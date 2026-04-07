@@ -1,0 +1,38 @@
+# Workshop Sample API — CLAUDE.md
+
+## Project Overview
+
+This is a Node.js REST API for managing vehicle data.
+Express.js backend with in-memory storage.
+
+## Build & Run
+
+- Install: `npm install`
+- Start: `npm start` (runs on port 3000)
+- Test: `npm test` (uses Node.js built-in test runner)
+
+## Code Style
+
+- Use ES6+ features (const/let, arrow functions, template literals)
+- Use `===` for strict equality, never `==`
+- Add JSDoc comments for all exported functions
+- Error responses must include an `error` field with a descriptive message
+
+## Architecture
+
+- `src/index.js` — Express app setup and routes
+- `src/api.js` — Route handlers (controller layer)
+- `src/utils.js` — Pure utility functions (testable)
+- `src/config.js` — Configuration (should use env vars)
+- `test/` — Unit tests using Node.js test runner
+
+## Conventions
+
+- HTTP status codes: 200 (OK), 201 (Created), 400 (Bad Request), 404 (Not Found)
+- All API routes under `/api/` prefix
+- Input validation before any data mutation
+- Never commit secrets or credentials to code
+
+## TODO
+
+<!-- Exercise: Add more specific instructions for your team -->

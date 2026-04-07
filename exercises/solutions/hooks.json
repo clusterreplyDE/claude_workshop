@@ -1,0 +1,55 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "FILE=\"$CLAUDE_FILE_PATH\"; if echo \"$FILE\" | grep -qE '\\.(js|ts|json|md)$'; then npx prettier --write \"$FILE\" 2>/dev/null && echo \"Formatted: $FILE\"; fi"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "FILE=\"$CLAUDE_FILE_PATH\"; if echo \"$FILE\" | grep -qE '\\.(test|spec)\\.js$'; then echo '{\"message\": \"Test file changed — consider running npm test\"}'; fi"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "INPUT=\"$CLAUDE_TOOL_INPUT\"; if echo \"$INPUT\" | grep -qE 'rm\\s+-rf\\s+/|rm\\s+-rf\\s+~|:(){ :|:& };:|mkfs|dd\\s+if='; then echo '{\"decision\": \"block\", \"reason\": \"Blocked potentially destructive command\"}'; exit 2; fi; exit 0"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"Session started: $(date '+%Y-%m-%d %H:%M') | Branch: $(git branch --show-current 2>/dev/null || echo 'N/A') | Node: $(node --version)\""
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'Task completed' | tee /dev/null"
+          }
+        ]
+      }
+    ]
+  }
+}
