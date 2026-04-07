@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code Deep Dive Workshop</title>
+<style>
+  :root {
+    --bg: #0f0f13;
+    --bg-card: #1a1a24;
+    --bg-card-hover: #22222f;
+    --bg-surface: #14141c;
+    --bg-code: #0d0d14;
+    --text: #e4e4ed;
+    --text-muted: #8888a0;
+    --text-dim: #5c5c72;
+    --accent: #d97706;
+    --accent2: #8b5cf6;
+    --accent3: #06b6d4;
+    --accent4: #10b981;
+    --border: #2a2a3a;
+    --border-light: #3a3a50;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.4);
+    --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    --sidebar-w: 280px;
+    --unit1: #d97706;
+    --unit2: #8b5cf6;
+    --unit3: #06b6d4;
+    --unit4: #10b981;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    position: fixed; top: 0; left: 0;
+    width: var(--sidebar-w); height: 100vh;
+    background: var(--bg-surface);
+    border-right: 1px solid var(--border);
+    overflow-y: auto; z-index: 100;
+    padding: 24px 0;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+    transition: transform var(--transition);
+  }
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .sidebar-logo {
+    padding: 0 20px 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+  .sidebar-logo h2 {
+    font-size: 15px; font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -0.3px;
+  }
+  .sidebar-logo span { font-size: 11px; color: var(--text-dim); display: block; margin-top: 4px; }
+
+  .nav-group { margin-bottom: 8px; }
+  .nav-group-title {
+    font-size: 10px; font-weight: 700; letter-spacing: 1.2px;
+    text-transform: uppercase; color: var(--text-dim);
+    padding: 12px 20px 6px;
+  }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 20px; cursor: pointer;
+    color: var(--text-muted); font-size: 13px;
+    transition: all var(--transition); text-decoration: none;
+    border-left: 3px solid transparent;
+  }
+  .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+  .nav-item.active {
+    color: var(--text); background: rgba(255,255,255,0.05);
+  }
+  .nav-item .nav-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    border: 2px solid var(--text-dim); flex-shrink: 0;
+    transition: all var(--transition);
+  }
+  .nav-item.active .nav-dot { border-color: var(--accent); background: var(--accent); }
+  .nav-item.completed .nav-dot { border-color: var(--accent4); background: var(--accent4); }
+  .nav-item .nav-num { font-size: 11px; font-weight: 600; opacity: 0.5; width: 18px; }
+
+  .nav-progress {
+    margin: 16px 20px; padding: 12px;
+    background: var(--bg-card); border-radius: var(--radius-sm);
+  }
+  .nav-progress-label { font-size: 11px; color: var(--text-dim); margin-bottom: 6px; }
+  .nav-progress-bar {
+    height: 4px; background: var(--border); border-radius: 2px; overflow: hidden;
+  }
+  .nav-progress-fill {
+    height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 2px; transition: width 0.5s ease; width: 0%;
+  }
+  .nav-progress-text { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+  /* MOBILE NAV TOGGLE */
+  .nav-toggle {
+    display: none; position: fixed; top: 16px; left: 16px; z-index: 200;
+    width: 40px; height: 40px; border-radius: 10px;
+    background: var(--bg-card); border: 1px solid var(--border);
+    color: var(--text); cursor: pointer;
+    align-items: center; justify-content: center; font-size: 20px;
+  }
+
+  /* MAIN */
+  .main { margin-left: var(--sidebar-w); min-height: 100vh; }
+
+  /* HERO */
+  .hero {
+    padding: 80px 60px 60px;
+    background: linear-gradient(165deg, var(--bg-surface) 0%, var(--bg) 50%, rgba(139,92,246,0.05) 100%);
+    border-bottom: 1px solid var(--border);
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; top: -200px; right: -200px;
+    width: 600px; height: 600px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(217,119,6,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px; border-radius: 20px;
+    background: rgba(217,119,6,0.1); border: 1px solid rgba(217,119,6,0.2);
+    color: var(--accent); font-size: 12px; font-weight: 600;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-size: clamp(32px, 4vw, 52px); font-weight: 800;
+    letter-spacing: -1.5px; line-height: 1.15; margin-bottom: 16px;
+  }
+  .hero h1 span {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero-sub {
+    font-size: 18px; color: var(--text-muted); max-width: 600px; margin-bottom: 32px;
+  }
+  .hero-meta {
+    display: flex; flex-wrap: wrap; gap: 24px;
+  }
+  .hero-stat {
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .hero-stat-value { font-size: 20px; font-weight: 700; color: var(--text); }
+  .hero-stat-label { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* SECTIONS */
+  section { padding: 48px 60px; }
+  section + section { border-top: 1px solid var(--border); }
+
+  .section-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 32px;
+  }
+  .section-header h2 {
+    font-size: 24px; font-weight: 700; letter-spacing: -0.5px;
+  }
+  .section-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+
+  /* SCHEDULE TIMELINE */
+  .timeline { display: flex; flex-direction: column; gap: 0; }
+  .timeline-unit {
+    display: flex; gap: 24px; position: relative;
+  }
+  .timeline-line {
+    width: 3px; flex-shrink: 0; position: relative; margin-left: 15px;
+  }
+  .timeline-dot {
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 3px solid; position: absolute; top: 24px; left: -5.5px;
+    background: var(--bg); z-index: 1;
+  }
+  .timeline-content {
+    flex: 1; padding: 16px 0 32px;
+  }
+  .timeline-time {
+    font-size: 13px; font-weight: 600; margin-bottom: 4px;
+  }
+  .timeline-title {
+    font-size: 18px; font-weight: 700; margin-bottom: 4px;
+  }
+  .timeline-desc {
+    font-size: 14px; color: var(--text-muted);
+  }
+  .timeline-modules {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;
+  }
+  .timeline-module-chip {
+    font-size: 12px; padding: 4px 10px; border-radius: 6px;
+    background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+  .timeline-break {
+    padding: 8px 0 8px; margin-left: 40px;
+    font-size: 13px; color: var(--text-dim);
+  }
+
+  /* MODULE CARDS */
+  .modules-grid { display: flex; flex-direction: column; gap: 16px; }
+
+  .module-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: all var(--transition);
+  }
+  .module-card:hover { border-color: var(--border-light); }
+  .module-card.expanded { border-color: var(--border-light); }
+
+  .module-header {
+    display: flex; align-items: center; gap: 16px;
+    padding: 20px 24px; cursor: pointer;
+    user-select: none;
+  }
+  .module-header:hover { background: var(--bg-card-hover); }
+
+  .module-num {
+    font-size: 13px; font-weight: 800; width: 40px; height: 40px;
+    border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; color: #fff;
+  }
+  .module-info { flex: 1; min-width: 0; }
+  .module-title { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
+  .module-subtitle { font-size: 13px; color: var(--text-muted); }
+
+  .module-badges { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+  .badge {
+    font-size: 11px; font-weight: 600; padding: 4px 10px;
+    border-radius: 6px; text-transform: uppercase; letter-spacing: 0.3px;
+  }
+  .badge-handson { background: rgba(16,185,129,0.15); color: #34d399; }
+  .badge-demo { background: rgba(139,92,246,0.15); color: #a78bfa; }
+  .badge-overview { background: rgba(6,182,212,0.15); color: #67e8f9; }
+  .badge-discussion { background: rgba(217,119,6,0.15); color: #fbbf24; }
+  .badge-time { background: rgba(255,255,255,0.05); color: var(--text-muted); }
+
+  .module-expand {
+    width: 28px; height: 28px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-dim); transition: all var(--transition);
+    flex-shrink: 0; font-size: 14px;
+  }
+  .module-card.expanded .module-expand { transform: rotate(180deg); color: var(--text); }
+
+  .module-body {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .module-card.expanded .module-body { max-height: 2000px; }
+
+  .module-content {
+    padding: 0 24px 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex; gap: 0; border-bottom: 1px solid var(--border);
+    margin-bottom: 20px; padding-top: 16px;
+  }
+  .tab {
+    padding: 10px 18px; font-size: 13px; font-weight: 600;
+    color: var(--text-dim); cursor: pointer; position: relative;
+    transition: color var(--transition); border: none; background: none;
+  }
+  .tab:hover { color: var(--text-muted); }
+  .tab.active { color: var(--text); }
+  .tab.active::after {
+    content: ''; position: absolute; bottom: -1px; left: 0; right: 0;
+    height: 2px; background: var(--accent); border-radius: 1px;
+  }
+  .tab-panel { display: none; animation: fadeIn 0.3s ease; }
+  .tab-panel.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+  /* CONTENT ELEMENTS */
+  .concept-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px;
+    margin-bottom: 16px;
+  }
+  .concept-item {
+    padding: 14px 16px; border-radius: var(--radius-sm);
+    background: var(--bg-surface); border: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .concept-item strong { display: block; margin-bottom: 4px; color: var(--text); font-size: 14px; }
+  .concept-item span { color: var(--text-muted); }
+
+  pre {
+    background: var(--bg-code); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 16px 20px;
+    overflow-x: auto; font-size: 13px; line-height: 1.7;
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+    margin: 12px 0;
+  }
+  pre code { color: #c4c4dc; }
+  .kw { color: #c792ea; }
+  .str { color: #c3e88d; }
+  .cm { color: #546e7a; }
+  .fn { color: #82aaff; }
+  .op { color: #89ddff; }
+  .num { color: #f78c6c; }
+  .flag { color: #ffcb6b; }
+
+  .hands-on-box {
+    padding: 16px 20px; border-radius: var(--radius-sm);
+    background: rgba(16,185,129,0.05); border: 1px solid rgba(16,185,129,0.15);
+    margin-top: 12px;
+  }
+  .hands-on-box h4 {
+    font-size: 13px; font-weight: 700; color: #34d399;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
+  }
+  .hands-on-box p, .hands-on-box li {
+    font-size: 14px; color: var(--text-muted);
+  }
+  .hands-on-box ol, .hands-on-box ul {
+    padding-left: 20px; display: flex; flex-direction: column; gap: 4px;
+  }
+
+  .key-takeaway {
+    padding: 16px 20px; border-radius: var(--radius-sm);
+    background: rgba(217,119,6,0.05); border-left: 3px solid var(--accent);
+    margin: 12px 0; font-size: 14px; color: var(--text-muted);
+  }
+  .key-takeaway strong { color: var(--text); }
+
+  .pill-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+  .pill {
+    font-size: 12px; padding: 5px 12px; border-radius: 20px;
+    background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+
+  /* CLI REFERENCE */
+  .cli-search {
+    width: 100%; padding: 12px 16px; border-radius: var(--radius-sm);
+    background: var(--bg-card); border: 1px solid var(--border);
+    color: var(--text); font-size: 14px; outline: none;
+    transition: border-color var(--transition); margin-bottom: 20px;
+  }
+  .cli-search:focus { border-color: var(--accent); }
+  .cli-search::placeholder { color: var(--text-dim); }
+
+  .cli-table {
+    width: 100%; border-collapse: collapse;
+  }
+  .cli-table th {
+    text-align: left; padding: 10px 16px; font-size: 11px;
+    font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+    color: var(--text-dim); border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; background: var(--bg);
+  }
+  .cli-table td {
+    padding: 10px 16px; font-size: 13px; border-bottom: 1px solid var(--border);
+    color: var(--text-muted); vertical-align: top;
+  }
+  .cli-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .cli-table code {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 12px; padding: 2px 6px; border-radius: 4px;
+    background: var(--bg-code); color: #c4c4dc;
+  }
+
+  /* PREREQUISITES */
+  .prereq-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px;
+  }
+  .prereq-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px 16px; border-radius: var(--radius-sm);
+    background: var(--bg-card); border: 1px solid var(--border);
+    cursor: pointer; transition: all var(--transition);
+  }
+  .prereq-item:hover { border-color: var(--border-light); }
+  .prereq-check {
+    width: 20px; height: 20px; border-radius: 6px;
+    border: 2px solid var(--border-light); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all var(--transition); margin-top: 1px;
+    color: transparent; font-size: 12px;
+  }
+  .prereq-item.checked .prereq-check {
+    background: var(--accent4); border-color: var(--accent4); color: #fff;
+  }
+  .prereq-text { font-size: 14px; }
+  .prereq-text strong { display: block; color: var(--text); margin-bottom: 2px; }
+  .prereq-text span { color: var(--text-muted); font-size: 13px; }
+
+  /* CAPSTONE */
+  .capstone-steps { display: flex; flex-direction: column; gap: 12px; }
+  .capstone-step {
+    display: flex; align-items: flex-start; gap: 16px;
+    padding: 20px; border-radius: var(--radius-sm);
+    background: var(--bg-card); border: 1px solid var(--border);
+    cursor: pointer; transition: all var(--transition);
+  }
+  .capstone-step:hover { border-color: var(--border-light); }
+  .capstone-step-num {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 800; flex-shrink: 0;
+    background: rgba(139,92,246,0.15); color: #a78bfa;
+    transition: all var(--transition);
+  }
+  .capstone-step.checked .capstone-step-num {
+    background: rgba(16,185,129,0.2); color: #34d399;
+  }
+  .capstone-step-info { flex: 1; }
+  .capstone-step-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .capstone-step-desc { font-size: 13px; color: var(--text-muted); }
+
+  /* FEATURE MATRIX */
+  .feature-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px;
+  }
+  .feature-item {
+    padding: 12px; border-radius: var(--radius-sm);
+    background: var(--bg-card); border: 1px solid var(--border);
+    text-align: center; font-size: 13px;
+  }
+  .feature-item .fi-label { color: var(--text); font-weight: 600; margin-bottom: 4px; }
+  .feature-item .fi-when { color: var(--text-dim); font-size: 11px; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); box-shadow: var(--shadow); }
+    .nav-toggle { display: flex; }
+    .main { margin-left: 0; }
+    section { padding: 32px 20px; }
+    .hero { padding: 60px 20px 40px; }
+    .concept-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ANIMATIONS */
+  .animate-in {
+    opacity: 0; transform: translateY(16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .animate-in.visible { opacity: 1; transform: none; }
+
+  /* BACK TO TOP */
+  .back-to-top {
+    position: fixed; bottom: 24px; right: 24px; z-index: 100;
+    width: 44px; height: 44px; border-radius: 12px;
+    background: var(--bg-card); border: 1px solid var(--border);
+    color: var(--text-muted); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; opacity: 0; pointer-events: none;
+    transition: all var(--transition); box-shadow: var(--shadow);
+  }
+  .back-to-top.visible { opacity: 1; pointer-events: auto; }
+  .back-to-top:hover { border-color: var(--accent); color: var(--accent); }
+</style>
+</head>
+<body>
+
+<!-- Mobile nav toggle -->
+<button class="nav-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')" aria-label="Toggle navigation">&#9776;</button>
+
+<!-- SIDEBAR -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <h2>Claude Code Workshop</h2>
+    <span>Deep Dive &mdash; 6 Hours</span>
+  </div>
+
+  <div class="nav-progress">
+    <div class="nav-progress-label">Your Progress</div>
+    <div class="nav-progress-bar"><div class="nav-progress-fill" id="progressFill"></div></div>
+    <div class="nav-progress-text" id="progressText">0 / 14 modules</div>
+  </div>
+
+  <a class="nav-item" href="#hero">&#x2302; Overview</a>
+  <a class="nav-item" href="#prerequisites">&#x2713; Prerequisites</a>
+  <a class="nav-item" href="#schedule">&#x1F552; Schedule</a>
+
+  <div class="nav-group">
+    <div class="nav-group-title" style="color:var(--unit1)">Unit 1 &mdash; Getting Started</div>
+    <a class="nav-item" href="#m01" data-module="1"><span class="nav-dot"></span><span class="nav-num">01</span> Claude Ecosystem</a>
+    <a class="nav-item" href="#m02" data-module="2"><span class="nav-dot"></span><span class="nav-num">02</span> Installation &amp; Setup</a>
+    <a class="nav-item" href="#m03" data-module="3"><span class="nav-dot"></span><span class="nav-num">03</span> Interactive Session</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title" style="color:var(--unit2)">Unit 2 &mdash; Making Claude Yours</div>
+    <a class="nav-item" href="#m04" data-module="4"><span class="nav-dot"></span><span class="nav-num">04</span> CLAUDE.md &amp; Rules</a>
+    <a class="nav-item" href="#m05" data-module="5"><span class="nav-dot"></span><span class="nav-num">05</span> Skills &amp; Commands</a>
+    <a class="nav-item" href="#m06" data-module="6"><span class="nav-dot"></span><span class="nav-num">06</span> Subagents &amp; Teams</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title" style="color:var(--unit3)">Unit 3 &mdash; Integration</div>
+    <a class="nav-item" href="#m07" data-module="7"><span class="nav-dot"></span><span class="nav-num">07</span> MCP Connections</a>
+    <a class="nav-item" href="#m08" data-module="8"><span class="nav-dot"></span><span class="nav-num">08</span> Hooks</a>
+    <a class="nav-item" href="#m09" data-module="9"><span class="nav-dot"></span><span class="nav-num">09</span> CLI &amp; Headless</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title" style="color:var(--unit4)">Unit 4 &mdash; Big Picture</div>
+    <a class="nav-item" href="#m10" data-module="10"><span class="nav-dot"></span><span class="nav-num">10</span> Plugins</a>
+    <a class="nav-item" href="#m11" data-module="11"><span class="nav-dot"></span><span class="nav-num">11</span> Remote &amp; Web</a>
+    <a class="nav-item" href="#m12" data-module="12"><span class="nav-dot"></span><span class="nav-num">12</span> Settings &amp; Security</a>
+    <a class="nav-item" href="#m13" data-module="13"><span class="nav-dot"></span><span class="nav-num">13</span> Best Practices</a>
+    <a class="nav-item" href="#m14" data-module="14"><span class="nav-dot"></span><span class="nav-num">14</span> Capstone</a>
+  </div>
+
+  <a class="nav-item" href="#cli-ref">&#x2318; CLI Reference</a>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="hero-badge">&#x2728; Hands-On Workshop</div>
+    <h1>Claude Code<br><span>Deep Dive</span></h1>
+    <p class="hero-sub">A comprehensive, hands-on workshop covering the entire Claude Code ecosystem &mdash; from first install to CI/CD pipelines and beyond.</p>
+    <div class="hero-meta">
+      <div class="hero-stat"><span class="hero-stat-value">14</span><span class="hero-stat-label">Modules</span></div>
+      <div class="hero-stat"><span class="hero-stat-value">6h</span><span class="hero-stat-label">Duration</span></div>
+      <div class="hero-stat"><span class="hero-stat-value">4</span><span class="hero-stat-label">Units</span></div>
+      <div class="hero-stat"><span class="hero-stat-value">10+</span><span class="hero-stat-label">Exercises</span></div>
+    </div>
+  </section>
+
+  <!-- PREREQUISITES -->
+  <section id="prerequisites" class="animate-in">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(217,119,6,0.12)">&#x2713;</div>
+      <h2>Prerequisites</h2>
+    </div>
+    <p style="color:var(--text-muted);margin-bottom:20px;font-size:15px">Complete these before the workshop. Click to check off.</p>
+    <div class="prereq-grid" id="prereqGrid">
+      <div class="prereq-item" data-prereq="0">
+        <div class="prereq-check">&#x2713;</div>
+        <div class="prereq-text"><strong>Anthropic Account</strong><span>Active plan (Pro/Max/Team) or API Key</span></div>
+      </div>
+      <div class="prereq-item" data-prereq="1">
+        <div class="prereq-check">&#x2713;</div>
+        <div class="prereq-text"><strong>Node.js &amp; npm</strong><span>Version 18 or higher</span></div>
+      </div>
+      <div class="prereq-item" data-prereq="2">
+        <div class="prereq-check">&#x2713;</div>
+        <div class="prereq-text"><strong>Git</strong><span>Installed and configured</span></div>
+      </div>
+      <div class="prereq-item" data-prereq="3">
+        <div class="prereq-check">&#x2713;</div>
+        <div class="prereq-text"><strong>VS Code</strong><span>Recommended editor</span></div>
+      </div>
+      <div class="prereq-item" data-prereq="4">
+        <div class="prereq-check">&#x2713;</div>
+        <div class="prereq-text"><strong>GitHub Account</strong><span>With Personal Access Token</span></div>
+      </div>
+      <div class="prereq-item" data-prereq="5">
+        <div class="prereq-check">&#x2713;</div>
+        <div class="prereq-text"><strong>Admin Rights</strong><span>Permission for <code>npm install -g</code></span></div>
+      </div>
+      <div class="prereq-item" data-prereq="6">
+        <div class="prereq-check">&#x2713;</div>
+        <div class="prereq-text"><strong>Network Access</strong><span>api.anthropic.com &amp; registry.npmjs.org</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCHEDULE -->
+  <section id="schedule" class="animate-in">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(139,92,246,0.12)">&#x1F552;</div>
+      <h2>Schedule</h2>
+    </div>
+    <div class="timeline">
+      <div class="timeline-unit">
+        <div class="timeline-line" style="background:var(--unit1)"><div class="timeline-dot" style="border-color:var(--unit1)"></div></div>
+        <div class="timeline-content">
+          <div class="timeline-time" style="color:var(--unit1)">09:30 &ndash; 11:00</div>
+          <div class="timeline-title">Unit 1: Getting Started</div>
+          <div class="timeline-desc">From zero to first productive session</div>
+          <div class="timeline-modules">
+            <span class="timeline-module-chip">M1 Ecosystem (15m)</span>
+            <span class="timeline-module-chip">M2 Setup (15m)</span>
+            <span class="timeline-module-chip">M3 Interactive (35m)</span>
+          </div>
+        </div>
+      </div>
+      <div class="timeline-break">&#x2615; Coffee Break &mdash; 11:00&ndash;11:15</div>
+      <div class="timeline-unit">
+        <div class="timeline-line" style="background:var(--unit2)"><div class="timeline-dot" style="border-color:var(--unit2)"></div></div>
+        <div class="timeline-content">
+          <div class="timeline-time" style="color:var(--unit2)">11:15 &ndash; 12:30</div>
+          <div class="timeline-title">Unit 2: Making Claude Yours</div>
+          <div class="timeline-desc">Project memory, workflows, delegation</div>
+          <div class="timeline-modules">
+            <span class="timeline-module-chip">M4 CLAUDE.md (20m)</span>
+            <span class="timeline-module-chip">M5 Skills (30m)</span>
+            <span class="timeline-module-chip">M6 Subagents (25m)</span>
+          </div>
+        </div>
+      </div>
+      <div class="timeline-break">&#x1F37D; Lunch Break &mdash; 12:30&ndash;13:30</div>
+      <div class="timeline-unit">
+        <div class="timeline-line" style="background:var(--unit3)"><div class="timeline-dot" style="border-color:var(--unit3)"></div></div>
+        <div class="timeline-content">
+          <div class="timeline-time" style="color:var(--unit3)">13:30 &ndash; 15:00</div>
+          <div class="timeline-title">Unit 3: Integration &amp; Automation</div>
+          <div class="timeline-desc">External tools, quality gates, pipelines</div>
+          <div class="timeline-modules">
+            <span class="timeline-module-chip">M7 MCP (35m)</span>
+            <span class="timeline-module-chip">M8 Hooks (25m)</span>
+            <span class="timeline-module-chip">M9 CLI (25m)</span>
+          </div>
+        </div>
+      </div>
+      <div class="timeline-break">&#x2615; Coffee Break &mdash; 15:00&ndash;15:15</div>
+      <div class="timeline-unit">
+        <div class="timeline-line" style="background:var(--unit4)"><div class="timeline-dot" style="border-color:var(--unit4)"></div></div>
+        <div class="timeline-content">
+          <div class="timeline-time" style="color:var(--unit4)">15:15 &ndash; 16:30</div>
+          <div class="timeline-title">Unit 4: The Big Picture</div>
+          <div class="timeline-desc">Remote, settings, best practices, capstone</div>
+          <div class="timeline-modules">
+            <span class="timeline-module-chip">M10 Plugins (10m)</span>
+            <span class="timeline-module-chip">M11 Remote (15m)</span>
+            <span class="timeline-module-chip">M12 Settings (10m)</span>
+            <span class="timeline-module-chip">M13 Practices (15m)</span>
+            <span class="timeline-module-chip">M14 Capstone (25m)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODULE CARDS -->
+  <section id="modules-section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(139,92,246,0.12)">&#x1F4DA;</div>
+      <h2>Modules</h2>
+    </div>
+    <div class="modules-grid">
+
+      <!-- M01 -->
+      <div class="module-card animate-in" id="m01" data-module="1">
+        <div class="module-header" onclick="toggleModule(this)">
+          <div class="module-num" style="background:var(--unit1)">01</div>
+          <div class="module-info">
+            <div class="module-title">The Claude Ecosystem</div>
+            <div class="module-subtitle">Setting the stage: Claude is more than Code</div>
+          </div>
+          <div class="module-badges">
+            <span class="badge badge-overview">Overview</span>
+            <span class="badge badge-time">15 min</span>
+          </div>
+          <div class="module-expand">&#x25BC;</div>
+        </div>
+        <div class="module-body">
+          <div class="module-content">
+            <div class="tabs">
+              <button class="tab active" onclick="switchTab(this,'concepts')">Concepts</button>
+              <button class="tab" onclick="switchTab(this,'commands')">Key Details</button>
+              <button class="tab" onclick="switchTab(this,'handson')">Hands-On</button>
+            </div>
+            <div class="tab-panel active" data-tab="concepts">
+              <div class="concept-grid">
+                <div class="concept-item"><strong>Claude Web</strong><span>claude.ai &mdash; Chat, Projects, Artifacts, Deep Research, Memory</span></div>
+                <div class="concept-item"><strong>Claude Apps</strong><span>Desktop, Mobile, Chrome Extension, Cowork</span></div>
+                <div class="concept-item"><strong>Claude Code</strong><span>Terminal CLI, VS Code, JetBrains, Desktop, Web</span></div>
+                <div class="concept-item"><strong>Claude API</strong><span>Messages API, Models (Opus/Sonnet/Haiku), Agent SDK</span></div>
+              </div>
+              <div class="key-takeaway"><strong>Decision Guide:</strong> Understand when to use which Claude product and which subscription tier (Free / Pro / Max / Team / Enterprise).</div>
+            </div>
+            <div class="tab-panel" data-tab="commands">
+              <h4 style="margin-bottom:12px;font-size:14px">Subscription Tiers</h4>
+              <div class="pill-list">
+                <span class="pill">Free &mdash; Basic access</span>
+                <span class="pill">Pro ($20/mo) &mdash; Claude Code included</span>
+                <span class="pill">Max ($100/$200) &mdash; More usage + Remote</span>
+                <span class="pill">Team ($30/user) &mdash; Collaboration</span>
+                <span class="pill">Enterprise &mdash; SSO, admin, compliance</span>
+              </div>
+              <h4 style="margin:16px 0 12px;font-size:14px">Model Capabilities</h4>
+              <div class="concept-grid">
+                <div class="concept-item"><strong>Opus</strong><span>Most capable. Complex reasoning, architecture decisions.</span></div>
+                <div class="concept-item"><strong>Sonnet</strong><span>Fast + smart. General coding, default model.</span></div>
+                <div class="concept-item"><strong>Haiku</strong><span>Fastest. Quick lookups, simple tasks.</span></div>
+              </div>
+            </div>
+            <div class="tab-panel" data-tab="handson">
+              <div class="hands-on-box">
+                <h4>&#x1F3AF; Exercise</h4>
+                <ol>
+                  <li>Open <strong>claude.ai</strong> and create a new Project</li>
+                  <li>Set Custom Instructions for the Project</li>
+                  <li>Generate an Artifact (e.g., a code snippet or diagram)</li>
+                  <li>Explore the Projects feature and understand how it differs from Claude Code</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- M02 -->
+      <div class="module-card animate-in" id="m02" data-module="2">
+        <div class="module-header" onclick="toggleModule(this)">
+          <div class="module-num" style="background:var(--unit1)">02</div>
+          <div class="module-info">
+            <div class="module-title">Installation &amp; Setup</div>
+            <div class="module-subtitle">From zero to first session</div>
+          </div>
+          <div class="module-badges">
+            <span class="badge badge-handson">Hands-on</span>
+            <span class="badge badge-time">15 min</span>
+          </div>
+          <div class="module-expand">&#x25BC;</div>
+        </div>
+        <div class="module-body">
+          <div class="module-content">
+            <div class="tabs">
+              <button class="tab active" onclick="switchTab(this,'concepts')">Concepts</button>
+              <button class="tab" onclick="switchTab(this,'commands')">Commands</button>
+              <button class="tab" onclick="switchTab(this,'handson')">Hands-On</button>
+            </div>
+            <div class="tab-panel active" data-tab="concepts">
+              <div class="concept-grid">
+                <div class="concept-item"><strong>Installation Methods</strong><span>Native installer (recommended), Homebrew, WinGet, NPM</span></div>
+                <div class="concept-item"><strong>System Requirements</strong><span>macOS 13+, Windows 10+, Linux Ubuntu 20+, 4GB RAM</span></div>
+                <div class="concept-item"><strong>Authentication</strong><span>Browser login, API key, AWS Bedrock, Google Vertex AI</span></div>
+                <div class="concept-item"><strong>IDE Extensions</strong><span>VS Code extension, JetBrains plugin</span></div>
+              </div>
+            </div>
+            <div class="tab-panel" data-tab="commands">
+<pre><code><span class="cm"># Install (recommended)</span>
+curl -fsSL https://claude.ai/install.sh | bash
+
+<span class="cm"># Alternatives</span>
+brew install claude-code          <span class="cm"># macOS</span>
+winget install Anthropic.Claude   <span class="cm"># Windows</span>
+npm install -g @anthropic-ai/claude-code
+
+<span class="cm"># Verify</span>
+claude <span class="flag">--version</span>
+claude doctor                     <span class="cm"># Diagnose issues</span>
+
+<span class="cm"># First session</span>
+claude                            <span class="cm"># Start interactive mode</span></code></pre>
+            </div>
+            <div class="tab-panel" data-tab="handson">
+              <div class="hands-on-box">
+                <h4>&#x1F3AF; Exercise</h4>
+                <ol>
+                  <li>Install Claude Code using your preferred method</li>
+                  <li>Run <code>claude --version</code> to verify</li>
+                  <li>Run <code>claude doctor</code> to check your environment</li>
+                  <li>Authenticate (browser login or API key)</li>
+                  <li>Start your first session with <code>claude</code></li>
+                  <li>Explore <code>/help</code> inside the session</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- M03 -->
+      <div class="module-card animate-in" id="m03" data-module="3">
+        <div class="module-header" onclick="toggleModule(this)">
+          <div class="module-num" style="background:var(--unit1)">03</div>
+          <div class="module-info">
+            <div class="module-title">Interactive Session Basics</div>
+            <div class="module-subtitle">Mastering the daily workflow and agentic loop</div>
+          </div>
+          <div class="module-badges">
+            <span class="badge badge-handson">Hands-on</span>
+            <span class="badge badge-time">35 min</span>
+          </div>
+          <div class="module-expand">&#x25BC;</div>
+        </div>
+        <div class="module-body">
+          <div class="module-content">
+            <div class="tabs">
+              <button class="tab active" onclick="switchTab(this,'concepts')">Concepts</button>
+              <button class="tab" onclick="switchTab(this,'commands')">Commands</button>
+              <button class="tab" onclick="switchTab(this,'handson')">Hands-On</button>
+            </div>
+            <div class="tab-panel active" data-tab="concepts">
+              <div class="key-takeaway"><strong>The Agentic Loop:</strong> Gather Context &#x2192; Plan &#x2192; Take Action &#x2192; Verify Results &#x2192; Iterate</div>
+              <div class="concept-grid">
+                <div class="concept-item"><strong>Built-in Tools</strong><span>Read, Edit, Write, Bash, Grep, Glob, WebFetch, WebSearch</span></div>
+                <div class="concept-item"><strong>File Referencing</strong><span>@file, @folder, images, URLs &mdash; direct context injection</span></div>
+                <div class="concept-item"><strong>Context Management</strong><span>/cost, /context, /compact, /clear &mdash; control your token budget</span></div>
+                <div class="concept-item"><strong>Model Selection</strong><span>Opus (complex), Sonnet (general), Haiku (fast) &mdash; switch with /model</span></div>
+                <div class="concept-item"><strong>Permission Modes</strong><span>default, acceptEdits, plan, auto &mdash; Shift+Tab to cycle</span></div>
+                <div class="concept-item"><strong>Checkpoints</strong><span>Auto snapshots, Esc&times;2 to rewind, three restore modes</span></div>
+              </div>
+            </div>
+            <div class="tab-panel" data-tab="commands">
+<pre><code><span class="cm"># Context &amp; cost</span>
+/cost                 <span class="cm"># Show token usage</span>
+/context              <span class="cm"># Inspect what's loaded</span>
+/compact <span class="flag">--focus</span> tests <span class="cm"># Compress, keep test focus</span>
+/clear                <span class="cm"># Fresh start</span>
+
+<span class="cm"># Model switching</span>
+/model                <span class="cm"># Switch between Opus/Sonnet/Haiku</span>
+
+<span class="cm"># Permissions</span>
+Shift+Tab             <span class="cm"># Cycle permission modes</span>
+
+<span class="cm"># Undo / Rewind</span>
+Esc Esc               <span class="cm"># Rewind to last checkpoint</span>
+
+<span class="cm"># Git from within session</span>
+/commit <span class="str">"fix: resolve null pointer"</span>
+/pr <span class="str">"Add auth middleware"</span></code></pre>
+            </div>
+            <div class="tab-panel" data-tab="handson">
+              <div class="hands-on-box">
+                <h4>&#x1F3AF; Exercise</h4>
+                <ol>
+                  <li>Clone the sample project: <code>cd exercises/sample-project &amp;&amp; npm install</code></li>
+                  <li>Start a Claude session inside the project</li>
+                  <li>Ask Claude to find and fix a bug</li>
+                  <li>Run <code>npm test</code> to verify the fix</li>
+                  <li>Use <code>/cost</code> to check your token usage</li>
+                  <li>Commit the fix from within the session</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- M04 -->
+      <div class="module-card animate-in" id="m04" data-module="4">
+        <div class="module-header" onclick="toggleModule(this)">
+          <div class="module-num" style="background:var(--unit2)">04</div>
+          <div class="module-info">
+            <div class="module-title">CLAUDE.md &amp; Rules</div>
+            <div class="module-subtitle">Teaching Claude how YOUR project works</div>
+          </div>
+          <div class="module-badges">
+            <span class="badge badge-handson">Hands-on</span>
+            <span class="badge badge-time">20 min</span>
+          </div>
+          <div class="module-expand">&#x25BC;</div>
+        </div>
+        <div class="module-body">
+          <div class="module-content">
+            <div class="tabs">
+              <button class="tab active" onclick="switchTab(this,'concepts')">Concepts</button>
+              <button class="tab" onclick="switchTab(this,'commands')">Examples</button>
+              <button class="tab" onclick="switchTab(this,'handson')">Hands-On</button>
+            </div>
+            <div class="tab-panel active" data-tab="concepts">
+              <div class="key-takeaway"><strong>Three-Level Hierarchy:</strong> User (<code>~/.claude/CLAUDE.md</code>) &#x2192; Project (<code>./CLAUDE.md</code>) &#x2192; Directory (<code>./src/CLAUDE.md</code>)</div>
+              <div class="concept-grid">
+                <div class="concept-item"><strong>What to Include</strong><span>Tech stack, code style, test commands, architecture decisions, deployment</span></div>
+                <div class="concept-item"><strong>What NOT to Include</strong><span>Standard conventions, API docs, private data &mdash; keep under ~200 lines</span></div>
+                <div class="concept-item"><strong>.claude/rules/</strong><span>Path-specific rules with YAML frontmatter &mdash; load only when matching files open</span></div>
+                <div class="concept-item"><strong>/init</strong><span>Auto-generate CLAUDE.md from your codebase analysis</span></div>
+              </div>
+            </div>
+            <div class="tab-panel" data-tab="commands">
+<pre><code><span class="cm"># Example CLAUDE.md structure</span>
+<span class="kw"># CLAUDE.md</span>
+
+<span class="kw">## Build &amp; Test</span>
+npm run build
+npm test              <span class="cm"># Jest, >80% coverage required</span>
+npm run lint          <span class="cm"># ESLint + Prettier</span>
+
+<span class="kw">## Architecture</span>
+Express REST API with PostgreSQL.
+Routes in src/routes/, services in src/services/.
+
+<span class="kw">## Conventions</span>
+- TypeScript strict mode
+- Functional components with hooks (React)
+- Error responses: { error: string, code: number }
+</code></pre>
+              <h4 style="margin:16px 0 8px;font-size:14px">Path-specific Rule Example</h4>
+<pre><code><span class="cm"># .claude/rules/testing.md</span>
+---
+<span class="kw">paths</span>: <span class="str">"**/*.test.ts"</span>
+---
+Use describe/it blocks. Prefer jest.spyOn over manual mocks.
+Always test error paths. Minimum 3 assertions per test.</code></pre>
+            </div>
+            <div class="tab-panel" data-tab="handson">
+              <div class="hands-on-box">
+                <h4>&#x1F3AF; Exercise</h4>
+                <ol>
+                  <li>Create a <code>CLAUDE.md</code> for the sample project manually</li>
+                  <li>Run <code>/init</code> and compare with your manual version</li>
+                  <li>Create a path-specific rule in <code>.claude/rules/</code></li>
+                  <li>Test that Claude follows your new conventions</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- M05 -->
+      <div class="module-card animate-in" id="m05" data-module="5">
+        <div class="module-header" onclick="toggleModule(this)">
+          <div class="module-num" style="background:var(--unit2)">05</div>
+          <div class="module-info">
+            <div class="module-title">Skills &amp; Commands</div>
+            <div class="module-subtitle">Reusable workflows and knowledge</div>
+          </div>
+          <div class="module-badges">
+            <span class="badge badge-handson">Hands-on</span>
+            <span class="badge badge-time">30 min</span>
+          </div>
+          <div class="module-expand">&#x25BC;</div>
+        </div>
+        <div class="module-body">
+          <div class="module-content">
+            <div class="tabs">
+              <button class="tab active" onclick="switchTab(this,'concepts')">Concepts</button>
+              <button class="tab" onclick="switchTab(this,'commands')">Examples</button>
+              <button class="tab" onclick="switchTab(this,'handson')">Hands-On</button>
+            </div>
+            <div class="tab-panel active" data-tab="concepts">
+              <div class="concept-grid">
+                <div class="concept-item"><strong>Reference Skills</strong><span>Auto-loaded knowledge &mdash; testing patterns, style guides, domain context</span></div>
+                <div class="concept-item"><strong>Action Skills</strong><span>Invoked with <code>/skillname</code> &mdash; code review, refactoring workflows</span></div>
+                <div class="concept-item"><strong>Commands</strong><span>Simple Markdown shortcuts in <code>.claude/commands/</code> with <code>$ARGUMENTS</code></span></div>
+                <div class="concept-item"><strong>Bundled Skills</strong><span>/batch, /debug, /loop, /simplify, /plan &mdash; built-in power tools</span></div>
+              </div>
+              <div class="key-takeaway"><strong>Key Difference:</strong> Skills have YAML frontmatter with <code>context: fork</code>, tool restrictions, and auto-invocation. Commands are simpler &mdash; just Markdown templates.</div>
+            </div>
+            <div class="tab-panel" data-tab="commands">
+<pre><code><span class="cm"># .claude/skills/review/SKILL.md</span>
+---
+<span class="kw">name</span>: <span class="str">Code Review</span>
+<span class="kw">description</span>: <span class="str">Review code for quality and patterns</span>
+<span class="kw">user-invocable</span>: <span class="num">true</span>
+<span class="kw">allowed-tools</span>: [<span class="str">Read</span>, <span class="str">Glob</span>, <span class="str">Grep</span>]
+---
+Review the code at $ARGUMENTS for:
+1. Code quality and readability
+2. Potential bugs or edge cases
+3. Adherence to project conventions
+</code></pre>
+<pre><code><span class="cm"># Simple command: .claude/commands/fix-issue.md</span>
+Fix GitHub issue #$ARGUMENTS.
+Read the issue, understand the problem,
+implement the fix, and run tests.</code></pre>
+            </div>
+            <div class="tab-panel" data-tab="handson">
+              <div class="hands-on-box">
+                <h4>&#x1F3AF; Exercise</h4>
+                <ol>
+                  <li>Create a <code>/review</code> command in <code>.claude/commands/</code></li>
+                  <li>Build a skill with YAML frontmatter in <code>.claude/skills/</code></li>
+                  <li>Add tool restrictions (<code>allowed-tools</code>) to make it read-only</li>
+                  <li>Test your skill with <code>/review src/api.js</code></li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- M06 -->
+      <div class="module-card animate-in" id="m06" data-module="6">
+        <div class="module-header" onclick="toggleModule(this)">
+          <div class="module-num" style="background:var(--unit2)">06</div>
+          <div class="module-info">
+            <div class="module-title">Subagents &amp; Agent Teams</div>
+            <div class="module-subtitle">Managing complexity through delegation</div>
+          </div>
+          <div class="module-badges">
+            <span class="badge badge-handson">Hands-on</span>
+            <span class="badge badge-time">25 min</span>
+          </div>
+          <div class="module-expand">&#x25BC;</div>
+        </div>
+        <div class="module-body">
+          <div class="module-content">
+            <div class="tabs">
+              <button class="tab active" onclick="switchTab(this,'concepts')">Concepts</button>
+              <button class="tab" onclick="switchTab(this,'commands')">Examples</button>
+              <button class="tab" onclick="switchTab(this,'handson')">Hands-On</button>
+            </div>
+            <div class="tab-panel active" data-tab="concepts">
+              <div class="concept-grid">
+                <div class="concept-item"><strong>Subagents</strong><span>Isolated Claude instances with own context, defined roles, restricted tools</span></div>
+                <div class="concept-item"><strong>Built-in Agents</strong><span>Explore (read-only research), Plan (task breakdown &amp; design)</span></div>
+                <div class="concept-item"><strong>Custom Agents</strong><span>Define in <code>.claude/agents/</code> with YAML frontmatter</span></div>
+                <div class="concept-item"><strong>Agent Teams</strong><span>Experimental &mdash; multiple independent sessions with shared task list</span></div>
+              </div>
+              <div class="key-takeaway"><strong>Patterns:</strong> <em>Master-Clone</em> (parallel workers on same task) vs. <em>Lead-Specialist</em> (coordinated roles with different expertise)</div>
+            </div>
+            <div class="tab-panel" data-tab="commands">
+<pre><code><span class="cm"># .claude/agents/reviewer.md</span>
+---
+<span class="kw">name</span>: <span class="str">Code Reviewer</span>
+<span class="kw">description</span>: <span class="str">Reviews code for quality</span>
+<span class="kw">tools</span>: [<span class="str">Read</span>, <span class="str">Glob</span>, <span class="str">Grep</span>]
+<span class="kw">model</span>: <span class="str">sonnet</span>
+---
+You are a senior code reviewer.
+Focus on correctness, readability, and
+adherence to project conventions.
+Flag security issues as critical.</code></pre>
+            </div>
+            <div class="tab-panel" data-tab="handson">
+              <div class="hands-on-box">
+                <h4>&#x1F3AF; Exercise</h4>
+                <ol>
+                  <li>Create a code-reviewer agent in <code>.claude/agents/reviewer.md</code></li>
+                  <li>Restrict it to read-only tools (Read, Glob, Grep)</li>
+                  <li>Invoke it with <code>@reviewer Review src/api.js</code></li>
+                  <li>Observe how it works in isolated context</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- M07 -->
+      <div class="module-card animate-in" id="m07" data-module="7">
+        <div class="module-header" onclick="toggleModule(this)">
+          <div class="module-num" style="background:var(--unit3)">07</div>
+          <div class="module-info">
+            <div class="module-title">MCP: External Connections</div>
+            <div class="module-subtitle">Connecting Claude to GitHub, Jira, databases &amp; more</div>
+          </div>
+          <div class="module-badges">
+            <span class="badge badge-handson">Hands-on</span>
+            <span class="badge badge-time">35 min</span>
+          </div>
+          <div class="module-expand">&#x25BC;</div>
+        </div>
+        <div class="module-body">
+          <div class="module-content">
+            <div class="tabs">
+              <button class="tab active" onclick="switchTab(this,'concepts')">Concepts</button>
+              <button class="tab" onclick="switchTab(this,'commands')">Commands</button>
+              <button class="tab" onclick="switchTab(this,'handson')">Hands-On</button>
+            </div>
+            <div class="tab-panel active" data-tab="concepts">
+              <div class="concept-grid">
+                <div class="concept-item"><strong>MCP</strong><span>Model Context Protocol &mdash; open standard for tool integration</span></div>
+                <div class="concept-item"><strong>Transport Types</strong><span>stdio (local processes), HTTP (cloud services)</span></div>
+                <div class="concept-item"><strong>Scope Hierarchy</strong><span>Local > Project (.mcp.json) > User (~/.claude.json)</span></div>
+                <div class="concept-item"><strong>Tool Discovery</strong><span>Automatic, lazy-loaded &mdash; idle tools use minimal context</span></div>
+              </div>
+            </div>
+            <div class="tab-panel" data-tab="commands">
+<pre><code><span class="cm"># Add an MCP server</span>
+claude mcp add <span class="flag">--transport</span> http github <span class="str">https://mcp.example.com</span>
+claude mcp add <span class="flag">--transport</span> stdio mydb <span class="op">--</span> npx db-mcp-server
+
+<span class="cm"># Manage servers</span>
+claude mcp list               <span class="cm"># Show all configured</span>
+claude mcp get github         <span class="cm"># Server details</span>
+claude mcp remove github      <span class="cm"># Remove a server</span>
+
+<span class="cm"># In session</span>
+/mcp                          <span class="cm"># Check status &amp; token costs</span>
+
+<span class="cm"># Debug</span>
+MCP_DEBUG=1 claude            <span class="cm"># Verbose MCP logging</span></code></pre>
+            </div>
+            <div class="tab-panel" data-tab="handson">
+              <div class="hands-on-box">
+                <h4>&#x1F3AF; Exercise</h4>
+                <ol>
+                  <li>Set up the GitHub MCP server with your PAT</li>
+                  <li>Use Claude to list issues from a repo</li>
+                  <li>Create a new issue programmatically through Claude</li>
+                  <li>Check MCP status and token costs with <code>/mcp</code></li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- M08 -->
+      <div class="module-card animate-in" id="m08" data-module="8">
+        <div class="module-header" onclick="toggleModule(this)">
+          <div class="module-num" style="background:var(--unit3)">08</div>
+          <div class="module-info">
+            <div class="module-title">Hooks: Guaranteeing Determinism</div>
+            <div class="module-subtitle">Code that ALWAYS runs &mdash; independent of the LLM</div>
+          </div>
+          <div class="module-badges">
+            <span class="badge badge-handson">Hands-on</span>
+            <span class="badge badge-time">25 min</span>
+          </div>
+          <div class="module-expand">&#x25BC;</div>
+        </div>
+        <div class="module-body">
+          <div class="module-content">
+            <div class="tabs">
+              <button class="tab active" onclick="switchTab(this,'concepts')">Concepts</button>
+              <button class="tab" onclick="switchTab(this,'commands')">Examples</button>
+              <button class="tab" onclick="switchTab(this,'handson')">Hands-On</button>
+            </div>
+            <div class="tab-panel active" data-tab="concepts">
+              <div class="concept-grid">
+                <div class="concept-item"><strong>Hook Types</strong><span>Command hooks (shell scripts), HTTP hooks (POST to URL)</span></div>
+                <div class="concept-item"><strong>Lifecycle Events</strong><span>SessionStart, PreToolUse, PostToolUse, Stop, TaskCompleted, &hellip;</span></div>
+                <div class="concept-item"><strong>Decision Control</strong><span>Exit 0 = continue, Exit 2 = block. Stdout goes into Claude context.</span></div>
+                <div class="concept-item"><strong>Key Distinction</strong><span>Hooks = deterministic (always run). Skills = LLM-driven (may or may not).</span></div>
+              </div>
+              <div class="key-takeaway"><strong>Use Cases:</strong> Auto-format after every edit, block dangerous commands, run tests on file change, send notifications on task complete.</div>
+            </div>
+            <div class="tab-panel" data-tab="commands">
+<pre><code><span class="cm">// .claude/settings.json</span>
+{
+  <span class="str">"hooks"</span>: {
+    <span class="str">"PostToolUse"</span>: [
+      {
+        <span class="str">"matcher"</span>: <span class="str">"Edit"</span>,
+        <span class="str">"hooks"</span>: [
+          {
+            <span class="str">"type"</span>: <span class="str">"command"</span>,
+            <span class="str">"command"</span>: <span class="str">"npx prettier --write \"$CLAUDE_FILE_PATH\""</span>
+          }
+        ]
+      }
+    ]
+  }
+}</code></pre>
+            </div>
+            <div class="tab-panel" data-tab="handson">
+              <div class="hands-on-box">
+                <h4>&#x1F3AF; Exercise</h4>
+                <ol>
+                  <li>Open <code>/hooks</code> in an interactive session</li>
+                  <li>Create a PostToolUse hook that runs Prettier after every Edit</li>
+                  <li>Test it by asking Claude to modify a file</li>
+                  <li>Verify the file is auto-formatted</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- M09 -->
+      <div class="module-card animate-in" id="m09" data-module="9">
+        <div class="module-header" onclick="toggleModule(this)">
+          <div class="module-num" style="background:var(--unit3)">09</div>
+          <div class="module-info">
+            <div class="module-title">CLI &amp; Headless Mode</div>
+            <div class="module-subtitle">Claude in pipelines and automation</div>
+          </div>
+          <div class="module-badges">
+            <span class="badge badge-handson">Hands-on</span>
+            <span class="badge badge-time">25 min</span>
+          </div>
+          <div class="module-expand">&#x25BC;</div>
+        </div>
+        <div class="module-body">
+          <div class="module-content">
+            <div class="tabs">
+              <button class="tab active" onclick="switchTab(this,'concepts')">Concepts</button>
+              <button class="tab" onclick="switchTab(this,'commands')">Commands</button>
+              <button class="tab" onclick="switchTab(this,'handson')">Hands-On</button>
+            </div>
+            <div class="tab-panel active" data-tab="concepts">
+              <div class="concept-grid">
+                <div class="concept-item"><strong>Headless Mode</strong><span><code>claude -p "prompt"</code> &mdash; one-shot, non-interactive execution</span></div>
+                <div class="concept-item"><strong>Output Formats</strong><span>text, json, stream-json &mdash; machine-readable pipeline output</span></div>
+                <div class="concept-item"><strong>Worktrees</strong><span><code>--worktree</code> &mdash; isolated parallel sessions in separate Git worktrees</span></div>
+                <div class="concept-item"><strong>CI/CD</strong><span>GitHub Actions integration for automated PR review</span></div>
+              </div>
+            </div>
+            <div class="tab-panel" data-tab="commands">
+<pre><code><span class="cm"># One-shot execution</span>
+claude <span class="flag">-p</span> <span class="str">"explain src/index.js"</span>
+
+<span class="cm"># JSON output</span>
+claude <span class="flag">-p</span> <span class="str">"list all TODOs"</span> <span class="flag">--output-format</span> json
+
+<span class="cm"># Tool restrictions</span>
+claude <span class="flag">-p</span> <span class="str">"review code"</span> <span class="flag">--allowedTools</span> Read,Glob,Grep
+
+<span class="cm"># Cost control</span>
+claude <span class="flag">-p</span> <span class="str">"fix bug"</span> <span class="flag">--max-budget-usd</span> <span class="num">1.00</span>
+
+<span class="cm"># Parallel worktrees</span>
+claude <span class="flag">--worktree</span> <span class="flag">-p</span> <span class="str">"add tests for auth"</span> &amp;
+claude <span class="flag">--worktree</span> <span class="flag">-p</span> <span class="str">"add tests for api"</span> &amp;
+wait</code></pre>
+            </div>
+            <div class="tab-panel" data-tab="handson">
+              <div class="hands-on-box">
+                <h4>&#x1F3AF; Exercise</h4>
+                <ol>
+                  <li>Run a headless command: <code>claude -p "list all files" --output-format json</code></li>
+                  <li>Write a simple GitHub Actions workflow that uses Claude for PR review</li>
+                  <li>Test with <code>--max-budget-usd 0.50</code> cost control</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- M10 -->
+      <div class="module-card animate-in" id="m10" data-module="10">
+        <div class="module-header" onclick="toggleModule(this)">
+          <div class="module-num" style="background:var(--unit4)">10</div>
+          <div class="module-info">
+            <div class="module-title">Plugins &amp; Marketplace</div>
+            <div class="module-subtitle">Sharing and reusing workflows</div>
+          </div>
+          <div class="module-badges">
+            <span class="badge badge-demo">Demo</span>
+            <span class="badge badge-time">10 min</span>
+          </div>
+          <div class="module-expand">&#x25BC;</div>
+        </div>
+        <div class="module-body">
+          <div class="module-content">
+            <div class="tabs">
+              <button class="tab active" onclick="switchTab(this,'concepts')">Concepts</button>
+              <button class="tab" onclick="switchTab(this,'commands')">Details</button>
+            </div>
+            <div class="tab-panel active" data-tab="concepts">
+              <div class="concept-grid">
+                <div class="concept-item"><strong>What is a Plugin?</strong><span>Bundle of skills, commands, hooks, agents, MCP servers &mdash; shareable package</span></div>
+                <div class="concept-item"><strong>Namespacing</strong><span><code>/plugin-name:skill</code> &mdash; multiple plugins coexist without collisions</span></div>
+                <div class="concept-item"><strong>Installation</strong><span><code>claude plugin install &lt;name&gt;</code> from Marketplace or Git repos</span></div>
+                <div class="concept-item"><strong>Distribution</strong><span>Anthropic Marketplace, internal Git repos, or local directories</span></div>
+              </div>
+            </div>
+            <div class="tab-panel" data-tab="commands">
+              <div class="pill-list">
+                <span class="pill">Code Review Suite</span>
+                <span class="pill">Documentation Bot</span>
+                <span class="pill">Security Scanner</span>
+                <span class="pill">Performance Profiler</span>
+              </div>
+<pre><code><span class="cm"># Install a plugin</span>
+claude plugin install code-review-suite
+
+<span class="cm"># Use namespaced skill</span>
+/code-review-suite:review src/
+
+<span class="cm"># List installed plugins</span>
+claude plugin list</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- M11 -->
+      <div class="module-card animate-in" id="m11" data-module="11">
+        <div class="module-header" onclick="toggleModule(this)">
+          <div class="module-num" style="background:var(--unit4)">11</div>
+          <div class="module-info">
+            <div class="module-title">Claude Code Remote &amp; Web</div>
+            <div class="module-subtitle">Claude Code without local installation</div>
+          </div>
+          <div class="module-badges">
+            <span class="badge badge-demo">Demo</span>
+            <span class="badge badge-time">15 min</span>
+          </div>
+          <div class="module-expand">&#x25BC;</div>
+        </div>
+        <div class="module-body">
+          <div class="module-content">
+            <div class="tabs">
+              <button class="tab active" onclick="switchTab(this,'concepts')">Concepts</button>
+              <button class="tab" onclick="switchTab(this,'commands')">Features</button>
+            </div>
+            <div class="tab-panel active" data-tab="concepts">
+              <div class="concept-grid">
+                <div class="concept-item"><strong>Claude Code Web</strong><span>Browser-based at claude.ai/code &mdash; isolated Linux VM on-demand (Max/Enterprise)</span></div>
+                <div class="concept-item"><strong>Teleported Sessions</strong><span>Move seamlessly between web and local terminal</span></div>
+                <div class="concept-item"><strong>Remote Control</strong><span>Share sessions with teammates for pair programming</span></div>
+                <div class="concept-item"><strong>Cowork</strong><span>Desktop app for non-technical users &mdash; VM-based, local files</span></div>
+              </div>
+              <div class="key-takeaway"><strong>When Remote vs. Local?</strong> Remote for onboarding, pair-programming, quick prototyping, no-setup demos. Local for performance-critical work and full control.</div>
+            </div>
+            <div class="tab-panel" data-tab="commands">
+              <div class="pill-list">
+                <span class="pill">Ultraplan &mdash; draft complex plans in cloud</span>
+                <span class="pill">Parallel Execution &mdash; concurrent cloud tasks</span>
+                <span class="pill">Auto-Fix &mdash; monitor &amp; fix CI failures</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- M12 -->
+      <div class="module-card animate-in" id="m12" data-module="12">
+        <div class="module-header" onclick="toggleModule(this)">
+          <div class="module-num" style="background:var(--unit4)">12</div>
+          <div class="module-info">
+            <div class="module-title">Settings, Configuration &amp; Security</div>
+            <div class="module-subtitle">Fine-tuning and enterprise context</div>
+          </div>
+          <div class="module-badges">
+            <span class="badge badge-overview">Overview</span>
+            <span class="badge badge-time">10 min</span>
+          </div>
+          <div class="module-expand">&#x25BC;</div>
+        </div>
+        <div class="module-body">
+          <div class="module-content">
+            <div class="tabs">
+              <button class="tab active" onclick="switchTab(this,'concepts')">Concepts</button>
+              <button class="tab" onclick="switchTab(this,'commands')">Details</button>
+            </div>
+            <div class="tab-panel active" data-tab="concepts">
+              <div class="concept-grid">
+                <div class="concept-item"><strong>Settings Hierarchy</strong><span>Managed > CLI > Local > Project > User &mdash; higher wins</span></div>
+                <div class="concept-item"><strong>Permission Modes</strong><span>default, acceptEdits, plan, auto, bypassPermissions</span></div>
+                <div class="concept-item"><strong>Network Config</strong><span>Proxy settings, custom CA certificates for corporate environments</span></div>
+                <div class="concept-item"><strong>Privacy</strong><span>Code is sent for processing. 30-day retention. No training on your data.</span></div>
+              </div>
+              <div class="key-takeaway"><strong>Enterprise Features:</strong> Managed settings via MDM, data residency (EU/US), HIPAA/SOC2 compliance, SSO integration.</div>
+            </div>
+            <div class="tab-panel" data-tab="commands">
+<pre><code><span class="cm"># Settings files</span>
+~/.claude/settings.json         <span class="cm"># User (personal)</span>
+.claude/settings.json           <span class="cm"># Project (committed)</span>
+.claude/settings.local.json     <span class="cm"># Local (gitignored)</span>
+
+<span class="cm"># Check cost</span>
+/cost                           <span class="cm"># Token &amp; dollar usage</span></code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- M13 -->
+      <div class="module-card animate-in" id="m13" data-module="13">
+        <div class="module-header" onclick="toggleModule(this)">
+          <div class="module-num" style="background:var(--unit4)">13</div>
+          <div class="module-info">
+            <div class="module-title">Best Practices &amp; Patterns</div>
+            <div class="module-subtitle">Learning from experience</div>
+          </div>
+          <div class="module-badges">
+            <span class="badge badge-discussion">Discussion</span>
+            <span class="badge badge-time">15 min</span>
+          </div>
+          <div class="module-expand">&#x25BC;</div>
+        </div>
+        <div class="module-body">
+          <div class="module-content">
+            <div class="tabs">
+              <button class="tab active" onclick="switchTab(this,'concepts')">Practices</button>
+              <button class="tab" onclick="switchTab(this,'commands')">Comparison</button>
+            </div>
+            <div class="tab-panel active" data-tab="concepts">
+              <div class="concept-grid">
+                <div class="concept-item"><strong>When /clear</strong><span>Starting a new unrelated task &mdash; fresh context, no noise</span></div>
+                <div class="concept-item"><strong>When /compact</strong><span>Long session, growing context &mdash; compress but keep focus</span></div>
+                <div class="concept-item"><strong>Context Rot</strong><span>AI degrades over time &mdash; conflicting instructions, abandoned experiments</span></div>
+                <div class="concept-item"><strong>Plan First</strong><span>Always review Claude's approach before execution on complex tasks</span></div>
+                <div class="concept-item"><strong>Prompt Hygiene</strong><span>Be specific, not verbose. One task per prompt. Provide examples.</span></div>
+                <div class="concept-item"><strong>Multi-Agent</strong><span>Parallel worktrees for independent tasks, subagents for focused work</span></div>
+              </div>
+            </div>
+            <div class="tab-panel" data-tab="commands">
+              <h4 style="margin-bottom:16px;font-size:15px">Feature Comparison: When to Use What?</h4>
+              <div class="feature-grid">
+                <div class="feature-item"><div class="fi-label">CLAUDE.md</div><div class="fi-when">Project-wide conventions &amp; commands</div></div>
+                <div class="feature-item"><div class="fi-label">Rules</div><div class="fi-when">Path-specific guidelines (load on demand)</div></div>
+                <div class="feature-item"><div class="fi-label">Skills</div><div class="fi-when">Reusable workflows with tool control</div></div>
+                <div class="feature-item"><div class="fi-label">Commands</div><div class="fi-when">Simple slash-command shortcuts</div></div>
+                <div class="feature-item"><div class="fi-label">Subagents</div><div class="fi-when">Isolated specialist workers</div></div>
+                <div class="feature-item"><div class="fi-label">Hooks</div><div class="fi-when">Deterministic automation (always runs)</div></div>
+                <div class="feature-item"><div class="fi-label">MCP</div><div class="fi-when">External system connections</div></div>
+                <div class="feature-item"><div class="fi-label">Plugins</div><div class="fi-when">Distributable bundles of all above</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- M14 -->
+      <div class="module-card animate-in" id="m14" data-module="14">
+        <div class="module-header" onclick="toggleModule(this)">
+          <div class="module-num" style="background:var(--unit4)">14</div>
+          <div class="module-info">
+            <div class="module-title">Capstone: Putting It All Together</div>
+            <div class="module-subtitle">From empty repo to productive setup</div>
+          </div>
+          <div class="module-badges">
+            <span class="badge badge-handson">Hands-on</span>
+            <span class="badge badge-time">25 min</span>
+          </div>
+          <div class="module-expand">&#x25BC;</div>
+        </div>
+        <div class="module-body">
+          <div class="module-content">
+            <p style="color:var(--text-muted);margin-bottom:20px">Build a complete Claude Code setup. Click each step to mark it done.</p>
+            <div class="capstone-steps" id="capstoneSteps">
+              <div class="capstone-step" data-step="0" onclick="toggleCapstone(this)">
+                <div class="capstone-step-num">1</div>
+                <div class="capstone-step-info">
+                  <div class="capstone-step-title">Create CLAUDE.md + Rules</div>
+                  <div class="capstone-step-desc">Project guide with conventions, build commands, and path-specific rules. ~5 min.</div>
+                </div>
+              </div>
+              <div class="capstone-step" data-step="1" onclick="toggleCapstone(this)">
+                <div class="capstone-step-num">2</div>
+                <div class="capstone-step-info">
+                  <div class="capstone-step-title">Build a Custom Skill</div>
+                  <div class="capstone-step-desc">Code review workflow with YAML frontmatter, tool restrictions, and examples. ~5 min.</div>
+                </div>
+              </div>
+              <div class="capstone-step" data-step="2" onclick="toggleCapstone(this)">
+                <div class="capstone-step-num">3</div>
+                <div class="capstone-step-info">
+                  <div class="capstone-step-title">Define a Subagent</div>
+                  <div class="capstone-step-desc">Code reviewer with read-only permissions and specific focus. ~4 min.</div>
+                </div>
+              </div>
+              <div class="capstone-step" data-step="3" onclick="toggleCapstone(this)">
+                <div class="capstone-step-num">4</div>
+                <div class="capstone-step-info">
+                  <div class="capstone-step-title">Connect an MCP Server</div>
+                  <div class="capstone-step-desc">GitHub or filesystem MCP for external data access. ~3 min.</div>
+                </div>
+              </div>
+              <div class="capstone-step" data-step="4" onclick="toggleCapstone(this)">
+                <div class="capstone-step-num">5</div>
+                <div class="capstone-step-info">
+                  <div class="capstone-step-title">Configure a Hook</div>
+                  <div class="capstone-step-desc">Auto-format or lint on every file edit. ~4 min.</div>
+                </div>
+              </div>
+              <div class="capstone-step" data-step="5" onclick="toggleCapstone(this)">
+                <div class="capstone-step-num">6</div>
+                <div class="capstone-step-info">
+                  <div class="capstone-step-title">Sketch CI/CD Integration</div>
+                  <div class="capstone-step-desc">GitHub Actions YAML for automated PR review. ~4 min.</div>
+                </div>
+              </div>
+            </div>
+            <div class="key-takeaway" style="margin-top:20px"><strong>Success Criteria:</strong> A new team member clones the repo and immediately gets a productive Claude Code experience.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CLI REFERENCE -->
+  <section id="cli-ref" class="animate-in">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(6,182,212,0.12)">&#x2318;</div>
+      <h2>CLI Quick Reference</h2>
+    </div>
+    <input type="text" class="cli-search" id="cliSearch" placeholder="Search commands... (e.g. output, model, resume)" oninput="filterCLI()">
+    <table class="cli-table" id="cliTable">
+      <thead><tr><th>Command / Flag</th><th>Description</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td><code>claude</code></td><td>Start interactive session</td><td><code>claude</code></td></tr>
+        <tr><td><code>claude -p</code></td><td>Headless / non-interactive mode</td><td><code>claude -p "explain this code"</code></td></tr>
+        <tr><td><code>-c, --continue</code></td><td>Continue most recent session</td><td><code>claude -c</code></td></tr>
+        <tr><td><code>--resume</code></td><td>Resume a specific session by ID</td><td><code>claude --resume abc123</code></td></tr>
+        <tr><td><code>--model</code></td><td>Select model</td><td><code>claude --model sonnet</code></td></tr>
+        <tr><td><code>--output-format</code></td><td>Output format (with -p)</td><td><code>claude -p "..." --output-format json</code></td></tr>
+        <tr><td><code>--json-schema</code></td><td>Structured output validation</td><td><code>claude -p "..." --json-schema schema.json</code></td></tr>
+        <tr><td><code>--system-prompt</code></td><td>Custom system prompt</td><td><code>claude -p "..." --system-prompt "You are a reviewer"</code></td></tr>
+        <tr><td><code>--allowedTools</code></td><td>Restrict to specific tools</td><td><code>claude -p "..." --allowedTools Read,Grep</code></td></tr>
+        <tr><td><code>--max-budget-usd</code></td><td>Cost limit per session</td><td><code>claude -p "..." --max-budget-usd 1.00</code></td></tr>
+        <tr><td><code>--worktree</code></td><td>Run in isolated Git worktree</td><td><code>claude --worktree -p "add tests"</code></td></tr>
+        <tr><td><code>--permission-mode</code></td><td>Set permission mode</td><td><code>claude --permission-mode plan</code></td></tr>
+        <tr><td><code>/cost</code></td><td>Show token &amp; cost usage</td><td>In-session command</td></tr>
+        <tr><td><code>/context</code></td><td>Inspect loaded context</td><td>In-session command</td></tr>
+        <tr><td><code>/compact</code></td><td>Compress conversation context</td><td><code>/compact --focus tests</code></td></tr>
+        <tr><td><code>/clear</code></td><td>Clear context completely</td><td>In-session command</td></tr>
+        <tr><td><code>/model</code></td><td>Switch model mid-session</td><td>In-session command</td></tr>
+        <tr><td><code>/init</code></td><td>Generate CLAUDE.md from codebase</td><td>In-session command</td></tr>
+        <tr><td><code>/mcp</code></td><td>Check MCP server status</td><td>In-session command</td></tr>
+        <tr><td><code>/hooks</code></td><td>Configure hooks interactively</td><td>In-session command</td></tr>
+        <tr><td><code>claude doctor</code></td><td>Diagnose setup issues</td><td><code>claude doctor</code></td></tr>
+        <tr><td><code>claude mcp add</code></td><td>Add MCP server</td><td><code>claude mcp add --transport http name url</code></td></tr>
+        <tr><td><code>claude mcp list</code></td><td>List MCP servers</td><td><code>claude mcp list</code></td></tr>
+        <tr><td><code>claude plugin install</code></td><td>Install a plugin</td><td><code>claude plugin install name</code></td></tr>
+        <tr><td><code>claude update</code></td><td>Update Claude Code</td><td><code>claude update</code></td></tr>
+        <tr><td><code>Esc Esc</code></td><td>Rewind to last checkpoint</td><td>Keyboard shortcut</td></tr>
+        <tr><td><code>Shift+Tab</code></td><td>Cycle permission modes</td><td>Keyboard shortcut</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="padding:40px 60px;border-top:1px solid var(--border);text-align:center">
+    <p style="color:var(--text-dim);font-size:13px">Claude Code Deep Dive Workshop &mdash; Built for Developers &amp; Solution Architects</p>
+  </footer>
+
+</div>
+
+<!-- BACK TO TOP -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0})">&#x2191;</button>
+
+<script>
+// Toggle module expand/collapse
+function toggleModule(header) {
+  const card = header.closest('.module-card');
+  card.classList.toggle('expanded');
+}
+
+// Tab switching
+function switchTab(btn, tabName) {
+  const container = btn.closest('.module-content');
+  container.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  container.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  container.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+}
+
+// CLI search filter
+function filterCLI() {
+  const q = document.getElementById('cliSearch').value.toLowerCase();
+  document.querySelectorAll('#cliTable tbody tr').forEach(row => {
+    const text = row.textContent.toLowerCase();
+    row.style.display = text.includes(q) ? '' : 'none';
+  });
+}
+
+// Prerequisites toggle
+document.querySelectorAll('.prereq-item').forEach(item => {
+  const idx = item.dataset.prereq;
+  if (localStorage.getItem('prereq_' + idx) === '1') item.classList.add('checked');
+  item.addEventListener('click', () => {
+    item.classList.toggle('checked');
+    localStorage.setItem('prereq_' + idx, item.classList.contains('checked') ? '1' : '0');
+  });
+});
+
+// Capstone toggle
+function toggleCapstone(el) {
+  el.classList.toggle('checked');
+  localStorage.setItem('capstone_' + el.dataset.step, el.classList.contains('checked') ? '1' : '0');
+}
+document.querySelectorAll('.capstone-step').forEach(s => {
+  if (localStorage.getItem('capstone_' + s.dataset.step) === '1') s.classList.add('checked');
+});
+
+// Sidebar active state + progress
+const navItems = document.querySelectorAll('.nav-item[data-module]');
+const sections = [];
+navItems.forEach(n => {
+  const id = n.getAttribute('href').slice(1);
+  const el = document.getElementById(id);
+  if (el) sections.push({ el, nav: n, module: n.dataset.module });
+});
+
+function updateActiveNav() {
+  const scrollY = window.scrollY + 120;
+  let current = null;
+  sections.forEach(s => {
+    if (s.el.offsetTop <= scrollY) current = s;
+  });
+  navItems.forEach(n => n.classList.remove('active'));
+  if (current) current.nav.classList.add('active');
+}
+window.addEventListener('scroll', updateActiveNav);
+updateActiveNav();
+
+// Back to top
+window.addEventListener('scroll', () => {
+  document.getElementById('backToTop').classList.toggle('visible', window.scrollY > 400);
+});
+
+// Scroll animations (IntersectionObserver)
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.animate-in').forEach(el => observer.observe(el));
+
+// Close sidebar on mobile nav click
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    if (window.innerWidth <= 900) document.querySelector('.sidebar').classList.remove('open');
+  });
+});
+
+// Module completion tracking via header double-click
+document.querySelectorAll('.module-header').forEach(header => {
+  header.addEventListener('dblclick', (e) => {
+    e.stopPropagation();
+    const card = header.closest('.module-card');
+    const mod = card.dataset.module;
+    const completed = localStorage.getItem('mod_' + mod) === '1';
+    localStorage.setItem('mod_' + mod, completed ? '0' : '1');
+    updateProgress();
+  });
+});
+
+function updateProgress() {
+  let done = 0;
+  for (let i = 1; i <= 14; i++) {
+    const completed = localStorage.getItem('mod_' + i) === '1';
+    const nav = document.querySelector(`.nav-item[data-module="${i}"]`);
+    if (nav) nav.classList.toggle('completed', completed);
+    if (completed) done++;
+  }
+  const pct = Math.round((done / 14) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = done + ' / 14 modules';
+}
+updateProgress();
+</script>
+</body>
+</html>

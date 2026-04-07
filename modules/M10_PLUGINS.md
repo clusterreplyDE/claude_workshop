@@ -328,6 +328,8 @@ Found 3 issues:
   3. Security: SQL injection risk on line 89
 ```
 
+> 🏢 **Reply Context:** Consider creating a Reply-internal plugin that bundles team conventions: a CLAUDE.md for BMW projects, Terraform/Helm validation skills, a code-review subagent, and the GitHub Enterprise MCP config. New team members install one plugin and get the complete setup.
+
 ---
 
 ## Summary

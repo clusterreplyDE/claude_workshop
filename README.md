@@ -14,11 +14,11 @@
 workshop/
 ├── README.md                  ← You are here
 │
-├── modules/                   # Detailed module content
+├── modules/                   # Detailed module content (Markdown)
 │   ├── 00_WORKSHOP_OUTLINE.md #   Workshop outline & schedule (v3.0)
 │   ├── M01_CLAUDE_ECOSYSTEM.md#   Module 1: The Claude Ecosystem
-│   ├── M02_INSTALLATION.md    #   Module 2: Installation & Setup
-│   ├── ...                    #   (one file per module, M01–M14)
+│   ├── M02_INSTALLATION_SETUP.md
+│   ├── ...                    #   (M01–M14, one file per module)
 │   └── M14_CAPSTONE.md        #   Module 14: Capstone
 │
 ├── slides/                    # Workshop presentation (PowerPoint)
@@ -37,9 +37,7 @@ workshop/
 │   ├── configs/               #   Example CLAUDE.md, skills, hooks, MCP configs
 │   └── solutions/             #   Reference solutions for exercises
 │
-└── _internal/                 # Project docs (not for participants)
-    ├── PROJECT_BRIEFING.md    #   Workshop context, decisions, background
-    └── PROJECT_INSTRUCTIONS.md#   Working instructions for content creation
+└── .gitignore                 # Git ignore rules
 ```
 
 ## What's What

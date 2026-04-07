@@ -373,6 +373,8 @@ Sessions auto-expire after inactivity
 9. Final PR created and merged
 ```
 
+> 🏢 **Reply Context:** Remote/Web mode is useful for onboarding new Reply developers to BMW projects — no local setup needed for initial codebase exploration. Cowork can help non-technical stakeholders generate reports from project data. Consider Remote Control for pair-programming sessions across Reply offices.
+
 ---
 
 ## Summary

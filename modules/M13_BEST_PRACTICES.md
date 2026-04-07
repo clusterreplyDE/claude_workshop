@@ -566,6 +566,8 @@ Start simple, then enhance:
 7. Final commit
 ```
 
+> 🏢 **Reply Context:** For BMW projects, the plan-first approach is especially important given the complexity of AKS deployments and Terraform infrastructure. Establish a team convention: always start complex Terraform changes in Plan mode, review the plan, then execute. Keep CLAUDE.md maintained as a team asset — review it in PRs just like code.
+
 ---
 
 ## Summary
