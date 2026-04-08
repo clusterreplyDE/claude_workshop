@@ -15,11 +15,11 @@ workshop/
 ├── README.md                  ← You are here
 │
 ├── modules/                   # Detailed module content (Markdown)
-│   ├── 00_WORKSHOP_OUTLINE.md #   Workshop outline & schedule (v3.0)
-│   ├── M01_CLAUDE_ECOSYSTEM.md#   Module 1: The Claude Ecosystem
-│   ├── M02_INSTALLATION_SETUP.md
-│   ├── ...                    #   (M01–M14, one file per module)
-│   └── M14_CAPSTONE.md        #   Module 14: Capstone
+│   ├── 00-workshop-outline.md #   Workshop outline & schedule (v3.0)
+│   ├── m01-claude-ecosystem.md#   Module 1: The Claude Ecosystem
+│   ├── m02-installation-setup.md
+│   ├── ...                    #   (m01–m14, one file per module)
+│   └── m14-capstone.md        #   Module 14: Capstone
 │
 ├── slides/                    # Workshop presentation (PowerPoint)
 │   └── workshop.pptx          #   Single deck for the full workshop
@@ -37,6 +37,9 @@ workshop/
 │   ├── configs/               #   Example CLAUDE.md, skills, hooks, MCP configs
 │   └── solutions/             #   Reference solutions for exercises
 │
+├── html/                      # Interactive workshop web page
+│   └── index.html             #   Single-page app with schedule, modules, CLI reference
+│
 └── .gitignore                 # Git ignore rules
 ```
 
@@ -48,6 +51,7 @@ workshop/
 | **slides/** | Single PowerPoint deck (.pptx) guiding through the full workshop. Trainer switches to terminal/tools for hands-on parts. | Trainer (on screen) |
 | **handout/** | Cheat sheet with commands, examples, and quick references. Distributed as Word (.docx) and/or PDF for printing or digital use. | Participants (during workshop) |
 | **exercises/** | Sample project, starter configs, and reference solutions for hands-on tasks. | Participants (during workshop) |
+| **html/** | Interactive single-page web app with schedule, expandable module cards, CLI reference, and progress tracking. | Trainer + Participants |
 
 ## Workshop Schedule
 
@@ -65,7 +69,7 @@ workshop/
 
 | # | Module | Duration | Type |
 |---|--------|----------|------|
-| M1 | The Claude Ecosystem | 15 min | Overview + Hands-on |
+| M1 | The Claude Ecosystem | 20 min | Overview + Hands-on |
 | M2 | Installation & Setup | 15 min | Hands-on |
 | M3 | Interactive Session Basics | 35 min | Hands-on |
 | M4 | CLAUDE.md & Rules | 20 min | Hands-on |
@@ -73,7 +77,7 @@ workshop/
 | M6 | Subagents & Agent Teams | 25 min | Hands-on + Outlook |
 | M7 | MCP: External Connections | 35 min | Hands-on |
 | M8 | Hooks: Guaranteeing Determinism | 25 min | Hands-on |
-| M9 | CLI & Headless Mode | 25 min | Hands-on |
+| M9 | CLI & Headless Mode | 30 min | Hands-on + Reference |
 | M10 | Plugins & Marketplace | 10 min | Demo |
 | M11 | Claude Code Remote & Web | 15 min | Demo |
 | M12 | Settings & Security | 10 min | Overview |
@@ -90,7 +94,6 @@ Before attending, participants need:
 - [ ] **VS Code** installed (recommended)
 - [ ] **GitHub Account** with Personal Access Token
 - [ ] Admin rights for `npm install -g`
-- [ ] Network access to `api.anthropic.com` and `registry.npmjs.org`
 
 > Claude Code installation, VS Code Extension setup, and first session are done together on-site.
 
@@ -116,3 +119,19 @@ Before attending, participants need:
 | Presentation (.pptx) | ✅ 45 slides |
 | Handouts (.docx) | ✅ 5 reference sheets |
 | Exercise materials | ✅ Sample project + configs + solutions |
+
+---
+
+## Future Topics
+
+The following areas are **not covered** in the current workshop but are candidates for future modules or expansions:
+
+| Topic | Description | Potential Format |
+|-------|-------------|-----------------|
+| Computer Use (Deep Dive) | Claude controlling browser and desktop apps, testing workflows, practical patterns | Hands-on module |
+| Batch API Patterns | Production patterns for bulk processing, cost optimization, error handling, result aggregation | Reference + examples |
+| Enterprise Administration | SSO/SCIM setup, audit logs, data residency, managed policies, org-level configuration | Overview module |
+| Production Observability | Rate limit handling, retry strategies, monitoring dashboards, cost tracking at scale | Practical guide |
+| Multi-Provider Strategy | Bedrock vs. Vertex AI vs. Direct API — architecture decisions, failover, compliance mapping | Decision guide |
+| Prompt Engineering | Advanced prompting techniques, few-shot examples, chain-of-thought, evaluation and benchmarking | Workshop module |
+| Migration from Other Providers | OpenAI → Claude migration patterns, SDK differences, prompt adaptation strategies | Reference guide |

@@ -18,7 +18,6 @@ Participants must complete these **before** the workshop:
 - **VS Code** installed (recommended, not mandatory)
 - **GitHub Account** with Personal Access Token (for MCP module)
 - Admin rights / permission for `npm install -g` on your machine
-- Network access to `api.anthropic.com` and `registry.npmjs.org` (check corporate proxy!)
 
 > **Done together on-site:** Claude Code installation, `claude doctor`, VS Code Extension setup, first session
 
@@ -28,21 +27,21 @@ Participants must complete these **before** the workshop:
 
 | Time | Unit | Theme | Modules |
 |------|------|-------|---------|
-| **09:30–11:00** | **Unit 1: Getting Started** | *From zero to first productive session* | M1 Ecosystem (15) · M2 Setup (15) · M3 Interactive Session (35) |
+| **09:30–11:00** | **Unit 1: Getting Started** | *From zero to first productive session* | M1 Ecosystem (20) · M2 Setup (15) · M3 Interactive Session (35) |
 | 11:00–11:15 | ☕ Coffee Break | | |
 | **11:15–12:30** | **Unit 2: Making Claude Yours** | *Project memory, workflows, delegation* | M4 CLAUDE.md & Rules (20) · M5 Skills & Commands (30) · M6 Subagents & Agent Teams (25) |
 | 12:30–13:30 | 🍽️ Lunch Break | | |
-| **13:30–15:00** | **Unit 3: Integration & Automation** | *External tools, quality gates, pipelines* | M7 MCP (35) · M8 Hooks (25) · M9 CLI & Headless (25) |
+| **13:30–15:00** | **Unit 3: Integration & Automation** | *External tools, quality gates, pipelines* | M7 MCP (35) · M8 Hooks (25) · M9 CLI & Headless (30) |
 | 15:00–15:15 | ☕ Coffee Break | | |
 | **15:15–16:30** | **Unit 4: The Big Picture** | *Remote, settings, best practices, capstone* | M10 Plugins (10) · M11 Remote & Web (15) · M12 Settings (10) · M13 Best Practices (15) · M14 Capstone (25) |
 
 | | Content | Available | Buffer |
 |---|---------|-----------|--------|
-| Unit 1 | 65 min | 90 min | 25 min (setup troubleshooting) |
+| Unit 1 | 70 min | 90 min | 20 min (setup troubleshooting) |
 | Unit 2 | 75 min | 75 min | — |
-| Unit 3 | 85 min | 90 min | 5 min |
+| Unit 3 | 90 min | 90 min | — |
 | Unit 4 | 75 min | 75 min | — |
-| **Total** | **300 min** | **330 min** | **30 min** |
+| **Total** | **310 min** | **330 min** | **20 min** |
 
 Each unit is **self-contained**:
 1. → "I can use Claude Code"
@@ -52,7 +51,28 @@ Each unit is **self-contained**:
 
 ---
 
-## Module 1 — The Claude Ecosystem (15 min)
+## Module Overview
+
+| # | Module | Duration | Format | Unit |
+|---|--------|----------|--------|------|
+| M1 | [The Claude Ecosystem](m01-claude-ecosystem.md) | 20 min | Hands-on | 1 |
+| M2 | [Installation & Setup](m02-installation-setup.md) | 15 min | Hands-on | 1 |
+| M3 | [Interactive Session Basics](m03-interactive-session.md) | 35 min | Hands-on | 1 |
+| M4 | [CLAUDE.md & Rules](m04-claudemd-rules.md) | 20 min | Hands-on | 2 |
+| M5 | [Skills & Commands](m05-skills-commands.md) | 30 min | Hands-on | 2 |
+| M6 | [Subagents & Agent Teams](m06-subagents-teams.md) | 25 min | Hands-on | 2 |
+| M7 | [MCP: External Connections](m07-mcp.md) | 35 min | Hands-on | 3 |
+| M8 | [Hooks: Guaranteeing Determinism](m08-hooks.md) | 25 min | Hands-on | 3 |
+| M9 | [CLI & Headless Mode](m09-cli-headless.md) | 30 min | Hands-on | 3 |
+| M10 | [Plugins & Marketplace](m10-plugins.md) | 10 min | Demo | 4 |
+| M11 | [Claude Code Remote & Web](m11-remote-web.md) | 15 min | Demo | 4 |
+| M12 | [Settings, Configuration & Security](m12-settings.md) | 10 min | Overview | 4 |
+| M13 | [Best Practices & Patterns](m13-best-practices.md) | 15 min | Discussion | 4 |
+| M14 | [Capstone: Putting It All Together](m14-capstone.md) | 25 min | Hands-on | 4 |
+
+---
+
+## Module 1 — The Claude Ecosystem (20 min)
 
 *Setting the stage: Claude is more than Code*
 
@@ -60,6 +80,7 @@ Each unit is **self-contained**:
 - Claude Apps: Desktop, Mobile, Chrome Extension, Cowork
 - Claude Code: CLI, VS Code, JetBrains, Desktop, Web
 - Claude API: Messages API, Models (Opus/Sonnet/Haiku), mention Agent SDK
+- **Advanced Model Features (Outlook):** Extended Thinking, Multimodal/Vision, PDF Support, Computer Use, Prompt Caching, Batch API
 - How it all connects (Subscriptions: Pro, Max, Team, Enterprise)
 - Decision guide: When to use what?
 - 🏢 **Reply Context:** Which subscriptions are available to us?
@@ -219,7 +240,7 @@ Each unit is **self-contained**:
 
 ---
 
-## Module 9 — CLI & Headless Mode (25 min)
+## Module 9 — CLI & Headless Mode (30 min)
 
 *Claude in the pipeline*
 
@@ -251,6 +272,12 @@ Each unit is **self-contained**:
 - Dispatch: trigger Claude Code tasks programmatically via API
 - Scheduled Tasks: recurring jobs on Anthropic cloud infrastructure
 - Use cases: automated daily code review, recurring report generation
+
+### Messages API Essentials (Reference)
+- SDK installation: Python (`anthropic`) + TypeScript (`@anthropic-ai/sdk`)
+- Basic API call, Tool Use / Function Calling, Structured Output (JSON Schema)
+- Extended Thinking API usage, Streaming, Prompt Caching
+- Quick reference table: feature → parameter → model availability
 
 ### Outlook: Agent SDK
 - `@anthropic-ai/claude-agent-sdk` — Node.js library for building custom agents
@@ -371,6 +398,11 @@ Participants build a complete Claude Code setup:
 | CLI & Headless Mode | M9 | Hands-on |
 | Worktrees & Background Tasks | M9 | Practical |
 | Dispatch & Scheduled Tasks | M9 | Overview |
+| Messages API (SDK, Tool Use, Streaming) | M9 | Reference |
+| Extended Thinking | M1, M9 | Overview + Reference |
+| Multimodal / Vision / PDF | M1 | Overview |
+| Prompt Caching & Batch API | M1, M9 | Overview + Reference |
+| Computer Use | M1 | Overview |
 | Agent SDK | M9 | Mention |
 | Plugins & Marketplace | M10 | Demo |
 | Claude Code Remote & Web | M11 | Demo |

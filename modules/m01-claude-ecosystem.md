@@ -1,4 +1,4 @@
-# Module 1 — The Claude Ecosystem (15 min)
+# Module 1 — The Claude Ecosystem (20 min)
 
 > *Setting the stage: Claude is more than Code*
 
@@ -107,6 +107,21 @@ For developers building applications powered by Claude.
 | **Features** | Tool use, vision, structured output (JSON), streaming, batches |
 | **Providers** | Direct (api.anthropic.com), AWS Bedrock, Google Vertex AI |
 | **Agent SDK** | `@anthropic-ai/claude-agent-sdk` — Node.js library for building custom agents with full access to tools, permissions, hooks, and subagents (covered briefly in Module 9) |
+
+### Advanced Model Features
+
+Beyond basic chat, the Claude API offers powerful capabilities that are especially relevant for developers:
+
+| Feature | What It Does | Developer Use Case |
+|---------|-------------|-------------------|
+| **Extended Thinking** | Claude shows its chain-of-thought reasoning before answering. Controllable via `thinking` parameter with configurable token budget. | Complex code analysis, architecture decisions, debugging multi-step problems |
+| **Multimodal (Vision)** | Process images, screenshots, and diagrams as input alongside text. Supports PNG, JPEG, GIF, WebP. | UI review from mockups, whiteboard→code, error screenshot analysis, diagram understanding |
+| **PDF Support** | Native PDF processing — extracts text, tables, and images from documents. | Analyze specs, review documentation, process contracts or compliance docs |
+| **Computer Use** | Claude controls mouse, keyboard, and screen — interacts with desktop and browser applications. | Automated browser testing, UI workflow automation, legacy system interaction |
+| **Prompt Caching** | Cache reusable context blocks (system prompts, large documents) across API calls. Up to 90% cost reduction on cached content. | High-volume API usage, repeated analysis with same context, cost-efficient pipelines |
+| **Batch API** | Submit large sets of requests asynchronously. 50% cost reduction, 24-hour processing window. | Bulk code analysis, migration tasks, large-scale reporting, dataset processing |
+
+> These features are available via the **Messages API** and are covered with code examples in **Module 9 — Messages API Essentials**.
 
 ### When to Use the API vs. Claude Code
 

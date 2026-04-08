@@ -1,4 +1,4 @@
-# Module 9 — CLI & Headless Mode (25 min)
+# Module 9 — CLI & Headless Mode (30 min)
 
 > *Claude in the pipeline*
 
@@ -451,7 +451,197 @@ Results are delivered via:
 
 ---
 
-## 7. Agent SDK: Embedding Claude in Your Tools
+## 7. Messages API Essentials (Reference)
+
+> This section is **reference material** for developers building applications *with* Claude. Code examples are designed for copy-paste — skim during the workshop, take home for later.
+
+### SDK Installation
+
+```bash
+# Python
+pip install anthropic
+
+# TypeScript / Node.js
+npm install @anthropic-ai/sdk
+```
+
+### Basic API Call
+
+```python
+import anthropic
+
+client = anthropic.Anthropic()  # uses ANTHROPIC_API_KEY env var
+
+message = client.messages.create(
+    model="claude-sonnet-4-6-20250414",
+    max_tokens=1024,
+    messages=[
+        {"role": "user", "content": "Explain the SOLID principles in 5 sentences."}
+    ]
+)
+print(message.content[0].text)
+```
+
+```typescript
+import Anthropic from "@anthropic-ai/sdk";
+
+const client = new Anthropic(); // uses ANTHROPIC_API_KEY env var
+
+const message = await client.messages.create({
+  model: "claude-sonnet-4-6-20250414",
+  max_tokens: 1024,
+  messages: [
+    { role: "user", content: "Explain the SOLID principles in 5 sentences." }
+  ],
+});
+console.log(message.content[0].text);
+```
+
+### Tool Use (Function Calling)
+
+Define tools as JSON Schema — Claude decides when to call them and returns structured arguments.
+
+```python
+import anthropic, json
+
+client = anthropic.Anthropic()
+
+tools = [
+    {
+        "name": "get_weather",
+        "description": "Get current weather for a city",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "city": {"type": "string", "description": "City name"},
+                "unit": {"type": "string", "enum": ["celsius", "fahrenheit"]}
+            },
+            "required": ["city"]
+        }
+    }
+]
+
+response = client.messages.create(
+    model="claude-sonnet-4-6-20250414",
+    max_tokens=1024,
+    tools=tools,
+    messages=[{"role": "user", "content": "What's the weather in Munich?"}]
+)
+
+# Claude returns a tool_use block — your app calls the actual API
+for block in response.content:
+    if block.type == "tool_use":
+        print(f"Call {block.name} with {json.dumps(block.input)}")
+```
+
+### Structured Output (JSON Schema)
+
+Force Claude to return data matching a specific schema:
+
+```python
+response = client.messages.create(
+    model="claude-sonnet-4-6-20250414",
+    max_tokens=1024,
+    messages=[{"role": "user", "content": "List 3 design patterns for microservices"}],
+    response_format={
+        "type": "json_schema",
+        "json_schema": {
+            "name": "patterns",
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "patterns": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "name": {"type": "string"},
+                                "description": {"type": "string"},
+                                "when_to_use": {"type": "string"}
+                            },
+                            "required": ["name", "description", "when_to_use"]
+                        }
+                    }
+                },
+                "required": ["patterns"]
+            }
+        }
+    }
+)
+```
+
+### Extended Thinking
+
+Enable Claude's chain-of-thought reasoning — visible to the developer:
+
+```python
+response = client.messages.create(
+    model="claude-sonnet-4-6-20250414",
+    max_tokens=16000,
+    thinking={
+        "type": "enabled",
+        "budget_tokens": 10000  # max tokens for thinking
+    },
+    messages=[{"role": "user", "content": "Design a rate limiter for a REST API"}]
+)
+
+for block in response.content:
+    if block.type == "thinking":
+        print("Reasoning:", block.thinking)
+    elif block.type == "text":
+        print("Answer:", block.text)
+```
+
+### Streaming
+
+Stream responses token-by-token for real-time UIs:
+
+```python
+with client.messages.stream(
+    model="claude-sonnet-4-6-20250414",
+    max_tokens=1024,
+    messages=[{"role": "user", "content": "Write a Python quicksort"}]
+) as stream:
+    for text in stream.text_stream:
+        print(text, end="", flush=True)
+```
+
+### Prompt Caching
+
+Cache large, reusable context blocks (system prompts, documents) for cost reduction:
+
+```python
+response = client.messages.create(
+    model="claude-sonnet-4-6-20250414",
+    max_tokens=1024,
+    system=[
+        {
+            "type": "text",
+            "text": "You are an expert on our company's 200-page API specification...",
+            "cache_control": {"type": "ephemeral"}  # cache this block
+        }
+    ],
+    messages=[{"role": "user", "content": "How does the /users endpoint handle pagination?"}]
+)
+# Subsequent calls with same system prompt use cache — up to 90% cheaper
+```
+
+### Quick Reference
+
+| Feature | Key Parameter | Availability |
+|---------|--------------|-------------|
+| Basic chat | `messages`, `model`, `max_tokens` | All models |
+| Tool use | `tools` array | All models |
+| Structured output | `response_format.json_schema` | All models |
+| Extended thinking | `thinking.budget_tokens` | Sonnet 4.6, Opus 4.6 |
+| Streaming | `.stream()` / `stream=True` | All models |
+| Prompt caching | `cache_control` on content blocks | All models |
+| Batch API | `client.batches.create()` | All models |
+| Vision | Image content blocks (`base64` or `url`) | All models |
+
+---
+
+## 8. Agent SDK: Embedding Claude in Your Tools
 
 For teams building custom tools, the **Agent SDK** provides programmatic access to Claude Code.
 
@@ -659,6 +849,7 @@ Customize the prompt and tools based on your needs:
 | **Parallelization** | Worktrees for parallel independent work, background tasks |
 | **Dispatch** | REST API for triggering Claude tasks from external systems |
 | **Scheduled Tasks** | Recurring jobs on Anthropic infrastructure (cron-like) |
+| **Messages API** | SDK for Python/TypeScript — tool use, structured output, extended thinking, streaming, caching |
 | **Agent SDK** | Node.js library for embedding Claude in custom tools |
 
 ---
