@@ -848,7 +848,7 @@ You've now covered the full Claude Code Deep Dive:
 4. **M04** — Interactive Session Extended
 5. **M05** — Project Memory & Context
 6. **M06** — Skills: Custom Workflows
-7. **M07** — Subagents & Agent Teams (delegation)
+7. **M07** — Subagents (delegation)
 8. **M08** — MCP: External Connections
 9. **M09** — Hooks: Guaranteeing Determinism
 10. **M10** — CLI & Headless Mode (this module)

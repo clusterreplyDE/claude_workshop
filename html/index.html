@@ -517,7 +517,7 @@
     <div class="nav-group-title" style="color:var(--unit2)">Unit 2 &mdash; Making Claude Yours</div>
     <a class="nav-item" href="#m05" data-module="5"><span class="nav-dot"></span><span class="nav-num">05</span> CLAUDE.md &amp; Rules</a>
     <a class="nav-item" href="#m06" data-module="6"><span class="nav-dot"></span><span class="nav-num">06</span> Skills &amp; Commands</a>
-    <a class="nav-item" href="#m07" data-module="7"><span class="nav-dot"></span><span class="nav-num">07</span> Subagents &amp; Teams</a>
+    <a class="nav-item" href="#m07" data-module="7"><span class="nav-dot"></span><span class="nav-num">07</span> Subagents</a>
   </div>
   <div class="nav-group">
     <div class="nav-group-title" style="color:var(--unit3)">Unit 3 &mdash; Integration</div>
@@ -999,12 +999,12 @@ Always test error paths. Minimum 3 assertions per test.</code></pre>
             </div>
             <div class="tab-panel active" data-tab="concepts">
               <div class="concept-grid">
+                <div class="concept-item"><strong>Commands</strong><span>Simple Markdown shortcuts in <code>.claude/commands/</code> &mdash; start here for quick prompts</span></div>
                 <div class="concept-item"><strong>Reference Skills</strong><span>Auto-loaded knowledge &mdash; testing patterns, style guides, domain context</span></div>
                 <div class="concept-item"><strong>Action Skills</strong><span>Invoked with <code>/skillname</code> &mdash; code review, refactoring workflows</span></div>
-                <div class="concept-item"><strong>Commands</strong><span>Simple Markdown shortcuts in <code>.claude/commands/</code> with <code>$ARGUMENTS</code></span></div>
                 <div class="concept-item"><strong>Bundled Skills</strong><span>/batch, /debug, /loop, /simplify, /plan &mdash; built-in power tools</span></div>
               </div>
-              <div class="key-takeaway"><strong>Key Difference:</strong> Skills have YAML frontmatter with <code>context: fork</code>, tool restrictions, and auto-invocation. Commands are simpler &mdash; just Markdown templates.</div>
+              <div class="key-takeaway"><strong>Rule of thumb:</strong> Start with a command. If you need templates, tool restrictions, or isolated context &mdash; upgrade to a skill.</div>
             </div>
             <div class="tab-panel" data-tab="commands">
 <pre><code><span class="cm"># .claude/skills/review/SKILL.md</span>
@@ -1044,7 +1044,7 @@ implement the fix, and run tests.</code></pre>
         <div class="module-header" onclick="toggleModule(this)">
           <div class="module-num" style="background:var(--unit2)">07</div>
           <div class="module-info">
-            <div class="module-title">Subagents &amp; Agent Teams</div>
+            <div class="module-title">Subagents</div>
             <div class="module-subtitle">Managing complexity through delegation</div>
           </div>
           <div class="module-badges">
@@ -1065,9 +1065,9 @@ implement the fix, and run tests.</code></pre>
                 <div class="concept-item"><strong>Subagents</strong><span>Isolated Claude instances with own context, defined roles, restricted tools</span></div>
                 <div class="concept-item"><strong>Built-in Agents</strong><span>Explore (read-only research), Plan (task breakdown &amp; design)</span></div>
                 <div class="concept-item"><strong>Custom Agents</strong><span>Define in <code>.claude/agents/</code> with YAML frontmatter</span></div>
-                <div class="concept-item"><strong>Agent Teams</strong><span>Experimental &mdash; multiple independent sessions with shared task list</span></div>
+                <div class="concept-item"><strong>Tool Control &amp; MCP</strong><span>Restrict tool access, scope MCP servers and memory to subagents</span></div>
               </div>
-              <div class="key-takeaway"><strong>Patterns:</strong> <em>Master-Clone</em> (parallel workers on same task) vs. <em>Lead-Specialist</em> (coordinated roles with different expertise)</div>
+              <div class="key-takeaway"><strong>Key Takeaway:</strong> Subagents enable delegation through isolated context with controlled tool access and specialized roles.</div>
             </div>
             <div class="tab-panel" data-tab="commands">
 <pre><code><span class="cm"># .claude/agents/reviewer.md</span>

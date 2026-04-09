@@ -29,7 +29,7 @@ Participants must complete these **before** the workshop:
 |------|------|-------|---------|
 | **09:30–11:00** | **Unit 1: Getting Started** | *From zero to first productive session* | M1 Ecosystem (20) · M2 Setup (15) · M3 Interactive Session (20) · M4 Interactive Session Extended (15) |
 | 11:00–11:15 | ☕ Coffee Break | | |
-| **11:15–12:30** | **Unit 2: Making Claude Yours** | *Project memory, workflows, delegation* | M5 CLAUDE.md & Rules (20) · M6 Skills & Commands (30) · M7 Subagents & Agent Teams (25) |
+| **11:15–12:30** | **Unit 2: Making Claude Yours** | *Project memory, workflows, delegation* | M5 CLAUDE.md & Rules (20) · M6 Skills & Commands (30) · M7 Subagents (25) |
 | 12:30–13:30 | 🍽️ Lunch Break | | |
 | **13:30–15:00** | **Unit 3: Integration & Automation** | *External tools, quality gates, pipelines* | M8 MCP (35) · M9 Hooks (25) · M10 CLI & Headless (30) |
 | 15:00–15:15 | ☕ Coffee Break | | |
@@ -62,7 +62,7 @@ Each unit is **self-contained**:
 | M4 | [Interactive Session Extended](m04-interactive-session-extended.md) | 15 min | Hands-on | 1 |
 | M5 | [CLAUDE.md & Rules](m05-claudemd-rules.md) | 20 min | Hands-on | 2 |
 | M6 | [Skills & Commands](m06-skills-commands.md) | 30 min | Hands-on | 2 |
-| M7 | [Subagents & Agent Teams](m07-subagents-teams.md) | 25 min | Hands-on | 2 |
+| M7 | [Subagents](m07-subagents-teams.md) | 25 min | Hands-on | 2 |
 | M8 | [MCP: External Connections](m08-mcp.md) | 35 min | Hands-on | 3 |
 | M9 | [Hooks: Guaranteeing Determinism](m09-hooks.md) | 25 min | Hands-on | 3 |
 | M10 | [CLI & Headless Mode](m10-cli-headless.md) | 30 min | Hands-on | 3 |
@@ -160,27 +160,25 @@ Each unit is **self-contained**:
 
 *Reusable workflows and knowledge*
 
-### Skills (recommended approach)
-- `.claude/skills/<name>/SKILL.md` with YAML frontmatter
-- Two types: **Reference skills** (knowledge, style guides) and **Action skills** (invocable workflows with `/<name>`)
-- Frontmatter fields: `name`, `description`, `context`, `agent`, `allowed-tools`
-- `context: fork` — skill runs in isolated subagent context
-- `disable-model-invocation: true` — manual-only, zero context cost until invoked
-- Bundled skills: `/simplify`, `/batch`, `/debug`, `/powerup`, etc.
-- Skill permissions: `/permissions` → `Skill(name)`, `Skill(name *)`
-- Skill locations: `.claude/skills/` (project), `~/.claude/skills/` (personal)
+### Commands (start simple)
+- `.claude/commands/<name>.md` — single Markdown file becomes a `/slash-command`
+- Project-level (`.claude/commands/`) or personal (`~/.claude/commands/`)
+- `$ARGUMENTS` for parameters — e.g. `/review @src/api.ts`
 
-### Commands (simple alternative)
-- `.claude/commands/` (project) and `~/.claude/commands/` (global)
-- Markdown files, `$ARGUMENTS` for parameters
-- Example: `/review`, `/fix-issue 123`
-- When to use commands vs. skills
+### Skills (complex workflows)
+- `.claude/skills/<name>/SKILL.md` with YAML frontmatter
+- Two types: **Reference skills** (auto-loaded knowledge) and **Action skills** (invoked with `/name`)
+- Frontmatter: `allowed-tools`, `context: fork`, `model`, `paths`
+- Can include templates, examples, scripts in the skill directory
+- String substitutions (`$1`, `${CLAUDE_SKILL_DIR}`) and dynamic context (`!`backtick``)
+- Bundled skills: `/batch`, `/debug`, `/loop`, `/simplify`, `/plan`
+- Priority: Enterprise > Personal > Project > Plugin
 
 **Hands-on:** Create a custom slash command + build a skill with auto-invocation
 
 ---
 
-## Module 7 — Subagents & Agent Teams (25 min)
+## Module 7 — Subagents (25 min)
 
 *Managing complexity through delegation*
 
@@ -190,15 +188,12 @@ Each unit is **self-contained**:
 - Built-in agents: Explore (read-only), Plan
 - Custom agents: restrict tools, define role, preload specific skills
 - `Task(...)` — dynamic spawning by Claude itself
-- Patterns: Master-Clone vs. Lead-Specialist
 - When subagents vs. CLAUDE.md context?
 
-### Agent Teams (Experimental — Outlook)
-- Multiple independent Claude Code sessions coordinating via shared task list
-- Peer-to-peer messaging between teammates
-- Use cases: parallel research, competing hypotheses, feature development with ownership
-- Difference to subagents: fully independent sessions, higher token cost, richer collaboration
-- Currently experimental, disabled by default
+### Tool Control & MCP in Subagents
+- Restrict tool access in agent definitions
+- MCP servers and memory scoped to subagent context
+- Subagents as specialized workers with specific tool access
 
 **Hands-on:** Define and test a code review subagent
 
@@ -398,7 +393,6 @@ Participants build a complete Claude Code setup:
 | Skills | M6 | Hands-on |
 | Slash Commands | M6 | Hands-on |
 | Subagents | M7 | Hands-on |
-| Agent Teams | M7 | Outlook |
 | MCP (Model Context Protocol) | M8 | Hands-on |
 | Hooks | M9 | Hands-on |
 | CLI & Headless Mode | M10 | Hands-on |
