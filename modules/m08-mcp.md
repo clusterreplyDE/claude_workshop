@@ -1,4 +1,4 @@
-# Module 7 — MCP: External Connections (35 min)
+# Module 8 — MCP: External Connections (35 min)
 
 > *Connecting Claude to the outside world*
 
@@ -397,22 +397,6 @@ Plugin-provided servers are pre-configured and ready to use.
 
 ---
 
-> 🏢 **Reply Context:** At BMW Aftersales, MCP enables critical integrations:
->
-> - **GitHub Enterprise MCP**: Connect to BMW's internal GitHub repos for issue tracking, PR management, and code search
-> - **Jira MCP**: Sync with VDPM project management — create issues, link PRs, update task status
-> - **Azure DevOps (Potential)**: Future integration for teams using ADO instead of GitHub
-> - **Internal Database MCP**: Query vehicle data, parts inventory, service history (read-only with row-level security)
-> - **Slack MCP**: Push notifications when critical tasks complete, allow @claude-code to respond to questions in channels
->
-> Example workflow:
-> ```
-> @mcp-github "Create an issue in BMW/VDPM about Terraform validation"
-> → GitHub MCP creates issue with linked PR
-> → Jira MCP syncs issue to VDPM project
-> → Slack MCP notifies #platform-team channel
-> ```
-
 ---
 
 ## Hands-On Exercise (10 min)
@@ -489,4 +473,4 @@ Update the issue we just created to add the "priority/high" label and assign it 
 | **Debugging** | Use `/mcp`, `claude mcp list`, and `MCP_DEBUG=1` |
 | **Real-World** | GitHub, Jira, databases, Slack, custom APIs |
 
-**Up next:** Module 8 — Hooks: Guaranteeing Determinism (code that ALWAYS runs, independent of the LLM).
+**Up next:** Module 9 — Hooks: Guaranteeing Determinism (code that ALWAYS runs, independent of the LLM).

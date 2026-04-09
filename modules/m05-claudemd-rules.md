@@ -1,4 +1,4 @@
-# Module 4 — CLAUDE.md & Rules (20 min)
+# Module 5 — CLAUDE.md & Rules (20 min)
 
 > *Teaching Claude how YOUR project works*
 
@@ -244,7 +244,7 @@ For larger projects, organize rules by topic. Each rule can target specific file
 │   ├── api-design.md          (REST API conventions)
 │   ├── terraform.md           (Terraform-specific rules)
 │   └── security.md            (Security checklist)
-└── skills/                    (Covered in Module 5)
+└── skills/                    (Covered in Module 6)
 ```
 
 ### Rule File Format
@@ -357,54 +357,6 @@ Don't mix them up:
 
 ---
 
-> 🏢 **Reply Context:** For BMW VDPM (Aftersales Platform):
->
-> **Example CLAUDE.md structure:**
->
-> ```markdown
-> # BMW VDPM — Aftersales Platform
->
-> ## Tech Stack
-> - C# .NET 8, ASP.NET Core 8
-> - Entity Framework Core (EF8)
-> - Azure Kubernetes Service (AKS)
-> - Helm for deployments
-> - PostgreSQL 14
-> - ArgoCD for GitOps
->
-> ## Code Style
-> - Use PascalCase for classes and methods
-> - Use camelCase for local variables and fields
-> - Async methods end in `Async`
-> - Await all async calls (never fire-and-forget)
-> - Use `using` for IDisposable
->
-> ## Project Structure
-> - `/src/Services` - Business logic
-> - `/src/Models` - EF Core models
-> - `/src/Controllers` - API endpoints
-> - `/tests/Unit` - Unit tests
-> - `/manifests` - Kubernetes manifests (YAML)
-> - `/helm` - Helm charts
->
-> ## Testing
-> - Run: `dotnet test`
-> - Minimum coverage: 75%
-> - Use xUnit, Moq for unit tests
->
-> ## Deployment
-> - Docker image build: `docker build -t vdpm:latest .`
-> - Helm: `helm upgrade --install vdpm ./helm`
-> - GitOps: Commit YAML to `infra-repo` → ArgoCD syncs automatically
->
-> ## Common Gotchas
-> - EF Core: Always `.AsNoTracking()` for read-only queries
-> - AKS: Pod memory limits are strict. Monitor with `kubectl top pods`
-> - Helm values: Never hardcode. Use `values.yaml` and `values-prod.yaml`
-> ```
-
----
-
 ## Hands-On Exercise (5 min)
 
 ### Create a CLAUDE.md for a Sample Project
@@ -504,5 +456,5 @@ After this exercise:
 | **Size** | Keep under 200 lines. Import external docs with `@file`. |
 | **Auto-generate** | Use `/init` for a quick draft, then customize |
 
-**Next step:** Module 5 covers Skills and Commands — how to turn CLAUDE.md insights into reusable workflows.
+**Next step:** Module 6 covers Skills and Commands — how to turn CLAUDE.md insights into reusable workflows.
 

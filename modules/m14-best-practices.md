@@ -1,4 +1,4 @@
-# Module 13 — Best Practices & Patterns (15 min)
+# Module 14 — Best Practices & Patterns (15 min)
 
 > *Learning from experience*
 
@@ -566,7 +566,6 @@ Start simple, then enhance:
 7. Final commit
 ```
 
-> 🏢 **Reply Context:** For BMW projects, the plan-first approach is especially important given the complexity of AKS deployments and Terraform infrastructure. Establish a team convention: always start complex Terraform changes in Plan mode, review the plan, then execute. Keep CLAUDE.md maintained as a team asset — review it in PRs just like code.
 
 ---
 
@@ -586,4 +585,4 @@ Start simple, then enhance:
 
 **Key Takeaway:** Claude Code works best when you **plan first, provide clear prompts, and use the right tool for the job**. Context rot is real — manage it with `/clear`, `/compact`, and regular commits.
 
-**Up next:** Module 14 — Capstone, where you'll build a complete Claude Code setup from scratch.
+**Up next:** Module 15 — Capstone, where you'll build a complete Claude Code setup from scratch.

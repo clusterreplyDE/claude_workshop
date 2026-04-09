@@ -1,4 +1,4 @@
-# Module 9 — CLI & Headless Mode (30 min)
+# Module 10 — CLI & Headless Mode (30 min)
 
 > *Claude in the pipeline*
 
@@ -690,6 +690,10 @@ The Agent SDK provides:
 - Create agentic workflows for enterprise teams
 - Expose Claude to non-developers through a custom UI
 
+### Quick Start: `agent-sdk-dev` Plugin
+
+Anthropic provides the **`agent-sdk-dev`** plugin with a `/new-sdk-app` command that interactively scaffolds a new Agent SDK project (Python or TypeScript). It also includes verification agents (`agent-sdk-verifier-py`, `agent-sdk-verifier-ts`) that validate your SDK application against best practices. Available at [github.com/anthropics/claude-code/plugins/agent-sdk-dev](https://github.com/anthropics/claude-code/tree/main/plugins/agent-sdk-dev).
+
 ### Example: Custom PR Review Tool
 
 ```typescript
@@ -718,26 +722,6 @@ reviewPullRequest(42);
 ```
 
 ---
-
-> 🏢 **Reply Context:** At BMW Aftersales (VDPM), headless mode enables:
->
-> - **GitHub Actions PR Review**: Automatic security checks on every PR to BMW repos
-> - **Terraform Validation Pipeline**: CI step that validates HCL and enforces standards
-> - **Nightly Code Audit**: Scheduled task runs security scan at 2 AM, reports to #platform-team
-> - **Dispatch-Triggered Tests**: Deploy webhook triggers test suite via dispatch API
-> - **Agent SDK Integration**: Custom VDP-portal tool embeds Claude for on-demand code analysis
->
-> Example GitHub Actions workflow for BMW:
-> ```yaml
-> - name: Claude Code Terraform Check
->   run: |
->     claude -p "Validate Terraform and check for security issues" \
->       --allowedTools "Read,Bash" \
->       --output-format json > /tmp/tf-check.json
->
->     # Parse results, fail if critical issues
->     python scripts/check-terraform-results.py /tmp/tf-check.json
-> ```
 
 ---
 
@@ -860,13 +844,14 @@ You've now covered the full Claude Code Deep Dive:
 
 1. **M01** — The Claude Ecosystem (context and products)
 2. **M02** — Installation & Setup
-3. **M03** — Core Concepts & Tools
-4. **M04** — Project Memory & Context
-5. **M05** — Skills: Custom Workflows
-6. **M06** — Subagents & Agent Teams (delegation)
-7. **M07** — MCP: External Connections
-8. **M08** — Hooks: Guaranteeing Determinism
-9. **M09** — CLI & Headless Mode (this module)
+3. **M03** — The Interactive Session
+4. **M04** — Interactive Session Extended
+5. **M05** — Project Memory & Context
+6. **M06** — Skills: Custom Workflows
+7. **M07** — Subagents & Agent Teams (delegation)
+8. **M08** — MCP: External Connections
+9. **M09** — Hooks: Guaranteeing Determinism
+10. **M10** — CLI & Headless Mode (this module)
 
 ### Next Steps
 

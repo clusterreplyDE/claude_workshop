@@ -1,4 +1,4 @@
-# Module 12 — Settings, Configuration & Security (10 min)
+# Module 13 — Settings, Configuration & Security (10 min)
 
 > *Fine-tuning and enterprise context*
 
@@ -56,7 +56,40 @@ Level 5: User Settings (~/.claude/settings.json)
 
 ---
 
-## 2. Permission Modes
+## 2. Configuration Files & Directories
+
+Claude Code stores configuration at standard locations per platform:
+
+### Config Directory
+
+| Platform | Location |
+|----------|----------|
+| **macOS/Linux** | `~/.claude/` |
+| **Windows** | `%APPDATA%\Claude\` |
+
+### What's Inside
+
+| File/Directory | Purpose |
+|----------------|---------|
+| `config.json` | Session defaults, model preferences |
+| `credentials.json` | Cached authentication tokens |
+| `settings.json` | User-level settings (permission modes, cost limits, etc.) |
+| `skills/` | User-level skills directory |
+| `commands/` | User-level commands |
+| `rules/` | User-level rules (CLAUDE.md alternative) |
+
+### Environment Variables
+
+| Variable | Purpose |
+|----------|---------|
+| `ANTHROPIC_API_KEY` | Direct API authentication |
+| `AWS_PROFILE` | AWS Bedrock authentication |
+| `GOOGLE_APPLICATION_CREDENTIALS` | Google Vertex AI service account |
+| `HTTP_PROXY` / `HTTPS_PROXY` | Corporate proxy settings |
+
+---
+
+## 3. Permission Modes
 
 Claude Code respects your control over what it can do. Configure the **permission mode** to set boundaries:
 
@@ -94,7 +127,7 @@ claude --mode default
 
 ---
 
-## 3. Permission Rules: Granular Control
+## 4. Permission Rules: Granular Control
 
 Instead of a blanket mode, define **rules** for specific paths:
 
@@ -171,7 +204,7 @@ Some paths are always protected, even with `auto` mode:
 
 ---
 
-## 4. Proxy & Network Configuration
+## 5. Proxy & Network Configuration
 
 Configure Claude Code for corporate environments with proxies:
 
@@ -219,7 +252,7 @@ For MITM proxies or internal CAs:
 
 ---
 
-## 5. Cost Awareness & Token Usage
+## 6. Cost Awareness & Token Usage
 
 Claude Code provides transparency into usage costs:
 
@@ -269,11 +302,9 @@ Cumulative (this month):
 | **Enterprise** | Custom contract | Custom token limits |
 | **API Key** | Pay-per-token | No monthly limits; charged per call |
 
-> 🏢 **Reply Context:** BMW projects using AWS Bedrock may be charged per Bedrock usage tier, not per Anthropic subscription. Verify your billing model with your cloud admin.
-
 ---
 
-## 6. Privacy & Compliance
+## 7. Privacy & Compliance
 
 ### What Data Is Sent?
 
@@ -313,7 +344,7 @@ For Enterprise customers with specific compliance needs:
 
 ---
 
-## 7. Managed Settings (Enterprise Only)
+## 8. Managed Settings (Enterprise Only)
 
 Enterprise administrators can enforce organization-wide settings via MDM or system policy:
 
@@ -371,7 +402,7 @@ Please contact your administrator.
 
 ---
 
-## 8. Complete Settings Example
+## 9. Complete Settings Example
 
 Putting it together:
 
@@ -423,7 +454,7 @@ Putting it together:
 
 ---
 
-## 9. Quick Reference
+## 10. Quick Reference
 
 ### Settings Files (In Priority Order)
 
@@ -456,4 +487,4 @@ Putting it together:
 | **Privacy** | Code is sent; secrets are not. 30-day retention. Enterprise data controls. |
 | **Enterprise** | Managed settings, MDM deployment, data residency, compliance |
 
-**Up next:** Module 13 — Best Practices & Patterns, exploring how to use Claude Code effectively in teams.
+**Up next:** Module 14 — Best Practices & Patterns, exploring how to use Claude Code effectively in teams.

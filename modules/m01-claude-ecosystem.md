@@ -68,7 +68,6 @@ The focus of this workshop. Claude Code is Anthropic's **agentic coding tool** �
 |-------------|--------|
 | **Terminal CLI** | `claude` command in any terminal |
 | **VS Code Extension** | Inline diffs, checkpoint viewer, selection context sharing |
-| **JetBrains Plugin** | IntelliJ, WebStorm, PyCharm, GoLand, Rider, etc. Native diff viewer integration |
 | **Claude Code Web** | Browser-based at claude.ai — no local install needed (Max/Enterprise) |
 | **Desktop App** | Built into the Claude Desktop application |
 
@@ -146,10 +145,10 @@ Beyond basic chat, the Claude API offers powerful capabilities that are especial
         ┌──────▼──────┐ ┌────▼─────┐  ┌──────▼──────┐
         │  Projects   │ │ Terminal │  │  Agent SDK  │
         │  Artifacts  │ │ VS Code  │  │  Custom     │
-        │  Memory     │ │ JetBrains│  │  Apps       │
-        │  Deep Res.  │ │ Web      │  │  Bedrock    │
-        └─────────────┘ │ Desktop  │  │  Vertex     │
-                        └──────────┘  └─────────────┘
+        │  Memory     │ │ Web      │  │  Apps       │
+        │  Deep Res.  │ │ Desktop  │  │  Bedrock    │
+        └─────────────┘ └──────────┘  │  Vertex     │
+                                       └─────────────┘
                │              │
         ┌──────▼──────────────▼──────┐
         │     Claude Apps            │
@@ -193,7 +192,6 @@ Beyond basic chat, the Claude API offers powerful capabilities that are especial
 - **Third-party providers** (AWS Bedrock, Google Vertex AI) use their own billing
 - For heavy Claude Code users, **Max 5x or 20x** is recommended to avoid rate limits
 
-> 🏢 **Reply Context:** Check with your team which subscriptions are available. For BMW projects using Bedrock or Vertex, Claude Code can authenticate against these providers directly (covered in Module 2).
 
 ---
 

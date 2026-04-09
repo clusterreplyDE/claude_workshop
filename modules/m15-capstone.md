@@ -1,4 +1,4 @@
-# Module 14 — Capstone: Putting It All Together (25 min)
+# Module 15 — Capstone: Putting It All Together (25 min)
 
 > *From empty repo to productive setup*
 
@@ -665,7 +665,6 @@ Please share feedback on:
 
 Your feedback shapes future workshops!
 
-> 🏢 **Reply Context:** Apply what you've built today to your BMW projects. Start with a CLAUDE.md for your team's conventions (AKS, Helm, .NET), add a Terraform validation skill, connect GitHub Enterprise via MCP, and set up a hook for `terraform fmt`. Share your setup as a Reply plugin so other teams benefit too.
 
 ---
 

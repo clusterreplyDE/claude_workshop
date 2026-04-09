@@ -1,4 +1,4 @@
-# Module 10 — Plugins & Marketplace (10 min)
+# Module 11 — Plugins & Marketplace (10 min)
 
 > *Sharing and reusing workflows*
 
@@ -180,15 +180,23 @@ Installed Plugins:
 
 ## 5. Anthropic Marketplace & Custom Repositories
 
-### Anthropic Marketplace
+### Anthropic Marketplace & Official Plugins
 
-Anthropic maintains a public [plugin marketplace](https://marketplace.claude.ai) featuring vetted, officially supported plugins:
+Anthropic maintains a public [plugin marketplace](https://marketplace.claude.ai) and a set of **official plugins** in the [Claude Code repository](https://github.com/anthropics/claude-code/tree/main/plugins):
 
-- **Code Review Suite** — automated PR reviews, CI/CD integration
-- **Documentation Bot** — README generation, API doc updates
-- **Security Scanner** — SAST, dependency checks, compliance
-- **Performance Profiler** — profiling, memory analysis, benchmarks
-- **Cloud Deployment Kit** — Terraform, Docker, Kubernetes automation
+| Plugin | What It Does | Highlights |
+|--------|-------------|------------|
+| **code-review** | Automated PR code review | 5 parallel Sonnet agents (CLAUDE.md compliance, bug detection, historical context, PR history, code comments) with confidence-based scoring |
+| **pr-review-toolkit** | Comprehensive PR review | 6 specialist agents: comment-analyzer, test-analyzer, silent-failure-hunter, type-design-analyzer, code-reviewer, code-simplifier |
+| **commit-commands** | Git workflow automation | `/commit`, `/commit-push-pr`, `/clean_gone` — streamlined git operations |
+| **feature-dev** | Structured feature development | 7-phase workflow with 3 agents (code-explorer, code-architect, code-reviewer) |
+| **hookify** | Auto-generate hooks | Analyzes conversation patterns or instructions to create hooks automatically |
+| **security-guidance** | Security monitoring | PreToolUse hook monitoring 9 patterns (command injection, XSS, eval, pickle, os.system, etc.) |
+| **plugin-dev** | Plugin development toolkit | 8-phase guided workflow, 3 agents, 7 skills for building plugins |
+| **agent-sdk-dev** | Agent SDK development kit | `/new-sdk-app` wizard + verification agents for Python and TypeScript |
+| **frontend-design** | Frontend design guidance | Auto-invoked for frontend work — bold design, typography, animations |
+
+> **Demo Tip:** `code-review` and `commit-commands` are excellent candidates for a live demo — they're practical, easy to install, and show the power of multi-agent plugins.
 
 ### Creating Your Own Marketplace (Git-Based)
 
@@ -328,8 +336,6 @@ Found 3 issues:
   3. Security: SQL injection risk on line 89
 ```
 
-> 🏢 **Reply Context:** Consider creating a Reply-internal plugin that bundles team conventions: a CLAUDE.md for BMW projects, Terraform/Helm validation skills, a code-review subagent, and the GitHub Enterprise MCP config. New team members install one plugin and get the complete setup.
-
 ---
 
 ## Summary
@@ -344,4 +350,4 @@ Found 3 issues:
 | **When to use** | Team workflows, complex setups, distribution; not for single-project local work |
 | **Distribution** | Anthropic Marketplace for official plugins, Git repos for internal/custom plugins |
 
-**Up next:** Module 11 — Claude Code Remote & Web, exploring cloud-based and browser-based Claude Code.
+**Up next:** Module 12 — Claude Code Remote & Web, exploring cloud-based and browser-based Claude Code.

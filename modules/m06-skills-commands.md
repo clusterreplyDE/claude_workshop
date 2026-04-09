@@ -1,4 +1,4 @@
-# Module 5 — Skills & Commands (30 min)
+# Module 6 — Skills & Commands (30 min)
 
 > *Reusable workflows and knowledge*
 
@@ -517,52 +517,6 @@ User can grant additional permissions:
 
 ---
 
-> 🏢 **Reply Context:** For BMW VDPM projects:
->
-> **Example skills to create:**
->
-> **1. Helm validation skill** (`.claude/skills/helm-validate/SKILL.md`)
-> ```markdown
-> ---
-> name: helm-validate
-> description: Validate Helm charts and values
-> paths: [helm/**/*.yaml, helm/**/*.yml]
-> user-invocable: true
-> allowed-tools: [Read, Bash]
-> ---
->
-> # Helm Validation
->
-> Validate the Helm chart: $ARGUMENTS
->
-> !`helm lint $1`
-> !`helm template vdpm $1 -f values.yaml`
->
-> Check for:
-> - Missing required values
-> - Invalid YAML
-> - Security issues (exposed secrets)
-> - ArgoCD compatibility
-> ```
->
-> **2. Kubernetes deployment review skill**
-> ```markdown
-> ---
-> name: k8s-review
-> description: Review K8s manifests for AKS best practices
-> paths: [manifests/**/*.yaml]
-> user-invocable: true
-> ---
->
-> Review for:
-> - Resource limits and requests
-> - Security policies
-> - Readiness/liveness probes
-> - Network policies
-> ```
-
----
-
 ## Hands-On Exercise (10 min)
 
 ### Create a Custom Slash Command
@@ -710,5 +664,5 @@ After this exercise:
 | **Priority** | Enterprise > Personal > Project > Plugin |
 | **When to use** | Skills for automation, commands for shortcuts, CLAUDE.md for conventions |
 
-**Next module:** We'll look at how to integrate external systems and tools with MCP (Module 6).
+**Next module:** We'll look at how to integrate external systems and tools with MCP (Module 7).
 

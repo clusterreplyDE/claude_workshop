@@ -1,4 +1,4 @@
-# Module 8 — Hooks: Guaranteeing Determinism (25 min)
+# Module 9 — Hooks: Guaranteeing Determinism (25 min)
 
 > *Code that ALWAYS runs — independent of the LLM*
 
@@ -472,30 +472,17 @@ exit 0
 - Use **hooks** for guardrails, automation, and policy enforcement
 - Use **skills** for optional workflows Claude might choose
 
+### Official Hook Plugins
+
+Anthropic provides ready-made hook plugins in the [Claude Code repo](https://github.com/anthropics/claude-code/tree/main/plugins):
+
+- **`security-guidance`** — A PreToolUse hook monitoring 9 security patterns (command injection, XSS, eval usage, dangerous HTML, pickle deserialization, os.system calls). Install once and get automatic security warnings on every edit.
+- **`hookify`** — Meta-tool: analyzes conversation patterns or explicit instructions to auto-generate hooks. Instead of writing hook scripts manually, describe what you want to prevent, and `hookify` creates the hook for you. Commands: `/hookify`, `/hookify:list`, `/hookify:configure`.
+- **`explanatory-output-style`** — SessionStart hook that injects educational context, so Claude explains its reasoning and implementation choices.
+
+> These plugins show how hooks scale from single scripts to full automation packages.
+
 ---
-
-> 🏢 **Reply Context:** At BMW Aftersales (VDPM), hooks ensure quality and compliance:
->
-> - **Terraform Validation Hook**: After every HCL edit, run `terraform validate` and `terraform fmt`. Block invalid configs.
-> - **Helm Lint Hook**: When Helm charts are modified, run `helm lint` before allowing the change.
-> - **Security Check Hook**: Before any Python changes, run `bandit` to check for security issues.
-> - **Changelog Hook**: When production code changes, ensure CHANGELOG.md is updated.
-> - **Notification Hook**: When a critical issue is created, notify #platform-team Slack channel.
-
-Example BMW hook config in `.claude/settings.json`:
-```json
-{
-  "hooks": [
-    {
-      "name": "terraform-validate",
-      "event": "PostToolUse",
-      "tools": ["Edit"],
-      "filePatterns": ["infra/**/*.tf"],
-      "command": "terraform -chdir=infra validate && terraform fmt -check infra"
-    }
-  ]
-}
-```
 
 ---
 
@@ -602,4 +589,4 @@ Try adding a second hook for Terraform validation or a pre-commit style check.
 | **Use Cases** | Auto-format, block dangerous commands, notify, run tests, inject context |
 | **vs. Skills** | Hooks = guaranteed; Skills = optional (Claude decides) |
 
-**Up next:** Module 9 — CLI & Headless Mode (running Claude Code in pipelines, CI/CD, and programmatically).
+**Up next:** Module 10 — CLI & Headless Mode (running Claude Code in pipelines, CI/CD, and programmatically).

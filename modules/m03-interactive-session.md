@@ -1,6 +1,6 @@
-# Module 3 — Interactive Session Basics (35 min)
+# Module 3 — The Interactive Session (20 min)
 
-> *Mastering the daily workflow*
+> *Understanding how Claude thinks and acts*
 
 ## Learning Objectives
 
@@ -10,10 +10,7 @@ By the end of this module, participants will be able to:
 - Use built-in tools effectively (Read, Edit, Write, Bash, Grep, Glob, WebFetch, WebSearch, Agent)
 - Reference files and folders with `@file` and `@folder` syntax
 - Manage session context to stay under token budgets
-- Switch models mid-session and use keyboard shortcuts
-- Navigate checkpoints to undo changes
-- Configure permission modes for different workflows
-- Integrate with Git to find bugs and commit fixes
+- Switch models mid-session for different task needs
 
 ---
 
@@ -48,29 +45,6 @@ Claude Code works in a continuous cycle. Understand this loop and you understand
 │     ↻ ITERATE → Back to step 1 if needed               │
 │                                                          │
 └──────────────────────────────────────────────────────────┘
-```
-
-**Example walkthrough:**
-
-```
-You:    "Find the bug in my login service and fix it"
-
-Claude: [GATHER] Reads service.js, tests/, and git log
-        "Found it: the token refresh logic is missing a check"
-
-Claude: [PLAN] "I'll add a null check in validateToken()"
-
-Claude: [ACTION] Edits service.js
-        Runs tests with `npm test`
-
-Claude: [VERIFY] "Tests pass! Commit ready."
-
-You:    "Run it against staging"
-
-Claude: [GATHER] Checks staging environment variables
-Claude: [ACTION] Deploys with `kubectl apply -f staging/`
-Claude: [VERIFY] Checks pod logs for errors
-        "Deployment successful. Ready for production review."
 ```
 
 ---
@@ -253,257 +227,53 @@ Option+P (macOS) or Alt+P (Linux/Windows)
 
 ---
 
-## 6. Keyboard Shortcuts
+## Hands-On Exercise (5 min)
 
-Master these to work faster:
+### Explore a Repository
 
-| Shortcut | Action |
-|----------|--------|
-| `Esc` | Stop Claude mid-response |
-| `Esc` `Esc` | Rewind to last checkpoint |
-| `Shift+Tab` | Cycle permission modes |
-| `Ctrl+C` | Cancel prompt input or current operation |
-| `Ctrl+O` | Toggle verbose output (shows tool calls) |
-| `Ctrl+B` | Move current task to background |
-| `Ctrl+T` | Open task list (`/todo`) |
-| `Ctrl+G` | Open editor for multi-line prompts |
-| `!` (prefix) | Force bash mode (run command directly) |
-| `/btw` (prefix) | Ask a side question (doesn't affect main task) |
+**Objective:** Load a repository, check context, and experiment with model switching.
 
-**Examples:**
+**Step 1: Load a Repository**
 
 ```bash
-# Stop Claude if it's taking too long
-Esc
-
-# Rewind the last change
-Esc Esc
-
-# Ask a quick question without losing focus
-/btw "What's the Node version?"
-
-# Cycle through permission modes
-Shift+Tab Shift+Tab
-
-# Send a task to background and start a new one
-Ctrl+B
-"Now let's refactor the API"
+claude @. "Describe what this project does and its structure"
+# Claude scans the repo with /context
 ```
 
----
-
-## 7. Permission Modes
-
-Control how much autonomy Claude has. Change with `Shift+Tab`.
-
-| Mode | Behavior | Use Case |
-|------|----------|----------|
-| **default** | Claude shows diffs before editing files. Asks before running dangerous commands (rm, reset, deploy). | Safe, hands-on. Good for learning. |
-| **acceptEdits** | Claude edits files directly, no confirmation. Safe commands auto-run. Dangerous commands still ask. | Trusted workflows. Faster iterations. |
-| **plan** | Claude explains its approach before taking ANY action. You review and approve. | High-stakes changes. Code reviews. |
-| **auto** | Claude runs everything without asking. Full autonomy. | Trusted automation, CI/CD environments. |
-| **dangerously-skip-permissions** | Bypasses all safety checks. Use with extreme caution. | Advanced users only. Can break things. |
-
-### Change Mode During Session
+**Step 2: Check Your Context Usage**
 
 ```bash
-Shift+Tab Shift+Tab
-# Cycles through: default → acceptEdits → plan → auto → dangerously-skip-permissions → default
+/context
+# See how many tokens are loaded
 ```
 
-Or set on startup:
+**Step 3: Compact Context if Needed**
 
 ```bash
-claude --permissions auto
+/compact
+# Summarize loaded context to save tokens
 ```
 
-**Best practice:** Start with `default` or `plan`. Move to `acceptEdits` or `auto` only after confirming Claude's approach.
-
----
-
-## 8. Checkpoints & Rewinding
-
-Claude creates automatic snapshots before making edits. Roll back anytime.
-
-### Automatic Checkpoints
-
-Before Claude edits a file, it saves a checkpoint. You can restore it:
+**Step 4: Switch Models and Try a Query**
 
 ```bash
-Esc Esc
-# Rewind to the previous checkpoint
-# Prompts: "Restore conversation only" or "Restore code and conversation"
+/model
+# Pick Haiku for a quick response, or Opus for deeper analysis
+claude "Identify the main entry point and explain its flow"
 ```
 
-### Checkpoint Viewer (VS Code)
-
-In VS Code, the Claude extension shows checkpoints:
-1. Open the Checkpoints panel in the Claude sidebar
-2. Browse snapshots with diffs
-3. Click to restore any checkpoint
-
-### Manual Checkpoints
-
-Create named snapshots for milestones:
+**Step 5: Return to Default Model**
 
 ```bash
-/checkpoint "Refactoring complete, tests passing"
-# Later:
-/restore "Refactoring complete, tests passing"
+/model
+# Switch back to Sonnet 4.6
 ```
 
----
+### Expected Outcomes
 
-## 9. Git Integration
-
-Claude Code understands your Git history and can commit changes.
-
-### What Claude Sees
-
-When you start a session, Claude is aware of:
-- Current branch
-- Uncommitted changes (staged and unstaged)
-- Recent commit history
-- `.gitignore` rules
-
-### Claude Makes Commits
-
-```bash
-claude "Find the memory leak in memory-manager.js and fix it"
-
-# Claude edits the file, runs tests, then:
-# "Commit ready. Commit message: Fix memory leak in memory-manager.js"
-# claude> /commit "Fix memory leak by adding cleanup in destructor"
-```
-
-### Creating Pull Requests
-
-```bash
-claude "Refactor the auth middleware to use async/await"
-
-# After changes:
-# claude> /pr "Refactor auth middleware to async/await" \
-#   "Improves readability and error handling. Tests pass."
-
-# Output: "PR created: https://github.com/.../pull/123"
-```
-
----
-
-## 10. Session Management
-
-| Command | Purpose |
-|---------|---------|
-| `claude` | Start a new session |
-| `claude --continue` | Resume the last session |
-| `claude --resume` | Pick a session to resume |
-| `claude --fork-session <id>` | Branch from a previous session (parallel work) |
-| `/list-sessions` | Show recent sessions and their IDs |
-
-### Example: Resume and Branch
-
-```bash
-# Session A: Worked on authentication, stopped
-claude --continue
-# [Resume authentication work]
-
-# Session B (parallel): Start a bug fix in a new session
-claude
-# [Work on bug fix independently]
-
-# Later, merge changes from both sessions into main
-```
-
----
-
-> 🏢 **Reply Context:** For .NET projects on AKS:
->
-> **Typical workflow:**
-> 1. Clone the microservice repo: `git clone <repo>`
-> 2. Load context: `claude @src/ @tests/ "Understand this service"`
-> 3. Find issues: Claude reads C# code, searches tests, identifies bugs
-> 4. Fix + Test: Claude edits files, runs `dotnet test`, verifies
-> 5. Commit: `claude> /commit "Fix authentication token timeout"`
-> 6. Deploy: Claude can run `kubectl apply -f manifests/` (with permission)
->
-> **For Terraform modules:**
-> 1. Load the module: `claude @main.tf @variables.tf`
-> 2. Validate: Claude runs `terraform validate` and `terraform fmt`
-> 3. Refactor: Claude reorganizes, updates docs, ensures compliance
-> 4. Commit: `claude> /commit "Refactor networking module for consistency"`
-
----
-
-## Hands-On Exercise (10 min)
-
-### Clone a Real Repository and Find a Bug
-
-**Setup:**
-
-```bash
-# Clone a small open-source project with known issues
-git clone https://github.com/lodash/lodash.git
-cd lodash
-
-# Or use a sample provided in the workshop materials
-cd /workshop-samples/bug-hunt-example
-```
-
-**Step 1: Load Context**
-
-```bash
-claude @. "What's this project? What are the main modules?"
-# Claude scans the repo, reads README, package.json, key files
-```
-
-**Step 2: Ask Claude to Find a Bug**
-
-```bash
-claude @src @tests "Run the tests. Are there any failures? Find the root cause."
-# Claude reads test files, runs tests (!npm test), identifies failures
-```
-
-**Step 3: Fix the Bug**
-
-```bash
-claude "Fix the bug we found. Make sure tests pass."
-# Claude edits the code, runs tests iteratively, confirms fix
-```
-
-**Step 4: Commit the Fix**
-
-```bash
-claude> /commit "Fix [bug description] - now passes all tests"
-# Check the commit:
-!git log --oneline -5
-```
-
-**Step 5: Create a Pull Request (Simulation)**
-
-```bash
-# On GitHub (or in workshop simulation):
-claude> /pr "Fix [bug]" "Resolves issue #42. All tests passing."
-```
-
-### Expected Output
-
-```
-✓ Project loaded (47 files scanned)
-✓ Test suite identified: 3 failures
-✓ Root cause found: Missing null check in utils.js line 42
-✓ Bug fixed, tests now pass (187/187)
-✓ Commit created: abc1234 "Fix null handling in utils.js"
-✓ PR ready: https://github.com/.../pull/123
-```
-
-### Troubleshooting During Exercise
-
-| Issue | Fix |
-|-------|-----|
-| `Too much context loaded` | Use `/compact` to refocus on one area |
-| `Tests taking too long` | Use `Ctrl+B` to background the task, start another |
-| `Want to undo a change` | Press `Esc` `Esc` to rewind to last checkpoint |
-| `Stuck on a problem` | Ask `/btw "Can you try a different approach?"` |
+- Understand how `/context` shows you token consumption
+- See firsthand the speed difference between models
+- Practice the `@folder` syntax for loading entire projects
 
 ---
 
@@ -514,10 +284,8 @@ claude> /pr "Fix [bug]" "Resolves issue #42. All tests passing."
 | **Agentic Loop** | Gather → Plan → Act → Verify → Iterate (Claude handles all) |
 | **Tools** | Read, Edit, Write, Bash, Grep, Glob, WebFetch, WebSearch used automatically |
 | **Context** | Use `@file` and `@folder` to load relevant code efficiently |
+| **Token Budget** | Check with `/context`, compact with `/compact` |
 | **Models** | Switch with `/model` or `Option+P`. Opus for hard problems, Haiku for speed. |
-| **Checkpoints** | Automatic snapshots before edits. Rewind with `Esc` `Esc`. |
-| **Permissions** | Start with `default` or `plan`. Move to `auto` when confident. |
-| **Git** | Claude commits, creates PRs. Full history awareness. |
 
-**Next step:** Module 4 shows how to make Claude "remember" your project conventions with CLAUDE.md.
+**Next step:** Module 4 — Interactive Session Extended covers keyboard shortcuts, permissions, checkpoints, Git integration, and session management.
 

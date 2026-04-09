@@ -27,13 +27,13 @@ Participants must complete these **before** the workshop:
 
 | Time | Unit | Theme | Modules |
 |------|------|-------|---------|
-| **09:30–11:00** | **Unit 1: Getting Started** | *From zero to first productive session* | M1 Ecosystem (20) · M2 Setup (15) · M3 Interactive Session (35) |
+| **09:30–11:00** | **Unit 1: Getting Started** | *From zero to first productive session* | M1 Ecosystem (20) · M2 Setup (15) · M3 Interactive Session (20) · M4 Interactive Session Extended (15) |
 | 11:00–11:15 | ☕ Coffee Break | | |
-| **11:15–12:30** | **Unit 2: Making Claude Yours** | *Project memory, workflows, delegation* | M4 CLAUDE.md & Rules (20) · M5 Skills & Commands (30) · M6 Subagents & Agent Teams (25) |
+| **11:15–12:30** | **Unit 2: Making Claude Yours** | *Project memory, workflows, delegation* | M5 CLAUDE.md & Rules (20) · M6 Skills & Commands (30) · M7 Subagents & Agent Teams (25) |
 | 12:30–13:30 | 🍽️ Lunch Break | | |
-| **13:30–15:00** | **Unit 3: Integration & Automation** | *External tools, quality gates, pipelines* | M7 MCP (35) · M8 Hooks (25) · M9 CLI & Headless (30) |
+| **13:30–15:00** | **Unit 3: Integration & Automation** | *External tools, quality gates, pipelines* | M8 MCP (35) · M9 Hooks (25) · M10 CLI & Headless (30) |
 | 15:00–15:15 | ☕ Coffee Break | | |
-| **15:15–16:30** | **Unit 4: The Big Picture** | *Remote, settings, best practices, capstone* | M10 Plugins (10) · M11 Remote & Web (15) · M12 Settings (10) · M13 Best Practices (15) · M14 Capstone (25) |
+| **15:15–16:30** | **Unit 4: The Big Picture** | *Remote, settings, best practices, capstone* | M11 Plugins (10) · M12 Remote & Web (15) · M13 Settings (10) · M14 Best Practices (15) · M15 Capstone (25) |
 
 | | Content | Available | Buffer |
 |---|---------|-----------|--------|
@@ -42,6 +42,7 @@ Participants must complete these **before** the workshop:
 | Unit 3 | 90 min | 90 min | — |
 | Unit 4 | 75 min | 75 min | — |
 | **Total** | **310 min** | **330 min** | **20 min** |
+| (Modules) | **15 modules** | — | — |
 
 Each unit is **self-contained**:
 1. → "I can use Claude Code"
@@ -57,18 +58,19 @@ Each unit is **self-contained**:
 |---|--------|----------|--------|------|
 | M1 | [The Claude Ecosystem](m01-claude-ecosystem.md) | 20 min | Hands-on | 1 |
 | M2 | [Installation & Setup](m02-installation-setup.md) | 15 min | Hands-on | 1 |
-| M3 | [Interactive Session Basics](m03-interactive-session.md) | 35 min | Hands-on | 1 |
-| M4 | [CLAUDE.md & Rules](m04-claudemd-rules.md) | 20 min | Hands-on | 2 |
-| M5 | [Skills & Commands](m05-skills-commands.md) | 30 min | Hands-on | 2 |
-| M6 | [Subagents & Agent Teams](m06-subagents-teams.md) | 25 min | Hands-on | 2 |
-| M7 | [MCP: External Connections](m07-mcp.md) | 35 min | Hands-on | 3 |
-| M8 | [Hooks: Guaranteeing Determinism](m08-hooks.md) | 25 min | Hands-on | 3 |
-| M9 | [CLI & Headless Mode](m09-cli-headless.md) | 30 min | Hands-on | 3 |
-| M10 | [Plugins & Marketplace](m10-plugins.md) | 10 min | Demo | 4 |
-| M11 | [Claude Code Remote & Web](m11-remote-web.md) | 15 min | Demo | 4 |
-| M12 | [Settings, Configuration & Security](m12-settings.md) | 10 min | Overview | 4 |
-| M13 | [Best Practices & Patterns](m13-best-practices.md) | 15 min | Discussion | 4 |
-| M14 | [Capstone: Putting It All Together](m14-capstone.md) | 25 min | Hands-on | 4 |
+| M3 | [The Interactive Session](m03-interactive-session.md) | 20 min | Hands-on | 1 |
+| M4 | [Interactive Session Extended](m04-interactive-session-extended.md) | 15 min | Hands-on | 1 |
+| M5 | [CLAUDE.md & Rules](m05-claudemd-rules.md) | 20 min | Hands-on | 2 |
+| M6 | [Skills & Commands](m06-skills-commands.md) | 30 min | Hands-on | 2 |
+| M7 | [Subagents & Agent Teams](m07-subagents-teams.md) | 25 min | Hands-on | 2 |
+| M8 | [MCP: External Connections](m08-mcp.md) | 35 min | Hands-on | 3 |
+| M9 | [Hooks: Guaranteeing Determinism](m09-hooks.md) | 25 min | Hands-on | 3 |
+| M10 | [CLI & Headless Mode](m10-cli-headless.md) | 30 min | Hands-on | 3 |
+| M11 | [Plugins & Marketplace](m11-plugins.md) | 10 min | Demo | 4 |
+| M12 | [Claude Code Remote & Web](m12-remote-web.md) | 15 min | Demo | 4 |
+| M13 | [Settings, Configuration & Security](m13-settings.md) | 10 min | Overview | 4 |
+| M14 | [Best Practices & Patterns](m14-best-practices.md) | 15 min | Discussion | 4 |
+| M15 | [Capstone: Putting It All Together](m15-capstone.md) | 25 min | Hands-on | 4 |
 
 ---
 
@@ -78,12 +80,11 @@ Each unit is **self-contained**:
 
 - Claude Web (claude.ai): Chat, Projects, Artifacts, Deep Research, Memory
 - Claude Apps: Desktop, Mobile, Chrome Extension, Cowork
-- Claude Code: CLI, VS Code, JetBrains, Desktop, Web
+- Claude Code: CLI, VS Code, Desktop, Web
 - Claude API: Messages API, Models (Opus/Sonnet/Haiku), mention Agent SDK
 - **Advanced Model Features (Outlook):** Extended Thinking, Multimodal/Vision, PDF Support, Computer Use, Prompt Caching, Batch API
 - How it all connects (Subscriptions: Pro, Max, Team, Enterprise)
 - Decision guide: When to use what?
-- 🏢 **Reply Context:** Which subscriptions are available to us?
 
 **Hands-on:** Quick tour of claude.ai — create a Project, generate an Artifact, set Custom Instructions
 
@@ -93,37 +94,45 @@ Each unit is **self-contained**:
 
 *From zero to first session*
 
-- Install Claude Code: `npm install -g @anthropic-ai/claude-code`
+- Install Claude Code: Native installer (`curl -fsSL https://claude.ai/install.sh | bash`), Homebrew, or npm
 - Verify: `claude --version`, `claude doctor`
 - Authentication: Anthropic Login, API Key, 3rd-party (Bedrock, Vertex)
 - First launch, model selection
 - VS Code Extension: install + overview
-- JetBrains Plugin: brief mention
-- 🏢 **Reply Context:** Corporate proxy settings, Bedrock/Vertex for BMW projects
 
 **Hands-on:** Install together, verify with `claude doctor`, start first session, explore `/help`
 
 ---
 
-## Module 3 — Interactive Session Basics (35 min)
+## Module 3 — The Interactive Session (20 min)
 
-*Mastering the daily workflow*
+*Understanding how Claude Code works*
 
 - The agentic loop: Input → Tool Selection → Execution → Review
 - Built-in Tools: Read, Edit, Write, Bash, Grep, Glob, WebFetch, WebSearch
 - Referencing files: `@file`, `@folder`, images, URLs
 - Context management: `/compact`, `/clear`, `/cost`, **`/context`** (inspect what's loaded, token costs per feature)
 - Model selection: `/model` (Opus, Sonnet, Haiku — when to use which?)
-- Git integration: Commits, branches, PRs from within a session
-- Checkpoints: Automatic snapshots, `/rewind`, Esc×2, three restore modes
-- Permission system: default, acceptEdits, plan, auto mode, `--dangerously-skip-permissions`
-- 🏢 **Reply Context:** Demo on a typical .NET/C# project or Terraform module
 
-**Hands-on:** Clone a repo, let Claude find a bug, fix + commit in one session
+**Hands-on:** Let Claude find a bug in a cloned repo, explore tool selection and context
 
 ---
 
-## Module 4 — CLAUDE.md & Rules (20 min)
+## Module 4 — Interactive Session Extended (15 min)
+
+*Mastering the daily workflow*
+
+- Keyboard shortcuts: Navigation, tool invocation, permissions
+- Permission system: default, acceptEdits, plan, auto mode, `--dangerously-skip-permissions`
+- Git integration: Commits, branches, PRs from within a session
+- Checkpoints: Automatic snapshots, `/rewind`, Esc×2, three restore modes
+- Session management: named sessions, session history, resuming work
+
+**Hands-on:** Fix + commit a bug in one session, practice keyboard shortcuts
+
+---
+
+## Module 5 — CLAUDE.md & Rules (20 min)
 
 *Teaching Claude how YOUR project works*
 
@@ -142,13 +151,12 @@ Each unit is **self-contained**:
 
 ### Best Practices
 - Version-control your CLAUDE.md, maintain it as a team asset
-- 🏢 **Reply Context:** What could a CLAUDE.md look like for a BMW VDPM project? (AKS, Helm, ArgoCD, .NET conventions)
 
 **Hands-on:** Create a CLAUDE.md for a sample project (manual + `/init` comparison)
 
 ---
 
-## Module 5 — Skills & Commands (30 min)
+## Module 6 — Skills & Commands (30 min)
 
 *Reusable workflows and knowledge*
 
@@ -172,7 +180,7 @@ Each unit is **self-contained**:
 
 ---
 
-## Module 6 — Subagents & Agent Teams (25 min)
+## Module 7 — Subagents & Agent Teams (25 min)
 
 *Managing complexity through delegation*
 
@@ -184,7 +192,6 @@ Each unit is **self-contained**:
 - `Task(...)` — dynamic spawning by Claude itself
 - Patterns: Master-Clone vs. Lead-Specialist
 - When subagents vs. CLAUDE.md context?
-- 🏢 **Reply Context:** Subagent for Terraform validation or Helm chart review
 
 ### Agent Teams (Experimental — Outlook)
 - Multiple independent Claude Code sessions coordinating via shared task list
@@ -197,7 +204,7 @@ Each unit is **self-contained**:
 
 ---
 
-## Module 7 — MCP: External Connections (35 min)
+## Module 8 — MCP: External Connections (35 min)
 
 *Connecting Claude to the outside world*
 
@@ -211,13 +218,12 @@ Each unit is **self-contained**:
 - MCP tool search: on by default, idle tools consume minimal context
 - Debugging: `claude mcp serve`, `/mcp` to check status and token costs
 - Scope hierarchy: local > project > user
-- 🏢 **Reply Context:** GitHub Enterprise MCP for BMW repos, Azure DevOps potential
 
 **Hands-on:** Set up GitHub MCP server, read/create issues from a repo
 
 ---
 
-## Module 8 — Hooks: Guaranteeing Determinism (25 min)
+## Module 9 — Hooks: Guaranteeing Determinism (25 min)
 
 *Code that ALWAYS runs — independent of the LLM*
 
@@ -240,7 +246,7 @@ Each unit is **self-contained**:
 
 ---
 
-## Module 9 — CLI & Headless Mode (30 min)
+## Module 10 — CLI & Headless Mode (30 min)
 
 *Claude in the pipeline*
 
@@ -284,13 +290,11 @@ Each unit is **self-contained**:
 - Full access to tools, permissions, hooks, and subagents
 - For teams embedding Claude Code into their own tools
 
-- 🏢 **Reply Context:** GitHub Actions for Terraform PRs, automated reviews in BMW repos
-
 **Hands-on:** Write a simple GitHub Action that uses Claude for PR reviews
 
 ---
 
-## Module 10 — Plugins & Marketplace (10 min)
+## Module 11 — Plugins & Marketplace (10 min)
 
 *Sharing and reusing workflows*
 
@@ -306,7 +310,7 @@ Each unit is **self-contained**:
 
 ---
 
-## Module 11 — Claude Code Remote & Web (15 min)
+## Module 12 — Claude Code Remote & Web (15 min)
 
 *Claude Code without local installation*
 
@@ -321,7 +325,7 @@ Each unit is **self-contained**:
 
 ---
 
-## Module 12 — Settings, Configuration & Security (10 min)
+## Module 13 — Settings, Configuration & Security (10 min)
 
 *Fine-tuning and enterprise context*
 
@@ -332,13 +336,12 @@ Each unit is **self-contained**:
 - Proxy & network configuration (corporate proxy, CA certificates)
 - Cost awareness: `/cost`, token usage, subscription vs. API
 - Privacy & compliance: What data is sent where?
-- 🏢 **Reply Context:** Corporate proxy at BMW, data privacy requirements
 
 **Brief overview**, no hands-on
 
 ---
 
-## Module 13 — Best Practices & Patterns (15 min)
+## Module 14 — Best Practices & Patterns (15 min)
 
 *Learning from experience*
 
@@ -355,7 +358,7 @@ Each unit is **self-contained**:
 
 ---
 
-## Module 14 — Capstone: Putting It All Together (25 min)
+## Module 15 — Capstone: Putting It All Together (25 min)
 
 *From empty repo to productive setup*
 
@@ -383,33 +386,36 @@ Participants build a complete Claude Code setup:
 | Feature | Module(s) | Depth |
 |---------|-----------|-------|
 | Claude.ai (Web, Projects, Artifacts, Memory) | M1 | Overview |
-| Claude Apps (Desktop, Mobile, Chrome, Cowork) | M1, M11 | Overview |
+| Claude Apps (Desktop, Mobile, Chrome, Cowork) | M1, M12 | Overview |
 | Installation & Auth | M2 | Hands-on |
-| Interactive Session & Built-in Tools | M3 | Hands-on |
-| Context Window & Token Management | M3, M13 | Practical |
-| CLAUDE.md | M4 | Hands-on |
-| `.claude/rules/` | M4 | Hands-on |
-| Skills | M5 | Hands-on |
-| Slash Commands | M5 | Hands-on |
-| Subagents | M6 | Hands-on |
-| Agent Teams | M6 | Outlook |
-| MCP (Model Context Protocol) | M7 | Hands-on |
-| Hooks | M8 | Hands-on |
-| CLI & Headless Mode | M9 | Hands-on |
-| Worktrees & Background Tasks | M9 | Practical |
-| Dispatch & Scheduled Tasks | M9 | Overview |
-| Messages API (SDK, Tool Use, Streaming) | M9 | Reference |
-| Extended Thinking | M1, M9 | Overview + Reference |
+| Agentic Loop & Built-in Tools | M3 | Hands-on |
+| Context Window & Token Management | M3, M14 | Practical |
+| Keyboard Shortcuts & Permissions | M4 | Hands-on |
+| Git Integration & Checkpoints | M4 | Hands-on |
+| Session Management | M4 | Hands-on |
+| CLAUDE.md | M5 | Hands-on |
+| `.claude/rules/` | M5 | Hands-on |
+| Skills | M6 | Hands-on |
+| Slash Commands | M6 | Hands-on |
+| Subagents | M7 | Hands-on |
+| Agent Teams | M7 | Outlook |
+| MCP (Model Context Protocol) | M8 | Hands-on |
+| Hooks | M9 | Hands-on |
+| CLI & Headless Mode | M10 | Hands-on |
+| Worktrees & Background Tasks | M10 | Practical |
+| Dispatch & Scheduled Tasks | M10 | Overview |
+| Messages API (SDK, Tool Use, Streaming) | M10 | Reference |
+| Extended Thinking | M1, M10 | Overview + Reference |
 | Multimodal / Vision / PDF | M1 | Overview |
-| Prompt Caching & Batch API | M1, M9 | Overview + Reference |
+| Prompt Caching & Batch API | M1, M10 | Overview + Reference |
 | Computer Use | M1 | Overview |
-| Agent SDK | M9 | Mention |
-| Plugins & Marketplace | M10 | Demo |
-| Claude Code Remote & Web | M11 | Demo |
-| Settings & Configuration | M12 | Overview |
-| Permission System | M3, M12 | Practical |
-| Best Practices & Patterns | M13 | Discussion |
-| Capstone (full setup) | M14 | Hands-on |
+| Agent SDK | M10 | Mention |
+| Plugins & Marketplace | M11 | Demo |
+| Claude Code Remote & Web | M12 | Demo |
+| Settings & Configuration | M13 | Overview |
+| Permission System | M4, M13 | Practical |
+| Best Practices & Patterns | M14 | Discussion |
+| Capstone (full setup) | M15 | Hands-on |
 
 ---
 
@@ -417,7 +423,6 @@ Participants build a complete Claude Code setup:
 
 - [ ] Prepare sample repo for hands-on exercises (simple project with intentional bugs, missing tests, TODOs)
 - [ ] Send participant email with prerequisites (Node.js, plan/API key, GitHub token, proxy check)
-- [ ] Prepare BMW/Reply-specific CLAUDE.md examples
 - [ ] Survey Plugin Marketplace: which plugins are currently relevant?
 - [ ] Prepare GitHub Action template for PR review
 - [ ] Create quick-reference handout (CLI commands, project file structure, keyboard shortcuts)

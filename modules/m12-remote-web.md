@@ -1,4 +1,4 @@
-# Module 11 — Claude Code Remote & Web (15 min)
+# Module 12 — Claude Code Remote & Web (15 min)
 
 > *Claude Code without local installation*
 
@@ -373,8 +373,6 @@ Sessions auto-expire after inactivity
 9. Final PR created and merged
 ```
 
-> 🏢 **Reply Context:** Remote/Web mode is useful for onboarding new Reply developers to BMW projects — no local setup needed for initial codebase exploration. Cowork can help non-technical stakeholders generate reports from project data. Consider Remote Control for pair-programming sessions across Reply offices.
-
 ---
 
 ## Summary
@@ -391,4 +389,4 @@ Sessions auto-expire after inactivity
 
 **Key Takeaway:** Claude Code is flexible. Use Remote for quick starts and collaboration, Local for performance and control. Both are equally valid.
 
-**Up next:** Module 12 — Settings, Configuration & Security.
+**Up next:** Module 13 — Settings, Configuration & Security.

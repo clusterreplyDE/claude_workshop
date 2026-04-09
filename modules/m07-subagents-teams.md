@@ -1,4 +1,4 @@
-# Module 6 — Subagents & Agent Teams (25 min)
+# Module 7 — Subagents & Agent Teams (25 min)
 
 > *Managing complexity through delegation*
 
@@ -282,6 +282,16 @@ You oversee the project. Delegate tasks to:
 
 **When to use:** Cross-layer projects, complex architectures, teams with specialized roles.
 
+### Real-World Examples: Official Plugins
+
+These patterns aren't just theoretical — Anthropic's official plugins use them in production:
+
+- **`code-review` plugin** (Lead-Specialist): Spawns 5 parallel Sonnet agents — each focused on a specific aspect (CLAUDE.md compliance, bug detection, historical context, PR history, code comments). A lead aggregates findings with confidence-based scoring to filter false positives.
+- **`pr-review-toolkit` plugin** (Lead-Specialist): 6 specialist agents (comment-analyzer, test-analyzer, silent-failure-hunter, type-design-analyzer, code-reviewer, code-simplifier) with configurable review aspects.
+- **`feature-dev` plugin** (Pipeline): 3 agents in a structured 7-phase workflow (code-explorer → code-architect → code-reviewer), each handing off to the next.
+
+> These plugins are open source at [github.com/anthropics/claude-code/plugins](https://github.com/anthropics/claude-code/tree/main/plugins) — great starting points for your own multi-agent setups.
+
 ---
 
 ## 7. MCP in Subagents
@@ -348,12 +358,6 @@ When a subagent completes, you receive:
 Subagents **do not** return raw tool outputs — only human-readable summaries.
 
 ---
-
-> 🏢 **Reply Context:** At BMW Aftersales, subagents are valuable for:
-> - **Terraform Reviewer**: Dedicated agent for infrastructure validation (read-only, no destructive Bash)
-> - **Helm Chart Auditor**: Specialized agent for Kubernetes manifests and security checks
-> - **PR Code Review**: Gate PRs with a read-only code-reviewer before merging to main
-> - **Compliance Checker**: Specialized agent for EU/ISO compliance validation (read-only, can reference compliance documentation)
 
 ---
 
@@ -488,4 +492,4 @@ Try refining the agent:
 | **Agent Teams** | Experimental: multiple equal peers coordinating (higher cost, full independence) |
 | **Use Case** | Delegate specialized work, enforce permissions, reduce token cost with Haiku |
 
-**Up next:** Module 7 — MCP: External Connections (connecting Claude to GitHub, Jira, databases, and more).
+**Up next:** Module 8 — MCP: External Connections (connecting Claude to GitHub, Jira, databases, and more).
