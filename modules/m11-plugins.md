@@ -7,332 +7,120 @@
 By the end of this module, participants will be able to:
 
 - Understand what a plugin is and how it differs from skills
-- Navigate the Claude plugin directory and install marketplace plugins
-- Recognize the plugin manifest structure and namespacing
-- Know when to package workflows as plugins vs. keeping them local
-- Understand plugin data persistence and configuration
+- Recognize the plugin structure and namespacing
+- Install plugins from the marketplace or Git repos
+- Know when to package workflows as plugins
 
 ---
 
 ## 1. What Is a Plugin?
 
-A **plugin** is a self-contained package that bundles multiple Claude Code extensions:
+A **plugin** is a self-contained package that bundles multiple Claude Code extensions together:
 
 | Component | Purpose | Example |
 |-----------|---------|---------|
-| **Skills** | Reusable workflows with frontmatter | `/my-plugin:review` — code review workflow |
-| **Commands** | Slash-like invocations | `/my-plugin:format-all-js` |
-| **Hooks** | Deterministic automation on file events | Auto-lint on edit, commit checks |
-| **Agents** | Subagents that run independently | QA bot, documentation generator |
-| **MCP Servers** | Connections to external systems | GitHub API, Slack, databases |
+| **Skills** | Reusable workflows | `/my-plugin:review` — code review |
+| **Commands** | Slash invocations | `/my-plugin:format-all` |
+| **Hooks** | Deterministic automation | Auto-lint on edit |
+| **MCP Servers** | External connections | GitHub API, Slack |
 
 ### Plugins vs. Skills
 
-| Aspect | Skill | Plugin |
-|--------|-------|--------|
-| **Scope** | Single workflow, local or global | Multiple related workflows, team/marketplace |
-| **Namespace** | Global (can collide) | Namespaced: `/plugin-name:skill-name` |
-| **Installation** | Copy `.claude/skills/` | `claude plugin install <name>` |
-| **Dependencies** | Individual | Can include MCP servers, hooks, config |
-| **Distribution** | Share SKILL.md file | Published to marketplace or Git repo |
+| | Skill | Plugin |
+|--|-------|--------|
+| **Scope** | Single workflow | Multiple related workflows |
+| **Namespace** | Global (can collide) | Namespaced: `/plugin:skill` |
+| **Install** | Copy to `.claude/skills/` | `claude plugin install <name>` |
+| **Distribution** | Share SKILL.md file | Marketplace or Git repo |
 
 ---
 
-## 2. Plugin Directory Structure
+## 2. Plugin Structure
 
-A plugin lives in `.claude-plugin/` at the project root or in a dedicated repo:
+A plugin lives in a directory with a `plugin.json` manifest:
 
 ```
 my-plugin/
-├── .claude-plugin/
-│   ├── plugin.json              # Plugin manifest
-│   ├── skills/                  # Custom skills
-│   │   ├── review/
-│   │   │   └── SKILL.md
-│   │   └── format/
-│   │       └── SKILL.md
-│   ├── agents/                  # Custom subagents
-│   │   └── qa-bot/
-│   │       └── agent.json
-│   ├── hooks/                   # Automation hooks
-│   │   └── pre-commit.json
-│   └── .mcp.json                # MCP server configuration
-├── README.md
-└── LICENSE
+├── plugin.json              # Manifest (name, version, components)
+├── skills/
+│   ├── review/SKILL.md
+│   └── format/SKILL.md
+├── hooks/
+│   └── pre-commit.json
+└── .mcp.json                # Optional MCP servers
 ```
-
-### plugin.json Manifest
 
 ```json
 {
   "name": "code-review-toolkit",
   "version": "1.0.0",
-  "description": "A complete code review and quality assurance workflow",
-  "author": "Your Team",
-  "license": "MIT",
-  "skills": {
-    "path": "skills/"
-  },
-  "agents": {
-    "path": "agents/"
-  },
-  "hooks": {
-    "path": "hooks/"
-  },
-  "mcp": {
-    "path": ".mcp.json"
-  },
-  "config": {
-    "required": ["github_token"],
-    "optional": ["slack_channel"]
-  }
+  "description": "Code review and quality assurance workflows",
+  "skills": { "path": "skills/" },
+  "hooks": { "path": "hooks/" },
+  "mcp": { "path": ".mcp.json" }
 }
 ```
 
-### Manifest Fields
+### Namespacing
 
-| Field | Purpose | Example |
-|-------|---------|---------|
-| **name** | Unique plugin identifier (lowercase, hyphenated) | `code-review-toolkit` |
-| **version** | Semantic versioning | `1.0.0` |
-| **description** | One-line summary | `A complete code review workflow` |
-| **skills.path** | Directory containing SKILL.md files | `skills/` |
-| **agents.path** | Directory containing agent configs | `agents/` |
-| **hooks.path** | Directory containing hook definitions | `hooks/` |
-| **mcp.path** | MCP server configuration | `.mcp.json` |
-| **config.required** | User-supplied config at enable time | `["github_token"]` |
-| **config.optional** | Optional configuration | `["slack_channel"]` |
-
----
-
-## 3. Namespaced Skills
-
-When a plugin is installed, all its skills are **namespaced** to avoid conflicts:
+Plugin skills are automatically namespaced to avoid collisions:
 
 ```bash
-# Local skill (no namespace)
-/my-local-skill
-
-# Plugin skill (namespaced)
-/code-review-toolkit:review
+/code-review-toolkit:review      # From plugin A
 /code-review-toolkit:format
-/code-review-toolkit:merge-check
-```
-
-### Multiple Plugins Can Coexist
-
-```bash
-# From plugin A
-/linter-suite:eslint
-/linter-suite:prettier
-
-# From plugin B
-/code-review-toolkit:review
-/code-review-toolkit:merge-check
-
-# All can run in the same session without collision
+/linter-suite:eslint             # From plugin B — no collision
 ```
 
 ---
 
-## 4. Plugin Installation & Management
-
-### CLI Commands
+## 3. Installation & Management
 
 ```bash
-# Install a plugin from marketplace
+# Install from marketplace
 claude plugin install code-review-toolkit
 
-# Install from a Git repository
+# Install from Git repo
 claude plugin install git+https://github.com/my-org/my-plugin.git
 
-# List installed plugins
+# List, update, remove
 claude plugin list
-
-# Remove a plugin
-claude plugin remove code-review-toolkit
-
-# Update a plugin
 claude plugin update code-review-toolkit
-```
-
-### Output of `claude plugin list`
-
-```
-Installed Plugins:
-  ✓ code-review-toolkit v1.0.0
-    Skills: review, format, merge-check (3)
-    Hooks: pre-commit (1)
-    MCP Servers: github (1)
-    Config: github_token (required), slack_channel (optional)
-
-  ✓ documentation-bot v2.1.0
-    Skills: generate-readme, update-api-docs (2)
-    Agents: doc-reviewer (1)
-    Config: None
-
-  ✓ performance-profiler v0.5.0
-    Skills: profile, analyze, report (3)
-    Hooks: post-test (1)
+claude plugin remove code-review-toolkit
 ```
 
 ---
 
-## 5. Anthropic Marketplace & Custom Repositories
+## 4. Marketplace & Official Plugins
 
-### Anthropic Marketplace & Official Plugins
+Anthropic maintains official plugins in the [Claude Code repository](https://github.com/anthropics/claude-code/tree/main/plugins):
 
-Anthropic maintains a public [plugin marketplace](https://marketplace.claude.ai) and a set of **official plugins** in the [Claude Code repository](https://github.com/anthropics/claude-code/tree/main/plugins):
+| Plugin | What It Does |
+|--------|-------------|
+| **code-review** | 5 parallel Sonnet agents for PR review (bugs, security, CLAUDE.md compliance) |
+| **commit-commands** | `/commit`, `/commit-push-pr` — streamlined git workflows |
+| **hookify** | Auto-generate hooks from conversation patterns or descriptions |
+| **security-guidance** | PreToolUse hook monitoring 9 security patterns |
+| **plugin-dev** | Guided plugin development toolkit |
 
-| Plugin | What It Does | Highlights |
-|--------|-------------|------------|
-| **code-review** | Automated PR code review | 5 parallel Sonnet agents (CLAUDE.md compliance, bug detection, historical context, PR history, code comments) with confidence-based scoring |
-| **pr-review-toolkit** | Comprehensive PR review | 6 specialist agents: comment-analyzer, test-analyzer, silent-failure-hunter, type-design-analyzer, code-reviewer, code-simplifier |
-| **commit-commands** | Git workflow automation | `/commit`, `/commit-push-pr`, `/clean_gone` — streamlined git operations |
-| **feature-dev** | Structured feature development | 7-phase workflow with 3 agents (code-explorer, code-architect, code-reviewer) |
-| **hookify** | Auto-generate hooks | Analyzes conversation patterns or instructions to create hooks automatically |
-| **security-guidance** | Security monitoring | PreToolUse hook monitoring 9 patterns (command injection, XSS, eval, pickle, os.system, etc.) |
-| **plugin-dev** | Plugin development toolkit | 8-phase guided workflow, 3 agents, 7 skills for building plugins |
-| **agent-sdk-dev** | Agent SDK development kit | `/new-sdk-app` wizard + verification agents for Python and TypeScript |
-| **frontend-design** | Frontend design guidance | Auto-invoked for frontend work — bold design, typography, animations |
+Teams can also host plugins in private Git repos (GitHub Enterprise, GitLab, Bitbucket) for internal distribution.
 
-> **Demo Tip:** `code-review` and `commit-commands` are excellent candidates for a live demo — they're practical, easy to install, and show the power of multi-agent plugins.
+---
 
-### Creating Your Own Marketplace (Git-Based)
+## Demo: Plugin in Action
 
-You can host plugins in Git repos and share them with your team:
+*(Live demo — no hands-on)*
 
 ```bash
-# Publish your plugin to a repo
-git init my-plugin
-# ... create .claude-plugin/, README.md, LICENSE
-git push origin main
-
-# Team members install from your repo
-claude plugin install git+https://github.com/my-org/my-plugin.git
-```
-
-### Sharing Within Organizations
-
-- **Internal repos**: GitLab, GitHub Enterprise, Bitbucket
-- **Version control**: Treat plugins like software — tag releases, use semantic versioning
-- **Documentation**: Include clear README with setup instructions, example usage, configuration
-
----
-
-## 6. Plugin Data Persistence
-
-Plugins can store persistent data on disk:
-
-### Environment Variables for Paths
-
-| Variable | Purpose | Typical Value |
-|----------|---------|---------------|
-| `${CLAUDE_PLUGIN_ROOT}` | Plugin's installation directory | `/home/user/.claude/plugins/code-review-toolkit/` |
-| `${CLAUDE_PLUGIN_DATA}` | Persistent data directory (created on first write) | `/home/user/.claude/plugin-data/code-review-toolkit/` |
-
-### Example: Storing Configuration
-
-```bash
-# A plugin hook or skill writes to ${CLAUDE_PLUGIN_DATA}
-cat > "${CLAUDE_PLUGIN_DATA}/config.json" <<EOF
-{
-  "github_token": "***",
-  "slack_channel": "#code-review",
-  "review_template": "standard"
-}
-EOF
-
-# Another skill reads it
-jq '.github_token' "${CLAUDE_PLUGIN_DATA}/config.json"
-```
-
----
-
-## 7. User Configuration at Enable Time
-
-When a plugin is first enabled, Claude can prompt the user for required configuration:
-
-```json
-{
-  "name": "code-review-toolkit",
-  "config": {
-    "required": [
-      {
-        "key": "github_token",
-        "prompt": "GitHub personal access token (for API calls)",
-        "sensitive": true
-      },
-      {
-        "key": "github_org",
-        "prompt": "GitHub organization name"
-      }
-    ],
-    "optional": [
-      {
-        "key": "slack_channel",
-        "prompt": "Slack channel for notifications (default: #engineering)"
-      }
-    ]
-  }
-}
-```
-
-**Interactive prompt:**
-
-```
-Configuring code-review-toolkit...
-? GitHub personal access token: ••••••••••••••••
-? GitHub organization name: acme-corp
-? Slack channel for notifications (press Enter to skip): #code-review
-
-✓ Configuration saved to ~/.claude/plugin-data/code-review-toolkit/config.json
-```
-
----
-
-## 8. When to Use Plugins
-
-### Use Plugins When:
-
-- **Team reuse**: Multiple repos need the same workflows (code review, deployment, CI/CD)
-- **Complex setups**: Bundling skills, hooks, MCP, and agents together
-- **Distribution**: Sharing with other teams or the public marketplace
-- **Versioning**: Want to track and update workflows independently from the repo
-- **Isolation**: Plugin code shouldn't live in the main project repo
-
-### Don't Use Plugins When:
-
-- **Single-project workflows**: Keep local skills in `.claude/skills/`
-- **Experimental**: Still iterating — publish as plugin once stable
-- **Quick fixes**: Ad-hoc commands don't need packaging
-
----
-
-## 9. Demo: Plugin in Action
-
-*(Live demo — no hands-on at this stage)*
-
-**Scenario:** A team enables the `code-review-toolkit` plugin:
-
-```bash
-# Step 1: Install
+# Install
 $ claude plugin install code-review-toolkit
-Fetching plugin from marketplace...
 ✓ Installed code-review-toolkit v1.0.0
 
-# Step 2: Configure
-? GitHub personal access token: ••••••••••••••••
-? GitHub organization: acme-corp
-✓ Configuration saved
-
-# Step 3: Use in a session
+# Use in session
 $ claude
 > /code-review-toolkit:review src/payment.ts
-Analyzing src/payment.ts...
 Found 3 issues:
   1. Missing error handling on line 42
-  2. Inefficient loop on line 67 (use map instead)
+  2. Inefficient loop on line 67
   3. Security: SQL injection risk on line 89
 ```
 
@@ -342,12 +130,10 @@ Found 3 issues:
 
 | Concept | Key Takeaway |
 |---------|--------------|
-| **What is a plugin?** | Bundled skills, hooks, agents, MCP servers — designed for team reuse |
-| **Directory structure** | `.claude-plugin/` with manifest, skills/, agents/, hooks/, .mcp.json |
-| **Namespacing** | Prevents collisions: `/plugin-name:skill-name` |
+| **Plugin** | Bundled skills, hooks, MCP servers — for team reuse |
+| **Namespacing** | `/plugin-name:skill-name` prevents collisions |
 | **Installation** | `claude plugin install <name>` from marketplace or Git |
-| **Configuration** | User-prompted at enable time, stored in `${CLAUDE_PLUGIN_DATA}` |
-| **When to use** | Team workflows, complex setups, distribution; not for single-project local work |
-| **Distribution** | Anthropic Marketplace for official plugins, Git repos for internal/custom plugins |
+| **When to use** | Team workflows, complex setups, distribution across repos |
+| **When not to** | Single-project, experimental — keep as local skills |
 
-**Up next:** Module 12 — Claude Code Remote & Web, exploring cloud-based and browser-based Claude Code.
+**Up next:** Module 12 — Claude Code Remote & Web.

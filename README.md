@@ -85,7 +85,7 @@ workshop/
 | M9 | Hooks: Deterministic Guardrails | 15 min | Hands-on |
 | M10 | CLI & Headless Mode | 15 min | Hands-on |
 | M11 | Plugins & Marketplace | 10 min | Demo |
-| M12 | Claude Code Remote & Web | 15 min | Demo |
+| M12 | Remote & Web | 10 min | Overview |
 | M13 | Settings & Security | 10 min | Overview |
 | M14 | Best Practices & Patterns | 15 min | Discussion |
 | M15 | Capstone: Putting It All Together | 25 min | Hands-on |
@@ -116,7 +116,7 @@ Before attending, participants need:
 | M6 — Skills & Commands | ✅ Complete |
 | M7 — Subagents | ✅ Complete |
 | M8 — MCP | ✅ Complete |
-| M9 — Hooks & Permissions | ✅ Complete |
+| M9 — Hooks: Deterministic Guardrails | ✅ Complete |
 | M10 — CLI & Headless | ✅ Complete |
 | M11 — Plugins | ✅ Complete |
 | M12 — Remote & Web | ✅ Complete |
@@ -140,6 +140,10 @@ The following areas are **not covered** in the current workshop but are candidat
 | Worktrees & Parallelization | Isolated parallel sessions with `--worktree`, tmux integration, background tasks | Hands-on module |
 | Dispatch API | REST API for triggering Claude tasks from external systems, scheduled/recurring jobs on Anthropic infrastructure | Reference + examples |
 | Advanced Hooks | HTTP hooks, async hooks, JSON responses, advanced matchers, file patterns, environment variables, hook plugins (security-guidance, hookify) | Hands-on module |
+| Plugin Development | Building custom plugins from scratch, plugin.json manifest, data persistence, user configuration at enable time, publishing to marketplace | Hands-on module |
+| Remote Deep Dive | Ultraplan, parallel cloud execution, auto-fix CI, session sharing/teleporting, VS Code integration, remote control sessions | Hands-on module |
+| Enterprise Settings | Managed settings (MDM), granular permission rules, proxy/CA config, custom data retention, compliance (HIPAA, SOC 2) | Reference guide |
+| Advanced Context Management | Context costs (/context command), feature loading analysis, multi-agent patterns for parallel work, CLAUDE.md as living team documentation | Workshop module |
 | Computer Use (Deep Dive) | Claude controlling browser and desktop apps, testing workflows, practical patterns | Hands-on module |
 | Batch API Patterns | Production patterns for bulk processing, cost optimization, error handling, result aggregation | Reference + examples |
 | Enterprise Administration | SSO/SCIM setup, audit logs, data residency, managed policies, org-level configuration | Overview module |
