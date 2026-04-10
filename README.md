@@ -82,8 +82,8 @@ workshop/
 | M6 | Skills & Commands | 30 min | Hands-on |
 | M7 | Subagents | 25 min | Hands-on |
 | M8 | MCP: External Connections | 35 min | Hands-on |
-| M9 | Hooks & Permissions | 25 min | Hands-on |
-| M10 | CLI & Headless Mode | 30 min | Hands-on + Reference |
+| M9 | Hooks: Deterministic Guardrails | 15 min | Hands-on |
+| M10 | CLI & Headless Mode | 15 min | Hands-on |
 | M11 | Plugins & Marketplace | 10 min | Demo |
 | M12 | Claude Code Remote & Web | 15 min | Demo |
 | M13 | Settings & Security | 10 min | Overview |
@@ -135,6 +135,11 @@ The following areas are **not covered** in the current workshop but are candidat
 
 | Topic | Description | Potential Format |
 |-------|-------------|-----------------|
+| Messages API & SDK | Python/TypeScript SDK — basic calls, tool use, structured output, extended thinking, streaming, prompt caching, batch API | Reference + hands-on |
+| Agent SDK | Embedding Claude into custom tools with `@anthropic-ai/claude-agent-sdk` — permissions, hooks, subagents, MCP integration | Hands-on module |
+| Worktrees & Parallelization | Isolated parallel sessions with `--worktree`, tmux integration, background tasks | Hands-on module |
+| Dispatch API | REST API for triggering Claude tasks from external systems, scheduled/recurring jobs on Anthropic infrastructure | Reference + examples |
+| Advanced Hooks | HTTP hooks, async hooks, JSON responses, advanced matchers, file patterns, environment variables, hook plugins (security-guidance, hookify) | Hands-on module |
 | Computer Use (Deep Dive) | Claude controlling browser and desktop apps, testing workflows, practical patterns | Hands-on module |
 | Batch API Patterns | Production patterns for bulk processing, cost optimization, error handling, result aggregation | Reference + examples |
 | Enterprise Administration | SSO/SCIM setup, audit logs, data residency, managed policies, org-level configuration | Overview module |
