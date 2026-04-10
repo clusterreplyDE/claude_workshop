@@ -203,6 +203,32 @@ Start simple, enhance iteratively:
 
 ---
 
+## 6. Decision Guide: When to Use What
+
+One of the most common questions: "I want to enforce X — where do I put it?" This table helps you choose:
+
+| I want to... | Use | Why |
+|---|---|---|
+| Tell Claude about project conventions | **CLAUDE.md** | Always loaded, passive knowledge |
+| Apply rules only for specific file paths | **Rules** (`.claude/rules/`) | Conditional, loaded on match |
+| Automate a repeatable workflow | **Skill** (`.claude/skills/`) | Invocable, reusable across sessions |
+| Create a quick shortcut command | **Command** (`.claude/commands/`) | Simple one-line trigger |
+| Guarantee something runs every time | **Hook** | Deterministic, exit 0/2 control |
+| Delegate to a focused specialist | **Subagent** | Isolated context, own tools |
+| Share workflows across repos/teams | **Plugin** | Namespaced, versioned package |
+
+### Example: "Always run tests before committing"
+
+| Approach | Mechanism | Tradeoff |
+|---|---|---|
+| CLAUDE.md instruction | "Always run tests before git commit" | Claude *should* comply, but might forget |
+| Hook (PreToolUse on Bash) | Script checks for `git commit`, runs `npm test` first | **Guaranteed** — runs every time, blocks on failure |
+| Skill `/test-and-commit` | Workflow: run tests → commit if pass | Convenient, but Claude must choose to invoke it |
+
+**Rule of thumb:** If it *must* happen → Hook. If Claude *should know* → CLAUDE.md. If it's a *workflow to invoke* → Skill.
+
+---
+
 ## Summary
 
 | Practice | When to Use |
@@ -213,7 +239,8 @@ Start simple, enhance iteratively:
 | **Specific prompts** | Every interaction |
 | **One task per prompt** | Keep focus |
 | **Commit often** | After logical steps |
+| **Decision guide** | Choosing CLAUDE.md vs. rules vs. skills vs. hooks |
 
-**Key Takeaway:** Plan first, prompt clearly, manage context, commit often. Context rot is real — fight it with `/clear`, `/compact`, and regular commits.
+**Key Takeaway:** Plan first, prompt clearly, manage context, commit often. Use the decision guide above to put knowledge and automation in the right place.
 
 **Up next:** Module 15 — Capstone: Putting It All Together.

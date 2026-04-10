@@ -35,7 +35,14 @@ The **Model Context Protocol (MCP)** is an open standard for connecting Claude t
 └──────┘  └──────┘  └────────┘  └──────────┘ └───────┘
 ```
 
-MCP tools are **discovered automatically** at session start — no extra configuration needed once a server is installed. Plugins can also provide MCP servers out of the box.
+MCP tools are **discovered automatically** at session start — no extra configuration needed once a server is installed.
+
+### Where Do MCP Servers Come From?
+
+- **npm packages** — Community servers: `npx @anthropic-ai/github-mcp-server`
+- **Plugins** — Bundled with Claude Code plugins (auto-configured)
+- **Custom** — Your own Node.js/Python script implementing the MCP protocol
+- **Cloud endpoints** — Hosted HTTP services (e.g., by your company)
 
 ### Benefits
 
@@ -161,34 +168,50 @@ Use `${VAR_NAME}` references — Claude resolves them at runtime.
 
 ## Hands-On Exercise (10 min)
 
-### Set Up GitHub MCP Server and Manage Issues
+### Set Up a Filesystem MCP Server
 
-**Prerequisites:** GitHub PAT with `repo` scope ([github.com/settings/tokens](https://github.com/settings/tokens))
+This exercise uses a **local stdio MCP server** — no external accounts needed.
 
-**Step 1: Install GitHub MCP**
+**Step 1: Install the Filesystem MCP Server**
 
 ```bash
-claude mcp add --transport http github https://mcp.github.example.com \
-  --header Authorization "token ghp_YOUR_TOKEN_HERE"
+claude mcp add --transport stdio filesystem -- \
+  npx -y @modelcontextprotocol/server-filesystem /tmp/mcp-demo
 ```
 
-**Step 2: Verify**
+This starts a local Node.js process that gives Claude read/write access to `/tmp/mcp-demo`.
+
+**Step 2: Create Test Data**
+
+```bash
+mkdir -p /tmp/mcp-demo
+echo "Hello from MCP!" > /tmp/mcp-demo/test.txt
+echo '{"name": "workshop", "version": "1.0"}' > /tmp/mcp-demo/config.json
+```
+
+**Step 3: Verify**
 
 ```bash
 claude mcp list
+claude mcp get filesystem    # Should show available tools
 ```
 
-**Step 3: Use It**
+**Step 4: Use It in a Session**
 
 ```bash
 claude
 # In session:
-> List all issues in the "workshop" repository.
-> Create an issue titled "Fix authentication flow" labeled "bug".
-> Update the issue to add "priority/high" label.
+> List all files available through the filesystem MCP server.
+> Read the contents of config.json via MCP.
+> Create a new file called notes.md with a summary of today's workshop.
 ```
 
-Claude invokes GitHub MCP tools (`list_issues`, `create_issue`, `update_issue`) automatically.
+Claude invokes MCP tools (`list_directory`, `read_file`, `write_file`) automatically.
+
+**Step 5: Discussion**
+
+- How would you replace `filesystem` with a GitHub MCP? (Hint: change transport to `http`, add auth header)
+- What scope would you use for a team GitHub MCP? (Hint: `--scope project` with `.mcp.json`)
 
 ---
 

@@ -88,7 +88,7 @@ workshop/
 | M12 | Remote & Web | 10 min | Overview |
 | M13 | Settings & Security | 10 min | Overview |
 | M14 | Best Practices & Patterns | 15 min | Discussion |
-| M15 | Capstone: Putting It All Together | 25 min | Hands-on |
+| M15 | Capstone: Putting It All Together | 30 min | Hands-on |
 
 ## Prerequisites
 

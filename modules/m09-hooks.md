@@ -110,9 +110,21 @@ Hooks are defined in `.claude/settings.json` (project or user level):
 
 Whatever your script prints to **stdout** is injected into Claude's context. This is how you give Claude feedback ("File formatted", "Command blocked because...").
 
+### Hook Input: What Your Script Receives
+
+When a hook fires, Claude passes **tool input as JSON via the `$TOOL_INPUT` environment variable**. For a Bash tool call, it looks like:
+
+```json
+{"command": "rm -rf /tmp/data", "timeout": 120000}
+```
+
+Your script can read this to decide whether to allow or block.
+
 ### Quick Setup via `/hooks`
 
 In a running session, type `/hooks` to interactively add, edit, or inspect hooks.
+
+> **Note:** Hooks configured in `.claude/settings.json` also run in headless mode (`claude -p`). This means your security guardrails apply in CI/CD pipelines too.
 
 ---
 
@@ -120,35 +132,23 @@ In a running session, type `/hooks` to interactively add, edit, or inspect hooks
 
 ### Build a Security Hook That Blocks Dangerous Commands
 
-**Goal:** Create a PreToolUse hook that prevents Claude from running destructive Bash commands like `rm -rf /` or `sudo rm`.
+**Goal:** Create a PreToolUse hook that prevents Claude from running destructive Bash commands.
 
-#### Step 1: Create the Hook Script
+#### Step 1: Start Simple — A Minimal Hook
 
-Create a file `scripts/validate-bash.sh`:
+Create `scripts/validate-bash.sh`:
 
 ```bash
 #!/bin/bash
-# Read the tool input from stdin (JSON with the command)
-INPUT=$(cat)
+# Simplest possible hook: block "rm -rf /"
+# $TOOL_INPUT contains JSON like: {"command": "rm -rf /", ...}
 
-# Extract the command string from JSON
-COMMAND=$(echo "$INPUT" | grep -o '"command":"[^"]*"' | cut -d'"' -f4)
-
-# Block recursive force-delete on root or home
-if echo "$COMMAND" | grep -qE 'rm\s+(-[a-zA-Z]*f[a-zA-Z]*\s+|.*--force).*(/|~|\$HOME)'; then
-  echo "BLOCKED: Recursive deletion of important directories is not allowed."
-  echo "Command was: $COMMAND"
-  exit 2
+if echo "$TOOL_INPUT" | grep -q '"command".*rm.*-rf.*/'; then
+  echo "BLOCKED: Dangerous rm command detected."
+  exit 2  # Block
 fi
 
-# Block sudo rm
-if echo "$COMMAND" | grep -qE '^sudo\s+rm'; then
-  echo "BLOCKED: sudo rm commands are not allowed."
-  exit 2
-fi
-
-# Everything else: allow
-exit 0
+exit 0  # Allow everything else
 ```
 
 Make it executable:
@@ -170,7 +170,7 @@ Add to your `.claude/settings.json`:
         "hooks": [
           {
             "type": "command",
-            "command": "/bin/bash ./scripts/validate-bash.sh $TOOL_INPUT"
+            "command": "/bin/bash ./scripts/validate-bash.sh"
           }
         ]
       }
@@ -178,6 +178,8 @@ Add to your `.claude/settings.json`:
   }
 }
 ```
+
+Note: `$TOOL_INPUT` is automatically available as an environment variable — no need to pass it as argument.
 
 #### Step 3: Test It
 
@@ -187,7 +189,7 @@ Start a Claude Code session and try:
 > Run: rm -rf /tmp/important-data
 ```
 
-Expected: Claude attempts to run the command → Hook fires → Script detects the pattern → **Exit 2** → Claude sees "BLOCKED" message and adapts.
+Expected: Hook fires → Script detects `rm -rf` → **Exit 2** → Claude sees "BLOCKED" message.
 
 Now try a safe command:
 
@@ -195,31 +197,42 @@ Now try a safe command:
 > Run: ls -la
 ```
 
-Expected: Hook fires → Script finds no dangerous pattern → **Exit 0** → Command executes normally.
+Expected: Hook fires → No match → **Exit 0** → Command runs normally.
 
-#### Step 4: Extend It (Bonus)
+#### Step 4: Make It Smarter (Bonus)
 
-Add more patterns to your script:
+Enhance the script with more patterns:
 
 ```bash
-# Block dropping database tables
-if echo "$COMMAND" | grep -qiE 'drop\s+(table|database)'; then
-  echo "BLOCKED: DROP TABLE/DATABASE commands are not allowed."
+#!/bin/bash
+# Enhanced version with multiple checks
+
+# Block rm -rf on important paths
+if echo "$TOOL_INPUT" | grep -q '"command".*rm.*-rf.*/'; then
+  echo "BLOCKED: Recursive deletion of important directories."
+  exit 2
+fi
+
+# Block sudo rm
+if echo "$TOOL_INPUT" | grep -q '"command".*sudo.*rm'; then
+  echo "BLOCKED: sudo rm is not allowed."
   exit 2
 fi
 
 # Block git force-push to main
-if echo "$COMMAND" | grep -qE 'git\s+push.*--force.*(main|master)'; then
-  echo "BLOCKED: Force-push to main/master is not allowed."
+if echo "$TOOL_INPUT" | grep -q '"command".*git.*push.*--force.*main'; then
+  echo "BLOCKED: Force-push to main is not allowed."
   exit 2
 fi
+
+exit 0
 ```
 
 #### Discussion
 
 - What other commands would you want to block in your team?
-- How could you use a PostToolUse hook to auto-format code after every edit?
-- Where would you store hooks — per project (`.claude/settings.json`) or globally (`~/.claude/settings.json`)?
+- How could you use a **PostToolUse** hook to auto-format code after every edit?
+- Where would you store hooks — per project or globally?
 
 ---
 

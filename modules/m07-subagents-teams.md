@@ -79,7 +79,9 @@ Your tasks:
 Use the terraform-validator MCP for advanced checks.
 ```
 
-This example shows the key capabilities combined: tool restrictions (`tools` + `disallowedTools`), an inline MCP server definition (`mcpServers`), and memory scoping (`memory`). MCP servers can also be referenced by name if defined in `.mcp.json`.
+This example shows the key capabilities combined: tool restrictions (`tools` + `disallowedTools`), an inline MCP server definition (`mcpServers`), and memory scoping (`memory`).
+
+> **Note:** The `mcpServers` block connects this subagent to an external tool. MCP is covered in detail in Module 8 — for now, just know that it lets agents access external systems.
 
 ---
 

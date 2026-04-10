@@ -1,4 +1,4 @@
-# Module 15 — Capstone: Putting It All Together (25 min)
+# Module 15 — Capstone: Putting It All Together (30 min)
 
 > *From empty repo to productive setup*
 
@@ -20,16 +20,18 @@ By the end of this module, participants will be able to:
 
 ### The 6 Tasks
 
-| # | Task | Deliverable | Time |
-|---|------|-------------|------|
-| 1 | Create CLAUDE.md | Project guide with context | 5 min |
-| 2 | Build a custom skill | Review skill with SKILL.md | 5 min |
-| 3 | Define a subagent | Focused code-reviewer agent | 3 min |
-| 4 | Connect MCP server | GitHub or filesystem | 3 min |
-| 5 | Configure a hook | Auto-format or lint on edit | 3 min |
-| 6 | Sketch CI/CD integration | GitHub Action YAML | 3 min |
+| # | Task | Deliverable | Time | Approach |
+|---|------|-------------|------|----------|
+| 1 | Create CLAUDE.md | Project guide with context | 5 min | Write from template |
+| 2 | Build a custom skill | Review skill with SKILL.md | 5 min | Write from template |
+| 3 | Define a subagent | Code-reviewer description | 3 min | Add to CLAUDE.md |
+| 4 | Connect MCP server | Filesystem MCP config | 3 min | Copy + adapt from M8 |
+| 5 | Configure a hook | Auto-format on edit | 3 min | Copy + adapt from M9 |
+| 6 | Sketch CI/CD integration | GitHub Action YAML | 3 min | Copy + adapt from M10 |
 
-Work through each task below. Use earlier modules as reference.
+**Tip:** Tasks 3-6 are intentionally "copy + adapt" — the goal is applying what you learned, not writing from scratch. Refer back to M7-M10 exercises.
+
+Work through each task below.
 
 ---
 
@@ -101,16 +103,23 @@ Test it: `claude` → ask Claude to review a file using the skill.
 
 ---
 
-## 4. Task 3: Define a Subagent (3 min)
+## 4. Task 3: Define a Subagent Role (3 min)
 
-In a Claude session, use the `Task` tool pattern from Module 7:
+Add a "Subagents" section to your CLAUDE.md (from Task 1):
 
+```markdown
+## Subagents
+
+### Code Reviewer
+- **Role:** Security and quality reviewer
+- **Tools:** Read, Grep, Glob (read-only)
+- **Scope:** Only `src/` and `tests/` directories
+- **When to use:** Before committing, ask Claude:
+  "Spawn a subagent to review src/payment.ts for security issues.
+  It should be read-only."
 ```
-> Create a subagent to review src/payment.ts for security issues.
-  It should be read-only and only inspect src/ and tests/ directories.
-```
 
-Or define in CLAUDE.md under a "Subagents" section describing the code-reviewer role for the team.
+Claude will create a focused subagent with its own isolated context (see M7). You can also create a dedicated agent file at `.claude/agents/code-reviewer.md` using the SKILL.md frontmatter format from M6, with `tools: [Read, Grep, Glob]`.
 
 ---
 
