@@ -546,7 +546,7 @@
     <h1>Claude Code<br><span>Deep Dive</span></h1>
     <p class="hero-sub">A comprehensive, hands-on workshop covering the entire Claude Code ecosystem &mdash; from first install to CI/CD pipelines and beyond.</p>
     <div class="hero-meta">
-      <div class="hero-stat"><span class="hero-stat-value">14</span><span class="hero-stat-label">Modules</span></div>
+      <div class="hero-stat"><span class="hero-stat-value">15</span><span class="hero-stat-label">Modules</span></div>
       <div class="hero-stat"><span class="hero-stat-value">6h</span><span class="hero-stat-label">Duration</span></div>
       <div class="hero-stat"><span class="hero-stat-value">4</span><span class="hero-stat-label">Units</span></div>
       <div class="hero-stat"><span class="hero-stat-value">10+</span><span class="hero-stat-label">Exercises</span></div>
@@ -632,8 +632,8 @@
           <div class="timeline-desc">External tools, quality gates, pipelines</div>
           <div class="timeline-modules">
             <span class="timeline-module-chip">M8 MCP (35m)</span>
-            <span class="timeline-module-chip">M9 Hooks (25m)</span>
-            <span class="timeline-module-chip">M10 CLI (30m)</span>
+            <span class="timeline-module-chip">M9 Hooks (15m)</span>
+            <span class="timeline-module-chip">M10 CLI (15m)</span>
           </div>
         </div>
       </div>
@@ -646,10 +646,10 @@
           <div class="timeline-desc">Remote, settings, best practices, capstone</div>
           <div class="timeline-modules">
             <span class="timeline-module-chip">M11 Plugins (10m)</span>
-            <span class="timeline-module-chip">M12 Remote (15m)</span>
+            <span class="timeline-module-chip">M12 Remote (10m)</span>
             <span class="timeline-module-chip">M13 Settings (10m)</span>
             <span class="timeline-module-chip">M14 Practices (15m)</span>
-            <span class="timeline-module-chip">M15 Capstone (25m)</span>
+            <span class="timeline-module-chip">M15 Capstone (30m)</span>
           </div>
         </div>
       </div>
@@ -1122,8 +1122,8 @@ Flag security issues as critical.</code></pre>
               <div class="concept-grid">
                 <div class="concept-item"><strong>MCP</strong><span>Model Context Protocol &mdash; open standard for tool integration</span></div>
                 <div class="concept-item"><strong>Transport Types</strong><span>stdio (local processes), HTTP (cloud services)</span></div>
-                <div class="concept-item"><strong>Scope Hierarchy</strong><span>Local > Project (.mcp.json) > User (~/.claude.json)</span></div>
-                <div class="concept-item"><strong>Tool Discovery</strong><span>Automatic, lazy-loaded &mdash; idle tools use minimal context</span></div>
+                <div class="concept-item"><strong>Scope &amp; Config</strong><span>Hierarchy: local > project (.mcp.json, committed) > user (~/.claude.json)</span></div>
+                <div class="concept-item"><strong>Management</strong><span><code>claude mcp list/get/remove</code>, <code>/mcp</code> in session to check status.</span></div>
               </div>
             </div>
             <div class="tab-panel" data-tab="commands">
@@ -1139,17 +1139,17 @@ claude mcp remove github      <span class="cm"># Remove a server</span>
 <span class="cm"># In session</span>
 /mcp                          <span class="cm"># Check status &amp; token costs</span>
 
-<span class="cm"># Debug</span>
-MCP_DEBUG=1 claude            <span class="cm"># Verbose MCP logging</span></code></pre>
+<span class="cm"># Scope</span>
+claude mcp add <span class="flag">--scope</span> project github <span class="str">https://mcp.github.com</span></code></pre>
             </div>
             <div class="tab-panel" data-tab="handson">
               <div class="hands-on-box">
                 <h4>&#x1F3AF; Exercise</h4>
                 <ol>
-                  <li>Set up the GitHub MCP server with your PAT</li>
-                  <li>Use Claude to list issues from a repo</li>
-                  <li>Create a new issue programmatically through Claude</li>
-                  <li>Check MCP status and token costs with <code>/mcp</code></li>
+                  <li>Install a local Filesystem MCP server with <code>claude mcp add</code></li>
+                  <li>Create test files in <code>/tmp/mcp-demo</code></li>
+                  <li>Use Claude to list and read files through MCP</li>
+                  <li>Check MCP status with <code>/mcp</code></li>
                 </ol>
               </div>
             </div>
@@ -1162,12 +1162,12 @@ MCP_DEBUG=1 claude            <span class="cm"># Verbose MCP logging</span></cod
         <div class="module-header" onclick="toggleModule(this)">
           <div class="module-num" style="background:var(--unit3)">09</div>
           <div class="module-info">
-            <div class="module-title">Hooks: Guaranteeing Determinism</div>
+            <div class="module-title">Hooks: Deterministic Guardrails</div>
             <div class="module-subtitle">Code that ALWAYS runs &mdash; independent of the LLM</div>
           </div>
           <div class="module-badges">
             <span class="badge badge-handson">Hands-on</span>
-            <span class="badge badge-time">25 min</span>
+            <span class="badge badge-time">15 min</span>
           </div>
           <div class="module-expand">&#x25BC;</div>
         </div>
@@ -1180,9 +1180,9 @@ MCP_DEBUG=1 claude            <span class="cm"># Verbose MCP logging</span></cod
             </div>
             <div class="tab-panel active" data-tab="concepts">
               <div class="concept-grid">
-                <div class="concept-item"><strong>Hook Types</strong><span>Command hooks (shell scripts), HTTP hooks (POST to URL)</span></div>
-                <div class="concept-item"><strong>Lifecycle Events</strong><span>SessionStart, PreToolUse, PostToolUse, Stop, TaskCompleted, &hellip;</span></div>
-                <div class="concept-item"><strong>Decision Control</strong><span>Exit 0 = continue, Exit 2 = block. Stdout goes into Claude context.</span></div>
+                <div class="concept-item"><strong>What Are Hooks?</strong><span>Shell commands at lifecycle events &mdash; always execute, not optional</span></div>
+                <div class="concept-item"><strong>Key Events</strong><span>PreToolUse (block), PostToolUse (react), SessionStart (init), Stop (cleanup)</span></div>
+                <div class="concept-item"><strong>Exit Codes</strong><span>Exit 0 = continue, Exit 2 = block. Stdout &rarr; Claude context. Input via <code>$TOOL_INPUT</code> env var.</span></div>
                 <div class="concept-item"><strong>Key Distinction</strong><span>Hooks = deterministic (always run). Skills = LLM-driven (may or may not).</span></div>
               </div>
               <div class="key-takeaway"><strong>Use Cases:</strong> Auto-format after every edit, block dangerous commands, run tests on file change, send notifications on task complete.</div>
@@ -1209,10 +1209,10 @@ MCP_DEBUG=1 claude            <span class="cm"># Verbose MCP logging</span></cod
               <div class="hands-on-box">
                 <h4>&#x1F3AF; Exercise</h4>
                 <ol>
-                  <li>Open <code>/hooks</code> in an interactive session</li>
-                  <li>Create a PostToolUse hook that runs Prettier after every Edit</li>
-                  <li>Test it by asking Claude to modify a file</li>
-                  <li>Verify the file is auto-formatted</li>
+                  <li>Create a <code>scripts/validate-bash.sh</code> that blocks <code>rm -rf</code></li>
+                  <li>Register it as a PreToolUse hook in <code>.claude/settings.json</code></li>
+                  <li>Test: ask Claude to run <code>rm -rf /tmp/data</code> (should be blocked)</li>
+                  <li>Test: ask Claude to run <code>ls -la</code> (should succeed)</li>
                 </ol>
               </div>
             </div>
@@ -1230,7 +1230,7 @@ MCP_DEBUG=1 claude            <span class="cm"># Verbose MCP logging</span></cod
           </div>
           <div class="module-badges">
             <span class="badge badge-handson">Hands-on</span>
-            <span class="badge badge-time">30 min</span>
+            <span class="badge badge-time">15 min</span>
           </div>
           <div class="module-expand">&#x25BC;</div>
         </div>
@@ -1245,10 +1245,8 @@ MCP_DEBUG=1 claude            <span class="cm"># Verbose MCP logging</span></cod
               <div class="concept-grid">
                 <div class="concept-item"><strong>Headless Mode</strong><span><code>claude -p "prompt"</code> &mdash; one-shot, non-interactive execution</span></div>
                 <div class="concept-item"><strong>Output Formats</strong><span>text, json, stream-json &mdash; machine-readable pipeline output</span></div>
-                <div class="concept-item"><strong>Worktrees</strong><span><code>--worktree</code> &mdash; isolated parallel sessions in separate Git worktrees</span></div>
+                <div class="concept-item"><strong>Tool Control</strong><span><code>--allowedTools</code>, <code>--disallowedTools</code> &mdash; restrict what Claude can do</span></div>
                 <div class="concept-item"><strong>CI/CD</strong><span>GitHub Actions integration for automated PR review</span></div>
-                <div class="concept-item"><strong>Messages API</strong><span>Python/TypeScript SDK &mdash; Tool Use, Structured Output, Extended Thinking, Streaming, Prompt Caching</span></div>
-                <div class="concept-item"><strong>Agent SDK</strong><span><code>@anthropic-ai/claude-agent-sdk</code> &mdash; embed Claude into custom tools and workflows</span></div>
               </div>
             </div>
             <div class="tab-panel" data-tab="commands">
@@ -1264,10 +1262,8 @@ claude <span class="flag">-p</span> <span class="str">"review code"</span> <span
 <span class="cm"># Cost control</span>
 claude <span class="flag">-p</span> <span class="str">"fix bug"</span> <span class="flag">--max-budget-usd</span> <span class="num">1.00</span>
 
-<span class="cm"># Parallel worktrees</span>
-claude <span class="flag">--worktree</span> <span class="flag">-p</span> <span class="str">"add tests for auth"</span> &amp;
-claude <span class="flag">--worktree</span> <span class="flag">-p</span> <span class="str">"add tests for api"</span> &amp;
-wait</code></pre>
+<span class="cm"># CI permissions</span>
+claude <span class="flag">-p</span> <span class="str">"review PR"</span> <span class="flag">--dangerously-skip-permissions</span></code></pre>
             </div>
             <div class="tab-panel" data-tab="handson">
               <div class="hands-on-box">
@@ -1340,8 +1336,8 @@ claude plugin list</code></pre>
             <div class="module-subtitle">Claude Code without local installation</div>
           </div>
           <div class="module-badges">
-            <span class="badge badge-demo">Demo</span>
-            <span class="badge badge-time">15 min</span>
+            <span class="badge badge-overview">Overview</span>
+            <span class="badge badge-time">10 min</span>
           </div>
           <div class="module-expand">&#x25BC;</div>
         </div>
@@ -1353,19 +1349,15 @@ claude plugin list</code></pre>
             </div>
             <div class="tab-panel active" data-tab="concepts">
               <div class="concept-grid">
-                <div class="concept-item"><strong>Claude Code Web</strong><span>Browser-based at claude.ai/code &mdash; isolated Linux VM on-demand (Max/Enterprise)</span></div>
-                <div class="concept-item"><strong>Teleported Sessions</strong><span>Move seamlessly between web and local terminal</span></div>
-                <div class="concept-item"><strong>Remote Control</strong><span>Share sessions with teammates for pair programming</span></div>
+                <div class="concept-item"><strong>Claude Code Web</strong><span>Browser-based at claude.ai &mdash; isolated Linux VM on-demand (Max/Enterprise)</span></div>
+                <div class="concept-item"><strong>Local vs. Remote</strong><span>Remote for onboarding, quick prototyping. Local for performance and full control.</span></div>
                 <div class="concept-item"><strong>Cowork</strong><span>Desktop app for non-technical users &mdash; VM-based, local files</span></div>
+                <div class="concept-item"><strong>Limitations</strong><span>Permissions, performance, availability &mdash; not a full local replacement</span></div>
               </div>
               <div class="key-takeaway"><strong>When Remote vs. Local?</strong> Remote for onboarding, pair-programming, quick prototyping, no-setup demos. Local for performance-critical work and full control.</div>
             </div>
             <div class="tab-panel" data-tab="commands">
-              <div class="pill-list">
-                <span class="pill">Ultraplan &mdash; draft complex plans in cloud</span>
-                <span class="pill">Parallel Execution &mdash; concurrent cloud tasks</span>
-                <span class="pill">Auto-Fix &mdash; monitor &amp; fix CI failures</span>
-              </div>
+              <div class="key-takeaway"><strong>Key Point:</strong> Claude Code Web provides the same core experience as the CLI, running in an isolated cloud VM. Great for onboarding and demos.</div>
             </div>
           </div>
         </div>
@@ -1470,7 +1462,7 @@ claude plugin list</code></pre>
           </div>
           <div class="module-badges">
             <span class="badge badge-handson">Hands-on</span>
-            <span class="badge badge-time">25 min</span>
+            <span class="badge badge-time">30 min</span>
           </div>
           <div class="module-expand">&#x25BC;</div>
         </div>
@@ -1677,7 +1669,7 @@ document.querySelectorAll('.module-header').forEach(header => {
 
 function updateProgress() {
   let done = 0;
-  for (let i = 1; i <= 14; i++) {
+  for (let i = 1; i <= 15; i++) {
     const completed = localStorage.getItem('mod_' + i) === '1';
     const nav = document.querySelector(`.nav-item[data-module="${i}"]`);
     if (nav) nav.classList.toggle('completed', completed);

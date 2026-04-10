@@ -31,17 +31,17 @@ Participants must complete these **before** the workshop:
 | 11:00–11:15 | ☕ Coffee Break | | |
 | **11:15–12:30** | **Unit 2: Making Claude Yours** | *Project memory, workflows, delegation* | M5 CLAUDE.md & Rules (20) · M6 Skills & Commands (30) · M7 Subagents (25) |
 | 12:30–13:30 | 🍽️ Lunch Break | | |
-| **13:30–15:00** | **Unit 3: Integration & Automation** | *External tools, quality gates, pipelines* | M8 MCP (35) · M9 Hooks (25) · M10 CLI & Headless (30) |
+| **13:30–15:00** | **Unit 3: Integration & Automation** | *External tools, quality gates, pipelines* | M8 MCP (35) · M9 Hooks (15) · M10 CLI & Headless (15) |
 | 15:00–15:15 | ☕ Coffee Break | | |
-| **15:15–16:30** | **Unit 4: The Big Picture** | *Remote, settings, best practices, capstone* | M11 Plugins (10) · M12 Remote & Web (15) · M13 Settings (10) · M14 Best Practices (15) · M15 Capstone (25) |
+| **15:15–16:30** | **Unit 4: The Big Picture** | *Remote, settings, best practices, capstone* | M11 Plugins (10) · M12 Remote & Web (10) · M13 Settings (10) · M14 Best Practices (15) · M15 Capstone (30) |
 
 | | Content | Available | Buffer |
 |---|---------|-----------|--------|
 | Unit 1 | 70 min | 90 min | 20 min (setup troubleshooting) |
 | Unit 2 | 75 min | 75 min | — |
-| Unit 3 | 90 min | 90 min | — |
+| Unit 3 | 65 min | 90 min | 25 min |
 | Unit 4 | 75 min | 75 min | — |
-| **Total** | **310 min** | **330 min** | **20 min** |
+| **Total** | **285 min** | **330 min** | **45 min** |
 | (Modules) | **15 modules** | — | — |
 
 Each unit is **self-contained**:
@@ -64,13 +64,13 @@ Each unit is **self-contained**:
 | M6 | [Skills & Commands](m06-skills-commands.md) | 30 min | Hands-on | 2 |
 | M7 | [Subagents](m07-subagents-teams.md) | 25 min | Hands-on | 2 |
 | M8 | [MCP: External Connections](m08-mcp.md) | 35 min | Hands-on | 3 |
-| M9 | [Hooks: Guaranteeing Determinism](m09-hooks.md) | 25 min | Hands-on | 3 |
-| M10 | [CLI & Headless Mode](m10-cli-headless.md) | 30 min | Hands-on | 3 |
+| M9 | [Hooks: Deterministic Guardrails](m09-hooks.md) | 15 min | Hands-on | 3 |
+| M10 | [CLI & Headless Mode](m10-cli-headless.md) | 15 min | Hands-on | 3 |
 | M11 | [Plugins & Marketplace](m11-plugins.md) | 10 min | Demo | 4 |
-| M12 | [Claude Code Remote & Web](m12-remote-web.md) | 15 min | Demo | 4 |
+| M12 | [Claude Code Remote & Web](m12-remote-web.md) | 10 min | Overview | 4 |
 | M13 | [Settings, Configuration & Security](m13-settings.md) | 10 min | Overview | 4 |
 | M14 | [Best Practices & Patterns](m14-best-practices.md) | 15 min | Discussion | 4 |
-| M15 | [Capstone: Putting It All Together](m15-capstone.md) | 25 min | Hands-on | 4 |
+| M15 | [Capstone: Putting It All Together](m15-capstone.md) | 30 min | Hands-on | 4 |
 
 ---
 
@@ -204,86 +204,55 @@ Each unit is **self-contained**:
 *Connecting Claude to the outside world*
 
 - What is MCP? (Model Context Protocol — open standard)
-- `claude mcp add <name> -- <command>` — register a server
-- Transport types: stdio, SSE/HTTP
-- Local MCP servers: GitHub, Filesystem, databases
-- Remote MCP servers: SSE/HTTP-based
-- Org-managed connectors (Team/Enterprise)
+- Where do MCP servers come from? (npm packages, plugins, custom, cloud endpoints)
+- Transport types: stdio (local processes), HTTP (cloud services)
+- `claude mcp add` — register a server (HTTP and stdio examples)
 - Configuration: `.mcp.json` (project, committed) vs. personal config
-- MCP tool search: on by default, idle tools consume minimal context
-- Debugging: `claude mcp serve`, `/mcp` to check status and token costs
 - Scope hierarchy: local > project > user
+- Management: `claude mcp list/get/remove`, `/mcp` in session
 
-**Hands-on:** Set up GitHub MCP server, read/create issues from a repo
+**Hands-on:** Set up a local Filesystem MCP server, read/write files through Claude
 
 ---
 
-## Module 9 — Hooks: Guaranteeing Determinism (25 min)
+## Module 9 — Hooks: Deterministic Guardrails (15 min)
 
 *Code that ALWAYS runs — independent of the LLM*
 
-- Hook types: Command hooks (shell), HTTP hooks (POST to URL)
-- Lifecycle events: `PreToolUse`, `PostToolUse`, `SessionStart`, `UserPromptSubmit`, `Stop`, `SubagentStop`, `PreCompact`, `PermissionRequest`, `TaskCompleted`, `WorktreeCreate`, `WorktreeRemove`, `TeammateIdle`
-- Matchers: Tool name matching (Bash, Edit, Write, Read, Glob, Grep, Agent, MCP tools)
-- Decision control: block, allow, message, feedback, suppressOutput, continue
-- Configuration: `/hooks` (interactive) or `.claude/settings.json`
-- Hook output: stdout → Claude context, exit code 2 → block tool
-- Async hooks: fire-and-forget for logging/telemetry
-- Distinction: Hooks = deterministic, Skills = LLM-driven
-- Use cases:
-  - Linter/formatter after every edit
-  - Block dangerous bash commands
-  - Notification when task completes
-  - Auto-test on test file changes
-  - Inject date/context at session start
+- What are hooks? Shell commands at lifecycle events — always execute, not optional
+- Key lifecycle events: `PreToolUse`, `PostToolUse`, `SessionStart`, `Stop`
+- Matchers: Filter by tool name (Bash, Edit, Write, etc.)
+- Exit codes: 0 = continue, 2 = block tool execution
+- Hook input: `$TOOL_INPUT` environment variable (JSON)
+- Hook output: stdout → injected into Claude's context
+- Configuration: `.claude/settings.json` under `"hooks"` key, or `/hooks` interactively
+- Hooks vs. Skills: Hooks = deterministic guardrails, Skills = LLM-driven workflows
+- Hooks also run in headless mode (`claude -p`) — guardrails apply in CI/CD too
 
-**Hands-on:** Build a hook that runs `prettier` after every file edit
+**Hands-on:** Build a security hook that blocks dangerous Bash commands (PreToolUse)
 
 ---
 
-## Module 10 — CLI & Headless Mode (30 min)
+## Module 10 — CLI & Headless Mode (15 min)
 
 *Claude in the pipeline*
 
 ### Headless / Non-Interactive Mode
 - `claude -p "prompt"` — one-shot execution
-- `claude -p --output-format json|stream-json` — machine-readable output
+- `--output-format text|json|stream-json` — machine-readable output
 - `--system-prompt` / `--append-system-prompt` — role specialization
 - `--allowedTools` / `--disallowedTools` — tool filtering
 - `--max-budget-usd` — cost control
-- `--json-schema` — structured output with validation
 
 ### Session Management
 - `--resume` / `--continue` — resume sessions
-- `--session-id` / `--fork-session` — programmatic session control
 - `-n, --name` — named sessions
 
 ### CI/CD Integration
 - GitHub Actions: automated PR review
 - `/install-github-app` — automatic PR reviews
-- `--dangerously-skip-permissions` vs. auto mode in CI
-- Security: API key management, minimal permissions
-
-### Parallelization & Background
-- Worktrees: `claude --worktree` for isolated parallel sessions
-- `&` — background tasks (sessions in the background)
-- `--tmux` — tmux integration for worktrees
-
-### Dispatch & Scheduled Tasks
-- Dispatch: trigger Claude Code tasks programmatically via API
-- Scheduled Tasks: recurring jobs on Anthropic cloud infrastructure
-- Use cases: automated daily code review, recurring report generation
-
-### Messages API Essentials (Reference)
-- SDK installation: Python (`anthropic`) + TypeScript (`@anthropic-ai/sdk`)
-- Basic API call, Tool Use / Function Calling, Structured Output (JSON Schema)
-- Extended Thinking API usage, Streaming, Prompt Caching
-- Quick reference table: feature → parameter → model availability
-
-### Outlook: Agent SDK
-- `@anthropic-ai/claude-agent-sdk` — Node.js library for building custom agents
-- Full access to tools, permissions, hooks, and subagents
-- For teams embedding Claude Code into their own tools
+- `--dangerously-skip-permissions` — permissions in CI
+- Security: API key management, minimal tool access
 
 **Hands-on:** Write a simple GitHub Action that uses Claude for PR reviews
 
@@ -305,18 +274,16 @@ Each unit is **self-contained**:
 
 ---
 
-## Module 12 — Claude Code Remote & Web (15 min)
+## Module 12 — Claude Code Remote & Web (10 min)
 
 *Claude Code without local installation*
 
 - Claude Code in the browser: access via claude.ai (Max/Enterprise)
 - When Remote vs. local? (Onboarding, pair-programming, no setup needed)
-- Remote Control: share sessions, `--remote-control-session-name-prefix`
-- Teleported Sessions: VS Code ↔ Remote
 - Cowork: Desktop app for non-technical users (VM-based, local files)
 - Limitations: permissions, performance, availability
 
-**Demo:** Start a Claude Code Web session, show differences to CLI
+**Overview:** Show Claude Code Web, compare with CLI experience
 
 ---
 
@@ -353,7 +320,7 @@ Each unit is **self-contained**:
 
 ---
 
-## Module 15 — Capstone: Putting It All Together (25 min)
+## Module 15 — Capstone: Putting It All Together (30 min)
 
 *From empty repo to productive setup*
 
@@ -396,16 +363,12 @@ Participants build a complete Claude Code setup:
 | MCP (Model Context Protocol) | M8 | Hands-on |
 | Hooks | M9 | Hands-on |
 | CLI & Headless Mode | M10 | Hands-on |
-| Worktrees & Background Tasks | M10 | Practical |
-| Dispatch & Scheduled Tasks | M10 | Overview |
-| Messages API (SDK, Tool Use, Streaming) | M10 | Reference |
-| Extended Thinking | M1, M10 | Overview + Reference |
+| CI/CD Integration | M10 | Hands-on |
+| Extended Thinking | M1 | Overview |
 | Multimodal / Vision / PDF | M1 | Overview |
-| Prompt Caching & Batch API | M1, M10 | Overview + Reference |
 | Computer Use | M1 | Overview |
-| Agent SDK | M10 | Mention |
 | Plugins & Marketplace | M11 | Demo |
-| Claude Code Remote & Web | M12 | Demo |
+| Claude Code Remote & Web | M12 | Overview |
 | Settings & Configuration | M13 | Overview |
 | Permission System | M4, M13 | Practical |
 | Best Practices & Patterns | M14 | Discussion |

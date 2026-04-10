@@ -1,4 +1,4 @@
-# Module 9 Exercise — GitHub Action Template for Claude Code PR Review
+# Module 10 Exercise — GitHub Action Template for Claude Code PR Review
 # Copy this to .github/workflows/claude-review.yml in your repository
 
 name: Claude Code PR Review
