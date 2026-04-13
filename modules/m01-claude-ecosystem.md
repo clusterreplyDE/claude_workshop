@@ -135,7 +135,7 @@ Beyond basic chat, the Claude API offers powerful capabilities that are especial
 | **Prompt Caching** | Cache reusable context blocks (system prompts, large documents) across API calls. Up to 90% cost reduction on cached content. | High-volume API usage, repeated analysis with same context, cost-efficient pipelines |
 | **Batch API** | Submit large sets of requests asynchronously. 50% cost reduction, 24-hour processing window. | Bulk code analysis, migration tasks, large-scale reporting, dataset processing |
 
-> These features are available via the **Messages API** and are covered with code examples in **Module 9 — Messages API Essentials**.
+> These features are available via the **Messages API** — see the Future Topics section in the README for more details.
 
 ### When to Use the API vs. Claude Code
 
