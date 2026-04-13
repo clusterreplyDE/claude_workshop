@@ -927,10 +927,12 @@ claude -p <span class="str">"fix bug"</span> <span class="flag">--max-budget-usd
               <button class="tab" onclick="switchTab(this,'handson')">Hands-On</button>
             </div>
             <div class="tab-panel active" data-tab="concepts">
-              <div class="key-takeaway"><strong>Three-Level Hierarchy:</strong> User (<code>~/.claude/CLAUDE.md</code>) &#x2192; Project (<code>./CLAUDE.md</code>) &#x2192; Directory (<code>./src/CLAUDE.md</code>)</div>
+              <div class="key-takeaway"><strong>Five-Level Hierarchy:</strong> User &#x2192; Project &#x2192; Directory &#x2192; Local (<code>CLAUDE.local.md</code>, gitignored) &#x2192; Managed (enterprise)</div>
               <div class="concept-grid">
-                <div class="concept-item"><strong>What to Include</strong><span>Tech stack, code style, test commands, architecture decisions, deployment</span></div>
-                <div class="concept-item"><strong>What NOT to Include</strong><span>Standard conventions, API docs, private data &mdash; keep under ~200 lines</span></div>
+                <div class="concept-item"><strong>User</strong><span><code>~/.claude/CLAUDE.md</code> &mdash; applies to all your projects</span></div>
+                <div class="concept-item"><strong>Project</strong><span><code>./CLAUDE.md</code> &mdash; committed, shared with team</span></div>
+                <div class="concept-item"><strong>Directory</strong><span><code>./src/CLAUDE.md</code> &mdash; scoped to specific folders</span></div>
+                <div class="concept-item"><strong>Local</strong><span><code>CLAUDE.local.md</code> &mdash; gitignored, personal overrides &amp; secrets</span></div>
                 <div class="concept-item"><strong>.claude/rules/</strong><span>Path-specific rules with YAML frontmatter &mdash; load only when matching files open</span></div>
                 <div class="concept-item"><strong>/init</strong><span>Auto-generate CLAUDE.md from your codebase analysis</span></div>
               </div>
@@ -1013,12 +1015,25 @@ Always test error paths. Minimum 3 assertions per test.</code></pre>
 <span class="kw">description</span>: <span class="str">Review code for quality and patterns</span>
 <span class="kw">user-invocable</span>: <span class="num">true</span>
 <span class="kw">allowed-tools</span>: [<span class="str">Read</span>, <span class="str">Glob</span>, <span class="str">Grep</span>]
+<span class="kw">context</span>: <span class="str">fork</span>           <span class="cm"># isolated subagent context</span>
+<span class="kw">model</span>: <span class="str">sonnet</span>
+<span class="kw">paths</span>: [<span class="str">"src/**/*.ts"</span>]  <span class="cm"># auto-load for matching files</span>
+<span class="kw">argument-hint</span>: <span class="str">"[file-path]"</span>
 ---
 Review the code at $ARGUMENTS for:
 1. Code quality and readability
 2. Potential bugs or edge cases
 3. Adherence to project conventions
 </code></pre>
+              <h4 style="margin:16px 0 8px;font-size:14px">All SKILL.md Frontmatter Fields</h4>
+              <div class="concept-grid">
+                <div class="concept-item"><strong>name, description</strong><span>Required &mdash; slug for <code>/skillname</code> and help text</span></div>
+                <div class="concept-item"><strong>allowed-tools</strong><span>Restrict to specific tools: <code>[Read, Grep]</code></span></div>
+                <div class="concept-item"><strong>context</strong><span><code>fork</code> = isolated subagent, <code>inherit</code> = parent context</span></div>
+                <div class="concept-item"><strong>paths</strong><span>Auto-load for matching files: <code>["src/**/*.ts"]</code></span></div>
+                <div class="concept-item"><strong>model</strong><span>Force model: <code>opus</code>, <code>sonnet</code>, <code>haiku</code></span></div>
+                <div class="concept-item"><strong>agent</strong><span><code>true</code> = run as full agentic workflow</span></div>
+              </div>
 <pre><code><span class="cm"># Simple command: .claude/commands/fix-issue.md</span>
 Fix GitHub issue #$ARGUMENTS.
 Read the issue, understand the problem,
@@ -1063,9 +1078,11 @@ implement the fix, and run tests.</code></pre>
             <div class="tab-panel active" data-tab="concepts">
               <div class="concept-grid">
                 <div class="concept-item"><strong>Subagents</strong><span>Isolated Claude instances with own context, defined roles, restricted tools</span></div>
-                <div class="concept-item"><strong>Built-in Agents</strong><span>Explore (read-only research), Plan (task breakdown &amp; design)</span></div>
-                <div class="concept-item"><strong>Custom Agents</strong><span>Define in <code>.claude/agents/</code> with YAML frontmatter</span></div>
-                <div class="concept-item"><strong>Tool Control &amp; MCP</strong><span>Restrict tool access, scope MCP servers and memory to subagents</span></div>
+                <div class="concept-item"><strong>Built-in Agents</strong><span>Explore (read-only, Haiku), Plan (task breakdown), General-Purpose (all tools)</span></div>
+                <div class="concept-item"><strong>Custom Agents</strong><span>Define in <code>.claude/agents/</code> with YAML frontmatter (9 fields)</span></div>
+                <div class="concept-item"><strong>Invocation</strong><span>Natural language, <code>@agent-name</code>, CLI <code>--agent</code>, or dynamic (Claude auto-delegates)</span></div>
+                <div class="concept-item"><strong>Tool Wildcards</strong><span><code>Bash(git *)</code>, <code>Edit(*.ts)</code> &mdash; fine-grained tool restrictions</span></div>
+                <div class="concept-item"><strong>MCP &amp; Memory</strong><span>Scope MCP servers and memory to individual subagents</span></div>
               </div>
               <div class="key-takeaway"><strong>Key Takeaway:</strong> Subagents enable delegation through isolated context with controlled tool access and specialized roles.</div>
             </div>
@@ -1076,11 +1093,19 @@ implement the fix, and run tests.</code></pre>
 <span class="kw">description</span>: <span class="str">Reviews code for quality</span>
 <span class="kw">tools</span>: [<span class="str">Read</span>, <span class="str">Glob</span>, <span class="str">Grep</span>]
 <span class="kw">model</span>: <span class="str">sonnet</span>
+<span class="kw">permissionMode</span>: <span class="str">auto</span>
+<span class="kw">maxTurns</span>: <span class="num">20</span>
+<span class="kw">memory</span>: { <span class="str">project</span>: <span class="num">true</span> }
 ---
 You are a senior code reviewer.
 Focus on correctness, readability, and
 adherence to project conventions.
 Flag security issues as critical.</code></pre>
+              <h4 style="margin:16px 0 8px;font-size:14px">Tool Wildcards</h4>
+<pre><code><span class="kw">tools</span>:
+  - <span class="str">Bash(git *)</span>         <span class="cm"># Only git commands</span>
+  - <span class="str">Edit(*.ts)</span>          <span class="cm"># Only TypeScript files</span>
+  - <span class="str">Grep(src/**/\*)</span>     <span class="cm"># Only in src/ directory</span></code></pre>
             </div>
             <div class="tab-panel" data-tab="handson">
               <div class="hands-on-box">
@@ -1141,6 +1166,19 @@ claude mcp remove github      <span class="cm"># Remove a server</span>
 
 <span class="cm"># Scope</span>
 claude mcp add <span class="flag">--scope</span> project github <span class="str">https://mcp.github.com</span></code></pre>
+              <h4 style="margin:16px 0 8px;font-size:14px">Project config: .mcp.json (committed to Git)</h4>
+<pre><code>{
+  <span class="str">"mcpServers"</span>: {
+    <span class="str">"github"</span>: {
+      <span class="str">"transport"</span>: <span class="str">"http"</span>,
+      <span class="str">"url"</span>: <span class="str">"https://mcp.github.company.com"</span>,
+      <span class="str">"headers"</span>: {
+        <span class="str">"Authorization"</span>: <span class="str">"Bearer <span class="flag">${GITHUB_TOKEN}</span>"</span>
+      }
+    }
+  }
+}</code></pre>
+              <div class="key-takeaway"><strong>Scope Priority:</strong> Local (<code>~/.claude.json</code> per project) > Project (<code>.mcp.json</code>, committed) > User (<code>~/.claude.json</code> global). Use <code>${VAR_NAME}</code> for secrets &mdash; resolved at runtime.</div>
             </div>
             <div class="tab-panel" data-tab="handson">
               <div class="hands-on-box">
@@ -1246,6 +1284,7 @@ claude mcp add <span class="flag">--scope</span> project github <span class="str
                 <div class="concept-item"><strong>Headless Mode</strong><span><code>claude -p "prompt"</code> &mdash; one-shot, non-interactive execution</span></div>
                 <div class="concept-item"><strong>Output Formats</strong><span>text, json, stream-json &mdash; machine-readable pipeline output</span></div>
                 <div class="concept-item"><strong>Tool Control</strong><span><code>--allowedTools</code>, <code>--disallowedTools</code> &mdash; restrict what Claude can do</span></div>
+                <div class="concept-item"><strong>Structured Output</strong><span><code>--json-schema</code> &mdash; validate output against a JSON schema</span></div>
                 <div class="concept-item"><strong>CI/CD</strong><span>GitHub Actions integration for automated PR review</span></div>
               </div>
             </div>
@@ -1261,6 +1300,10 @@ claude <span class="flag">-p</span> <span class="str">"review code"</span> <span
 
 <span class="cm"># Cost control</span>
 claude <span class="flag">-p</span> <span class="str">"fix bug"</span> <span class="flag">--max-budget-usd</span> <span class="num">1.00</span>
+
+<span class="cm"># Structured output with schema validation</span>
+claude <span class="flag">-p</span> <span class="str">"Extract issue metadata"</span> \
+  <span class="flag">--json-schema</span> <span class="str">'{"type":"object","properties":{"title":{"type":"string"},"priority":{"type":"string"}}}'</span>
 
 <span class="cm"># CI permissions</span>
 claude <span class="flag">-p</span> <span class="str">"review PR"</span> <span class="flag">--dangerously-skip-permissions</span></code></pre>
@@ -1308,17 +1351,28 @@ claude <span class="flag">-p</span> <span class="str">"review PR"</span> <span c
               </div>
             </div>
             <div class="tab-panel" data-tab="commands">
-              <div class="pill-list">
-                <span class="pill">Code Review Suite</span>
-                <span class="pill">Documentation Bot</span>
-                <span class="pill">Security Scanner</span>
-                <span class="pill">Performance Profiler</span>
+              <h4 style="margin-bottom:12px;font-size:14px">Official Plugins (Anthropic Marketplace)</h4>
+              <div class="concept-grid">
+                <div class="concept-item"><strong>code-review</strong><span>5 parallel Sonnet agents for PR review (bugs, security, CLAUDE.md compliance)</span></div>
+                <div class="concept-item"><strong>commit-commands</strong><span><code>/commit</code>, <code>/commit-push-pr</code> &mdash; streamlined git workflows</span></div>
+                <div class="concept-item"><strong>hookify</strong><span>Auto-generate hooks from conversation patterns or descriptions</span></div>
+                <div class="concept-item"><strong>security-guidance</strong><span>PreToolUse hook monitoring 9 security patterns</span></div>
+                <div class="concept-item"><strong>plugin-dev</strong><span>Guided plugin development toolkit</span></div>
               </div>
+              <h4 style="margin:16px 0 8px;font-size:14px">plugin.json Manifest</h4>
+<pre><code>{
+  <span class="str">"name"</span>: <span class="str">"code-review-toolkit"</span>,
+  <span class="str">"version"</span>: <span class="str">"1.0.0"</span>,
+  <span class="str">"description"</span>: <span class="str">"Code review and quality assurance"</span>,
+  <span class="str">"skills"</span>: { <span class="str">"path"</span>: <span class="str">"skills/"</span> },
+  <span class="str">"hooks"</span>: { <span class="str">"path"</span>: <span class="str">"hooks/"</span> },
+  <span class="str">"mcp"</span>: { <span class="str">"path"</span>: <span class="str">".mcp.json"</span> }
+}</code></pre>
 <pre><code><span class="cm"># Install a plugin</span>
-claude plugin install code-review-suite
+claude plugin install code-review
 
 <span class="cm"># Use namespaced skill</span>
-/code-review-suite:review src/
+/code-review:review src/
 
 <span class="cm"># List installed plugins</span>
 claude plugin list</code></pre>
@@ -1386,7 +1440,7 @@ claude plugin list</code></pre>
             <div class="tab-panel active" data-tab="concepts">
               <div class="concept-grid">
                 <div class="concept-item"><strong>Settings Hierarchy</strong><span>Managed > CLI > Local > Project > User &mdash; higher wins</span></div>
-                <div class="concept-item"><strong>Permission Modes</strong><span>default, acceptEdits, plan, auto, bypassPermissions</span></div>
+                <div class="concept-item"><strong>Permission Modes</strong><span>default, acceptEdits, plan, auto &mdash; plus path-based rules (allow/block per file pattern)</span></div>
                 <div class="concept-item"><strong>Network Config</strong><span>Proxy settings, custom CA certificates for corporate environments</span></div>
                 <div class="concept-item"><strong>Privacy</strong><span>Code is sent for processing. 30-day retention. No training on your data.</span></div>
               </div>
@@ -1474,46 +1528,47 @@ claude plugin list</code></pre>
                 <div class="capstone-step-num">1</div>
                 <div class="capstone-step-info">
                   <div class="capstone-step-title">Create CLAUDE.md + Rules</div>
-                  <div class="capstone-step-desc">Project guide with conventions, build commands, and path-specific rules. ~5 min.</div>
+                  <div class="capstone-step-desc">Create <code>./CLAUDE.md</code> with project overview, build commands, architecture, conventions. Add a rule in <code>.claude/rules/</code>. ~5 min.</div>
                 </div>
               </div>
               <div class="capstone-step" data-step="1" onclick="toggleCapstone(this)">
                 <div class="capstone-step-num">2</div>
                 <div class="capstone-step-info">
                   <div class="capstone-step-title">Build a Custom Skill</div>
-                  <div class="capstone-step-desc">Code review workflow with YAML frontmatter, tool restrictions, and examples. ~5 min.</div>
+                  <div class="capstone-step-desc">Create <code>.claude/skills/review/SKILL.md</code> with frontmatter (<code>allowed-tools</code>, <code>context: fork</code>). ~5 min.</div>
                 </div>
               </div>
               <div class="capstone-step" data-step="2" onclick="toggleCapstone(this)">
                 <div class="capstone-step-num">3</div>
                 <div class="capstone-step-info">
                   <div class="capstone-step-title">Define a Subagent</div>
-                  <div class="capstone-step-desc">Code reviewer with read-only permissions and specific focus. ~4 min.</div>
+                  <div class="capstone-step-desc">Create <code>.claude/agents/reviewer.md</code> with tools allowlist and <code>permissionMode: auto</code>. ~4 min.</div>
                 </div>
               </div>
               <div class="capstone-step" data-step="3" onclick="toggleCapstone(this)">
                 <div class="capstone-step-num">4</div>
                 <div class="capstone-step-info">
                   <div class="capstone-step-title">Connect an MCP Server</div>
-                  <div class="capstone-step-desc">GitHub or filesystem MCP for external data access. ~3 min.</div>
+                  <div class="capstone-step-desc">Add <code>.mcp.json</code> with a server config (GitHub HTTP or local filesystem stdio). ~3 min.</div>
                 </div>
               </div>
               <div class="capstone-step" data-step="4" onclick="toggleCapstone(this)">
                 <div class="capstone-step-num">5</div>
                 <div class="capstone-step-info">
                   <div class="capstone-step-title">Configure a Hook</div>
-                  <div class="capstone-step-desc">Auto-format or lint on every file edit. ~4 min.</div>
+                  <div class="capstone-step-desc">Add PostToolUse hook in <code>.claude/settings.json</code> for auto-format on edit. ~4 min.</div>
                 </div>
               </div>
               <div class="capstone-step" data-step="5" onclick="toggleCapstone(this)">
                 <div class="capstone-step-num">6</div>
                 <div class="capstone-step-info">
                   <div class="capstone-step-title">Sketch CI/CD Integration</div>
-                  <div class="capstone-step-desc">GitHub Actions YAML for automated PR review. ~4 min.</div>
+                  <div class="capstone-step-desc">Create <code>.github/workflows/claude-review.yml</code> with headless PR review. ~4 min.</div>
                 </div>
               </div>
             </div>
-            <div class="key-takeaway" style="margin-top:20px"><strong>Success Criteria:</strong> A new team member clones the repo and immediately gets a productive Claude Code experience.</div>
+            <div class="key-takeaway" style="margin-top:20px"><strong>Starter templates</strong> for each task are in the module markdown (<code>m15-capstone.md</code>) and in <code>exercises/m15-capstone/solutions/</code>.</div>
+            <div class="key-takeaway" style="margin-top:8px"><strong>Success Criteria:</strong> A new team member clones the repo and immediately gets a productive Claude Code experience.</div>
           </div>
         </div>
       </div>
