@@ -2,6 +2,18 @@
 
 > *Claude Code without local installation*
 
+
+
+## Contents
+
+- [Learning Objectives](#learning-objectives)
+- [1. Claude Code in the Browser](#1-claude-code-in-the-browser)
+- [2. Local vs. Remote: When to Use Which](#2-local-vs-remote-when-to-use-which)
+- [3. Cowork: Desktop Agent for Knowledge Workers](#3-cowork-desktop-agent-for-knowledge-workers)
+- [4. Limitations](#4-limitations)
+- [Summary](#summary)
+
+
 ## Learning Objectives
 
 By the end of this module, participants will be able to:

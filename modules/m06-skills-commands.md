@@ -2,6 +2,22 @@
 
 > *Reusable workflows and knowledge*
 
+
+
+## Contents
+
+- [Learning Objectives](#learning-objectives)
+- [1. Commands & Skills — Overview](#1-commands-skills-overview)
+- [2. Commands](#2-commands)
+- [3. Skills — Structure & Frontmatter](#3-skills-structure-frontmatter)
+- [4. Two Types of Skills](#4-two-types-of-skills)
+- [5. String Substitutions & Dynamic Context](#5-string-substitutions-dynamic-context)
+- [6. Bundled Skills](#6-bundled-skills)
+- [7. Priority, Loading & Permissions](#7-priority-loading-permissions)
+- [Hands-On Exercise (10 min)](#hands-on-exercise-10-min)
+- [Summary](#summary)
+
+
 ## Learning Objectives
 
 By the end of this module, participants will be able to:

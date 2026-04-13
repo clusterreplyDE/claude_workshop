@@ -2,6 +2,20 @@
 
 > *Mastering shortcuts, permissions, and version control*
 
+
+
+## Contents
+
+- [Learning Objectives](#learning-objectives)
+- [1. Keyboard Shortcuts](#1-keyboard-shortcuts)
+- [2. Permission Modes](#2-permission-modes)
+- [3. Checkpoints & Rewinding](#3-checkpoints-rewinding)
+- [4. Git Integration](#4-git-integration)
+- [5. Session Management](#5-session-management)
+- [Hands-On Exercise (10 min)](#hands-on-exercise-10-min)
+- [Summary](#summary)
+
+
 ## Learning Objectives
 
 By the end of this module, participants will be able to:

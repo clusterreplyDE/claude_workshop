@@ -2,6 +2,20 @@
 
 > *Connecting Claude to the outside world*
 
+
+
+## Contents
+
+- [Learning Objectives](#learning-objectives)
+- [1. What is MCP?](#1-what-is-mcp)
+- [2. Transport Types](#2-transport-types)
+- [3. Installing MCP Servers](#3-installing-mcp-servers)
+- [4. MCP Server Management](#4-mcp-server-management)
+- [5. Scope: Local, Project, User](#5-scope-local-project-user)
+- [Hands-On Exercise (10 min)](#hands-on-exercise-10-min)
+- [Summary](#summary)
+
+
 ## Learning Objectives
 
 By the end of this module, participants will be able to:

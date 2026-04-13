@@ -2,6 +2,20 @@
 
 > *Learning from experience*
 
+
+
+## Contents
+
+- [Learning Objectives](#learning-objectives)
+- [1. Context Management: /clear vs. /compact](#1-context-management-clear-vs-compact)
+- [2. Context Rot: Why AI Gets Worse Over Time](#2-context-rot-why-ai-gets-worse-over-time)
+- [3. Plan Mode First](#3-plan-mode-first)
+- [4. Prompt Hygiene](#4-prompt-hygiene)
+- [5. Common Patterns](#5-common-patterns)
+- [6. Decision Guide: When to Use What](#6-decision-guide-when-to-use-what)
+- [Summary](#summary)
+
+
 ## Learning Objectives
 
 By the end of this module, participants will be able to:

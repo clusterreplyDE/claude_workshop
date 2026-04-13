@@ -2,6 +2,21 @@
 
 > *Setting the stage: Claude is more than Code*
 
+
+
+## Contents
+
+- [Learning Objectives](#learning-objectives)
+- [1. Claude Web (claude.ai)](#1-claude-web-claudeai)
+- [2. Claude Apps](#2-claude-apps)
+- [3. Claude Code](#3-claude-code)
+- [4. Claude API](#4-claude-api)
+- [5. How It All Connects](#5-how-it-all-connects)
+- [6. Subscription Tiers](#6-subscription-tiers)
+- [Hands-On Exercise (5 min)](#hands-on-exercise-5-min)
+- [Summary](#summary)
+
+
 ## Learning Objectives
 
 By the end of this module, participants will be able to:

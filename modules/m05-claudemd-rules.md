@@ -2,6 +2,21 @@
 
 > *Teaching Claude how YOUR project works*
 
+
+
+## Contents
+
+- [Learning Objectives](#learning-objectives)
+- [1. What Is CLAUDE.md?](#1-what-is-claudemd)
+- [2. The Three-Level Hierarchy](#2-the-three-level-hierarchy)
+- [3. What to Include in CLAUDE.md](#3-what-to-include-in-claudemd)
+- [4. Creating a CLAUDE.md](#4-creating-a-claudemd)
+- [5. The .claude/rules/ Directory](#5-the-clauderules-directory)
+- [6. When to Use Each Approach](#6-when-to-use-each-approach)
+- [Hands-On Exercise (5 min)](#hands-on-exercise-5-min)
+- [Summary](#summary)
+
+
 ## Learning Objectives
 
 By the end of this module, participants will be able to:

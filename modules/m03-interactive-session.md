@@ -2,6 +2,20 @@
 
 > *Understanding how Claude thinks and acts*
 
+
+
+## Contents
+
+- [Learning Objectives](#learning-objectives)
+- [1. The Agentic Loop](#1-the-agentic-loop)
+- [2. Built-In Tools](#2-built-in-tools)
+- [3. File & Folder Referencing](#3-file-folder-referencing)
+- [4. Context Management](#4-context-management)
+- [5. Model Selection](#5-model-selection)
+- [Hands-On Exercise (5 min)](#hands-on-exercise-5-min)
+- [Summary](#summary)
+
+
 ## Learning Objectives
 
 By the end of this module, participants will be able to:

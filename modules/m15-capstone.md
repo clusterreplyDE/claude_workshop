@@ -2,6 +2,23 @@
 
 > *From empty repo to productive setup*
 
+
+
+## Contents
+
+- [Learning Objectives](#learning-objectives)
+- [1. The Capstone Challenge](#1-the-capstone-challenge)
+- [2. Task 1: Create CLAUDE.md (5 min)](#2-task-1-create-claudemd-5-min)
+- [3. Task 2: Build a Custom Skill (5 min)](#3-task-2-build-a-custom-skill-5-min)
+- [4. Task 3: Define a Subagent Role (3 min)](#4-task-3-define-a-subagent-role-3-min)
+- [5. Task 4: Connect MCP Server (3 min)](#5-task-4-connect-mcp-server-3-min)
+- [6. Task 5: Configure a Hook (3 min)](#6-task-5-configure-a-hook-3-min)
+- [7. Task 6: Sketch CI/CD (3 min)](#7-task-6-sketch-cicd-3-min)
+- [8. Final Project Structure](#8-final-project-structure)
+- [9. Evaluation Checklist](#9-evaluation-checklist)
+- [10. Workshop Wrap-Up](#10-workshop-wrap-up)
+
+
 ## Learning Objectives
 
 By the end of this module, participants will be able to:

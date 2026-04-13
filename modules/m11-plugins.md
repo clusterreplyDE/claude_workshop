@@ -2,6 +2,19 @@
 
 > *Sharing and reusing workflows*
 
+
+
+## Contents
+
+- [Learning Objectives](#learning-objectives)
+- [1. What Is a Plugin?](#1-what-is-a-plugin)
+- [2. Plugin Structure](#2-plugin-structure)
+- [3. Installation & Management](#3-installation-management)
+- [4. Marketplace & Official Plugins](#4-marketplace-official-plugins)
+- [Demo: Plugin in Action](#demo-plugin-in-action)
+- [Summary](#summary)
+
+
 ## Learning Objectives
 
 By the end of this module, participants will be able to:

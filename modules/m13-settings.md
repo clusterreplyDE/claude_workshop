@@ -2,6 +2,18 @@
 
 > *Fine-tuning and enterprise context*
 
+
+
+## Contents
+
+- [Learning Objectives](#learning-objectives)
+- [1. Settings Hierarchy](#1-settings-hierarchy)
+- [2. Permission Modes](#2-permission-modes)
+- [3. Cost Awareness](#3-cost-awareness)
+- [4. Privacy & Enterprise](#4-privacy-enterprise)
+- [Summary](#summary)
+
+
 ## Learning Objectives
 
 By the end of this module, participants will be able to:

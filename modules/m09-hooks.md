@@ -2,6 +2,18 @@
 
 > *Code that ALWAYS runs — independent of the LLM*
 
+
+
+## Contents
+
+- [Learning Objectives](#learning-objectives)
+- [1. What Are Hooks?](#1-what-are-hooks)
+- [2. Lifecycle Events](#2-lifecycle-events)
+- [3. Configuration](#3-configuration)
+- [Hands-On Exercise (10 min)](#hands-on-exercise-10-min)
+- [Summary](#summary)
+
+
 ## Learning Objectives
 
 By the end of this module, participants will be able to:

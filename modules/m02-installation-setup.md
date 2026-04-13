@@ -2,6 +2,21 @@
 
 > *From zero to first session*
 
+
+
+## Contents
+
+- [Learning Objectives](#learning-objectives)
+- [1. Installation Methods](#1-installation-methods)
+- [2. System Requirements](#2-system-requirements)
+- [3. Post-Installation Verification](#3-post-installation-verification)
+- [4. Authentication Methods](#4-authentication-methods)
+- [5. First Launch](#5-first-launch)
+- [6. IDE Extensions](#6-ide-extensions)
+- [Hands-On Exercise (5 min)](#hands-on-exercise-5-min)
+- [Summary](#summary)
+
+
 ## Learning Objectives
 
 By the end of this module, participants will be able to:

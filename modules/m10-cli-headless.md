@@ -2,6 +2,19 @@
 
 > *Claude in the pipeline*
 
+
+
+## Contents
+
+- [Learning Objectives](#learning-objectives)
+- [1. Headless / Non-Interactive Mode](#1-headless-non-interactive-mode)
+- [2. Permissions in Headless Mode](#2-permissions-in-headless-mode)
+- [3. Session Management (Overview)](#3-session-management-overview)
+- [4. CI/CD Example: GitHub Actions PR Review](#4-cicd-example-github-actions-pr-review)
+- [Hands-On Exercise (5 min)](#hands-on-exercise-5-min)
+- [Summary](#summary)
+
+
 ## Learning Objectives
 
 By the end of this module, participants will be able to:

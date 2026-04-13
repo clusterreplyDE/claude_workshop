@@ -2,6 +2,21 @@
 
 > *Managing complexity through delegation*
 
+
+
+## Contents
+
+- [Learning Objectives](#learning-objectives)
+- [1. Subagents: Isolated Context Windows](#1-subagents-isolated-context-windows)
+- [2. Defining Subagents](#2-defining-subagents)
+- [3. Built-In Subagents](#3-built-in-subagents)
+- [4. Tool Access Patterns](#4-tool-access-patterns)
+- [5. Invocation Patterns](#5-invocation-patterns)
+- [6. Output & Return](#6-output-return)
+- [Hands-On Exercise (5 min)](#hands-on-exercise-5-min)
+- [Summary](#summary)
+
+
 ## Learning Objectives
 
 By the end of this module, participants will be able to:
