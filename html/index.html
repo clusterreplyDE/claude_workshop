@@ -1432,7 +1432,7 @@ claude plugin list</code></pre>
                 <div class="concept-item"><strong>Context Rot</strong><span>AI degrades over time &mdash; conflicting instructions, abandoned experiments</span></div>
                 <div class="concept-item"><strong>Plan First</strong><span>Always review Claude's approach before execution on complex tasks</span></div>
                 <div class="concept-item"><strong>Prompt Hygiene</strong><span>Be specific, not verbose. One task per prompt. Provide examples.</span></div>
-                <div class="concept-item"><strong>Multi-Agent</strong><span>Parallel worktrees for independent tasks, subagents for focused work</span></div>
+                <div class="concept-item"><strong>Delegation</strong><span>Use subagents for focused, isolated work with restricted tools</span></div>
               </div>
             </div>
             <div class="tab-panel" data-tab="commands">
@@ -1541,7 +1541,7 @@ claude plugin list</code></pre>
         <tr><td><code>--system-prompt</code></td><td>Custom system prompt</td><td><code>claude -p "..." --system-prompt "You are a reviewer"</code></td></tr>
         <tr><td><code>--allowedTools</code></td><td>Restrict to specific tools</td><td><code>claude -p "..." --allowedTools Read,Grep</code></td></tr>
         <tr><td><code>--max-budget-usd</code></td><td>Cost limit per session</td><td><code>claude -p "..." --max-budget-usd 1.00</code></td></tr>
-        <tr><td><code>--worktree</code></td><td>Run in isolated Git worktree</td><td><code>claude --worktree -p "add tests"</code></td></tr>
+        <tr><td><code>--session-id</code></td><td>Set session ID for automation</td><td><code>claude -p "..." --session-id my-run</code></td></tr>
         <tr><td><code>--permission-mode</code></td><td>Set permission mode</td><td><code>claude --permission-mode plan</code></td></tr>
         <tr><td><code>/cost</code></td><td>Show token &amp; cost usage</td><td>In-session command</td></tr>
         <tr><td><code>/context</code></td><td>Inspect loaded context</td><td>In-session command</td></tr>

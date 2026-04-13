@@ -313,7 +313,7 @@ Each unit is **self-contained**:
 - Context rot: why AI gets worse the longer the conversation
 - Plan mode first: plan complex features before executing
 - Prompt hygiene: be specific, but don't micromanage
-- Multi-agent patterns: parallel worktrees, background tasks
+- Delegation: use subagents for focused, isolated work
 - Code review workflow: Claude + human in the loop
 - CLAUDE.md as a team asset
 - Feature comparison: CLAUDE.md vs. rules vs. skills vs. subagents — when to use what
