@@ -89,7 +89,7 @@ Shift+Tab Shift+Tab
 Or set on startup:
 
 ```bash
-claude --permissions auto
+claude --permission-mode auto
 ```
 
 **Best practice:** Start with `default` or `plan`. Move to `acceptEdits` or `auto` only after confirming Claude's approach.
@@ -117,15 +117,15 @@ In VS Code, the Claude extension shows checkpoints:
 2. Browse snapshots with diffs
 3. Click to restore any checkpoint
 
-### Manual Checkpoints
+### Restoring Checkpoints
 
-Create named snapshots for milestones:
+When you press `Esc Esc`, Claude offers three restore options:
 
-```bash
-/checkpoint "Refactoring complete, tests passing"
-# Later:
-/restore "Refactoring complete, tests passing"
-```
+1. **Restore conversation only** — undo Claude's last messages but keep file changes
+2. **Restore code and conversation** — revert both files and conversation to the checkpoint
+3. **Cancel** — do nothing
+
+Checkpoints are created automatically before each tool use. You can browse them in the VS Code Checkpoint Viewer.
 
 ---
 
@@ -143,25 +143,30 @@ When you start a session, Claude is aware of:
 
 ### Claude Makes Commits
 
-```bash
-claude "Find the memory leak in memory-manager.js and fix it"
+Ask Claude in natural language — it uses the Bash tool to run git commands:
 
-# Claude edits the file, runs tests, then:
-# "Commit ready. Commit message: Fix memory leak in memory-manager.js"
-# claude> /commit "Fix memory leak by adding cleanup in destructor"
+```bash
+> Find the memory leak in memory-manager.js and fix it
+
+# Claude edits the file, runs tests, then you say:
+> Commit the fix with a descriptive message
+
+# Claude runs: git add ..., git commit -m "Fix memory leak by adding cleanup in destructor"
 ```
 
 ### Creating Pull Requests
 
 ```bash
-claude "Refactor the auth middleware to use async/await"
+> Refactor the auth middleware to use async/await
 
 # After changes:
-# claude> /pr "Refactor auth middleware to async/await" \
-#   "Improves readability and error handling. Tests pass."
+> Create a PR for this change
 
+# Claude runs: git push, gh pr create ...
 # Output: "PR created: https://github.com/.../pull/123"
 ```
+
+Claude uses `git` and `gh` CLI tools directly — there are no special slash commands for git operations.
 
 ---
 
@@ -171,19 +176,18 @@ claude "Refactor the auth middleware to use async/await"
 |---------|---------|
 | `claude` | Start a new session |
 | `claude --continue` | Resume the last session |
-| `claude --resume` | Pick a session to resume |
-| `claude --fork-session <id>` | Branch from a previous session (parallel work) |
-| `/list-sessions` | Show recent sessions and their IDs |
+| `claude --resume` | Pick a session to resume (interactive selection) |
+| `claude -n "feature-x"` | Start or resume a named session |
 
-### Example: Resume and Branch
+### Example: Resume and Parallel Sessions
 
 ```bash
 # Session A: Worked on authentication, stopped
 claude --continue
 # [Resume authentication work]
 
-# Session B (parallel): Start a bug fix in a new session
-claude
+# Session B (parallel): Start a new named session for a bug fix
+claude -n "bugfix-42"
 # [Work on bug fix independently]
 
 # Later, merge changes from both sessions into main
@@ -193,18 +197,16 @@ claude
 
 ## Hands-On Exercise (10 min)
 
-### Clone a Real Repository and Find a Bug
+### Find and Fix Bugs in the Sample Project
 
 **Setup:**
 
 ```bash
-# Clone a small open-source project with known issues
-git clone https://github.com/lodash/lodash.git
-cd lodash
-
-# Or use a sample provided in the workshop materials
-cd /workshop-samples/bug-hunt-example
+cd exercises/sample-project
+npm install
 ```
+
+This is a Node.js Vehicle API with **6 intentional bugs** (security issues, logic errors, best-practice violations). The test suite has 17 tests — 6 of them fail.
 
 **Step 1: Load Context**
 
@@ -213,11 +215,11 @@ claude @. "What's this project? What are the main modules?"
 # Claude scans the repo, reads README, package.json, key files
 ```
 
-**Step 2: Ask Claude to Find a Bug**
+**Step 2: Ask Claude to Find Bugs**
 
 ```bash
-claude @src @tests "Run the tests. Are there any failures? Find the root cause."
-# Claude reads test files, runs tests (!npm test), identifies failures
+> Run the tests. Are there any failures? Find the root causes.
+# Claude runs npm test, reads failing tests, identifies bugs in src/
 ```
 
 **Step 3: Fix the Bug**
@@ -230,28 +232,26 @@ claude "Fix the bug we found. Make sure tests pass."
 **Step 4: Commit the Fix**
 
 ```bash
-claude> /commit "Fix [bug description] - now passes all tests"
+> Commit the fix with a descriptive message
+# Claude runs git add + git commit
 # Check the commit:
-!git log --oneline -5
+> !git log --oneline -5
 ```
 
 **Step 5: Create a Pull Request (Simulation)**
 
 ```bash
 # On GitHub (or in workshop simulation):
-claude> /pr "Fix [bug]" "Resolves issue #42. All tests passing."
+> Create a PR for this fix. Title: "Fix [bug]". Mention it resolves issue #42.
+# Claude uses gh pr create
 ```
 
-### Expected Output
+### Expected Outcome
 
-```
-✓ Project loaded (47 files scanned)
-✓ Test suite identified: 3 failures
-✓ Root cause found: Missing null check in utils.js line 42
-✓ Bug fixed, tests now pass (187/187)
-✓ Commit created: abc1234 "Fix null handling in utils.js"
-✓ PR ready: https://github.com/.../pull/123
-```
+- Claude finds 6 bugs across `src/config.js`, `src/utils.js`, and `src/api.js`
+- Fixes include: removing hardcoded credentials, adding validation, fixing ID generation, handling division by zero, fixing off-by-one, correcting HTTP status codes
+- All 17 tests pass after fixes
+- Compare your results with `exercises/sample-project/bug-fixes.md` (trainer reference)
 
 ### Troubleshooting During Exercise
 
@@ -270,9 +270,9 @@ claude> /pr "Fix [bug]" "Resolves issue #42. All tests passing."
 |---------|--------------|
 | **Shortcuts** | `Esc Esc` to rewind, `Shift+Tab` to change permissions, `Ctrl+O` for verbose mode |
 | **Permissions** | Start with `default` or `plan`. Move to `acceptEdits` or `auto` when confident. |
-| **Checkpoints** | Automatic snapshots before edits. Rewind with `Esc Esc`. Name milestones with `/checkpoint`. |
-| **Git** | Claude commits, creates PRs. Full history awareness. `/commit` and `/pr` commands. |
-| **Sessions** | `claude --continue` to resume, `/list-sessions` to browse, `--fork-session` for parallel work |
+| **Checkpoints** | Automatic snapshots before edits. Rewind with `Esc Esc`. Browse in VS Code Checkpoint Viewer. |
+| **Git** | Claude commits, creates PRs via git/gh CLI. Full history awareness. Ask in natural language. |
+| **Sessions** | `claude --continue` to resume, `--resume` to pick, `-n "name"` for named sessions |
 
 **Next step:** Module 5 — CLAUDE.md & Rules explores the CLAUDE.md configuration file for project-specific conventions and behaviors.
 

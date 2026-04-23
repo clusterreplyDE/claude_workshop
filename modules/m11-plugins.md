@@ -149,4 +149,6 @@ Found 3 issues:
 | **When to use** | Team workflows, complex setups, distribution across repos |
 | **When not to** | Single-project, experimental — keep as local skills |
 
+> **Handout:** `handout/M11-M15-big-picture-reference.docx` — Plugin structure, remote/web features, settings hierarchy, best practices, feature comparison, capstone checklist, and useful URLs.
+
 **Up next:** Module 12 — Claude Code Remote & Web.

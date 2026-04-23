@@ -243,4 +243,6 @@ Notice how Projects + Custom Instructions shape Claude's responses. This same co
 | **Claude Code** | Agentic coding | Full codebase context, tools, extensibility, CI/CD |
 | **Claude API** | Build custom apps | Programmatic access, Agent SDK |
 
+> **Handout:** `handout/M01-ecosystem-reference.docx` — Product landscape, decision guide, subscription tiers, models, and useful URLs at a glance.
+
 **Up next:** Module 2 — Installing Claude Code and getting your first session running.

@@ -144,7 +144,7 @@ jobs:
 
       - name: Run Claude Review
         env:
-          CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           REVIEW=$(claude -p "Review the changes in this PR. 
             Focus on security, performance, and code quality. 
@@ -168,7 +168,7 @@ jobs:
             });
 ```
 
-**Key points:** Store `CLAUDE_API_KEY` as a GitHub Secret, use `--allowedTools` to restrict to read-only, and `--dangerously-skip-permissions` because there's no TTY.
+**Key points:** Store `ANTHROPIC_API_KEY` as a GitHub Secret, use `--allowedTools` to restrict to read-only, and `--dangerously-skip-permissions` because there's no TTY.
 
 ---
 

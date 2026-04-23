@@ -34,10 +34,10 @@ By the end of this module, participants will be able to:
 Use when **switching to an unrelated task**:
 
 ```bash
-> /plan "implement auth module"
+> /plan implement auth module
 > ... (finish, commit)
 > /clear                          # Reset context completely
-> /plan "optimize database queries"  # New task, fresh context
+> /plan optimize database queries  # New task, fresh context
 ```
 
 ### /compact — Consolidate
@@ -100,20 +100,32 @@ Turn 50+:    "Context rot" — conflicting instructions,
 For any non-trivial task, **plan before executing**:
 
 ```bash
-# Step 1: Plan
-claude --plan "refactor payment module for better error handling"
+# In a session, switch to plan mode first:
+Shift+Tab  # Cycle to "plan" mode
 
-# Claude outputs a plan:
+# Then give your task:
+> refactor payment module for better error handling
+
+# Claude outputs a plan (no code changes yet):
 # 1. Analyze current structure
 # 2. Design new exception hierarchy
 # 3. Implement changes
 # 4. Update tests
 
-# Step 2: Review — Does it match your intent?
+# Review — Does it match your intent?
+# If yes, switch back to default or acceptEdits mode:
+Shift+Tab  # Cycle to "default" or "acceptEdits"
 
-# Step 3: Execute
-claude "refactor payment module for better error handling"
+# Then execute:
+> Go ahead with the plan
 # Claude follows the plan, less backtracking
+```
+
+You can also use the `/plan` slash command for a one-off plan without switching modes:
+
+```bash
+> /plan refactor payment module for better error handling
+# Claude creates a plan, you review, then approve execution
 ```
 
 ### Why Plan First?
@@ -124,11 +136,11 @@ claude "refactor payment module for better error handling"
 
 ```bash
 # BAD: Jump in
-claude "refactor the entire API layer"
+> refactor the entire API layer
 # Risk: wrong direction, wasted time
 
 # GOOD: Plan first
-claude --plan "refactor the entire API layer"
+> /plan refactor the entire API layer
 # Review together, then execute with confidence
 ```
 
@@ -188,7 +200,7 @@ claude "fix the payment processing bug"
 ### Feature + Tests Together
 
 ```bash
-claude --plan "add two-factor authentication"
+> /plan add two-factor authentication
 # Review, then execute — Claude implements feature AND tests
 git add src/auth-2fa.ts tests/auth-2fa.test.ts
 git commit -m "feat: add two-factor auth with tests"
@@ -199,7 +211,7 @@ git commit -m "feat: add two-factor auth with tests"
 When unsure which approach to take:
 
 ```bash
-claude --plan "implement caching — should we use Redis or in-memory?"
+> /plan implement caching — should we use Redis or in-memory?
 # Claude compares tradeoffs, recommends
 # You decide together, then execute
 ```
@@ -249,7 +261,7 @@ One of the most common questions: "I want to enforce X — where do I put it?" T
 |----------|------------|
 | **/clear** | New unrelated task |
 | **/compact** | Long session, token budget tight |
-| **/plan first** | Complex features, refactors |
+| **Plan mode / `/plan` first** | Complex features, refactors |
 | **Specific prompts** | Every interaction |
 | **One task per prompt** | Keep focus |
 | **Commit often** | After logical steps |

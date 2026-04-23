@@ -178,6 +178,8 @@ When a subagent completes, you receive a **summary** of what it did, any generat
 
 ## Hands-On Exercise (5 min)
 
+> We continue working in `exercises/sample-project/`. A reference agent definition is in `exercises/m07-subagents/agents/`.
+
 ### Define and Test a Code Review Subagent
 
 **Step 1: Create the Definition**

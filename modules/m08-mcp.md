@@ -184,6 +184,8 @@ Use `${VAR_NAME}` references — Claude resolves them at runtime.
 
 ### Set Up a Filesystem MCP Server
 
+> We continue working in `exercises/sample-project/`. A reference `.mcp.json` is in `exercises/m08-mcp/`.
+
 This exercise uses a **local stdio MCP server** — no external accounts needed.
 
 **Step 1: Install the Filesystem MCP Server**
@@ -239,5 +241,7 @@ Claude invokes MCP tools (`list_directory`, `read_file`, `write_file`) automatic
 | **Scope** | Local (project-specific), Project (.mcp.json, team), User (global) |
 | **Management** | `claude mcp list/get/remove`, `/mcp` in session |
 | **Debugging** | `MCP_DEBUG=1`, `/mcp`, common issues table |
+
+> **Handout:** `handout/M08-M10-integration-reference.docx` — MCP commands, scopes, hook events, decision control, CLI flags, and GitHub Action template.
 
 **Up next:** Module 9 — Hooks & Permissions (code that ALWAYS runs, independent of the LLM).

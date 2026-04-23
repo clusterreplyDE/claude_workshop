@@ -126,7 +126,7 @@ Skills can be project-level (`.claude/skills/`), personal (`~/.claude/skills/`),
 | `argument-hint` | string | (none) | Usage hint: `"[file-path]"` |
 | `agent` | bool | false | Run as full agentic workflow |
 
-See the exercises folder for a complete SKILL.md example with frontmatter.
+See `exercises/m06-skills-commands/SKILL-FORMAT-REFERENCE.md` for a complete example with all frontmatter fields. The same folder contains example commands and a full skill.
 
 ---
 
@@ -211,6 +211,8 @@ Control what each skill can do with `allowed-tools` in frontmatter. A skill with
 ---
 
 ## Hands-On Exercise (10 min)
+
+> We continue working in `exercises/sample-project/`. Reference examples for commands and skills are in `exercises/m06-skills-commands/`.
 
 ### Create a Custom Slash Command
 

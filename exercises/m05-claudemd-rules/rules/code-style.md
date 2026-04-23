@@ -1,12 +1,11 @@
 ---
-paths:
-  - "src/**/*.js"
+description: JavaScript code style conventions
 ---
 
 # Code Style Rules
 
 - Use `const` by default, `let` only when reassignment is needed, never `var`
-- Prefer arrow functions for callbacks
-- Use template literals instead of string concatenation
-- Always add JSDoc comments with @param and @returns for exported functions
-- Maximum function length: 30 lines (extract helpers if longer)
+- Arrow functions for callbacks: `arr.map(x => x.id)`
+- Template literals for string concatenation: `` `Hello ${name}` ``
+- Destructure objects and arrays where it improves readability
+- Early returns to avoid deep nesting

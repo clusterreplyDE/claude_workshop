@@ -32,7 +32,7 @@ Claude Code resolves settings from highest to lowest priority:
 ```
 Level 1: Managed Settings (Enterprise only)     ← Admin enforced
     ↓
-Level 2: CLI Flags (--mode auto, --max-budget)   ← Single session
+Level 2: CLI Flags (--permission-mode auto, --max-budget)  ← Single session
     ↓
 Level 3: Local (settings.local.json)              ← Machine, git-ignored
     ↓
@@ -44,7 +44,7 @@ Level 5: User (~/.claude/settings.json)           ← Global, all repos
 | Level | File | Use Case |
 |-------|------|----------|
 | **Managed** | Admin-enforced | Enterprise policies |
-| **CLI Flags** | `--mode auto --max-budget-usd 10` | Per-session override |
+| **CLI Flags** | `--permission-mode auto --max-budget-usd 10` | Per-session override |
 | **Local** | `settings.local.json` | Personal prefs, secrets (git-ignored) |
 | **Project** | `.claude/settings.json` | Team conventions |
 | **User** | `~/.claude/settings.json` | Your global defaults |
@@ -66,7 +66,7 @@ Control what Claude is allowed to do:
 
 ```bash
 # Set for a single session
-claude --mode auto
+claude --permission-mode auto
 
 # Set for project (in .claude/settings.json)
 {

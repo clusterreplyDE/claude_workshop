@@ -243,15 +243,19 @@ Option+P (macOS) or Alt+P (Linux/Windows)
 
 ## Hands-On Exercise (5 min)
 
-### Explore a Repository
+### Explore the Sample Project
 
-**Objective:** Load a repository, check context, and experiment with model switching.
+**Objective:** Load the workshop project, check context, and experiment with model switching.
 
-**Step 1: Load a Repository**
+> Make sure you're in `exercises/sample-project/` (set up in M02 Step 6).
+
+**Step 1: Start a Session in the Project**
 
 ```bash
-claude @. "Describe what this project does and its structure"
-# Claude scans the repo with /context
+cd exercises/sample-project
+claude
+> @. Describe what this project does and its structure
+# Claude scans the repo, reads README, package.json, key files
 ```
 
 **Step 2: Check Your Context Usage**
@@ -273,7 +277,7 @@ claude @. "Describe what this project does and its structure"
 ```bash
 /model
 # Pick Haiku for a quick response, or Opus for deeper analysis
-claude "Identify the main entry point and explain its flow"
+> Identify the main entry point and explain the request flow
 ```
 
 **Step 5: Return to Default Model**

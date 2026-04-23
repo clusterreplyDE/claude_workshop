@@ -275,6 +275,17 @@ claude
 /context
 ```
 
+**Step 6: Prepare the Workshop Project**
+
+We'll use the same project throughout the workshop (M03–M15):
+
+```bash
+cd exercises/sample-project
+npm install
+```
+
+This is a Node.js Vehicle API with intentional bugs and a `.claude/` folder containing reference examples for every module.
+
 ### Troubleshooting
 
 | Issue | Solution |
@@ -297,6 +308,9 @@ claude
 | **IDE Integration** | Install VS Code extension (optional) |
 | **Check Version** | `claude --version` |
 | **Update** | `claude update` or `brew upgrade claude-code` |
+
+> **Handout:** `handout/M02-M04-setup-session-reference.docx` — Installation, authentication, built-in tools, context commands, keyboard shortcuts, and permission modes.
+> **CLI Reference:** `handout/M00-cli-reference.md` — Complete list of all CLI flags and subcommands.
 
 **Next steps:** You now have Claude Code running. Module 3 covers the interactive session workflow, tools, and agentic loop.
 

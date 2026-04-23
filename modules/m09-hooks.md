@@ -71,11 +71,11 @@ There are more events (SubagentStop, PreCompact, NotificationReceived, etc.), bu
 
 ### Matchers: Filtering by Tool
 
-You don't have to react to *every* tool call. Use `tools` to filter:
+You don't have to react to *every* tool call. Use `matcher` to filter:
 
 ```json
-"tools": ["Bash"]           // Only Bash commands
-"tools": ["Write", "Edit"]  // Only file modifications
+"matcher": "Bash"              // Only Bash commands
+"matcher": "Write|Edit"        // Only file modifications (regex OR)
 ```
 
 ---
@@ -141,6 +141,8 @@ In a running session, type `/hooks` to interactively add, edit, or inspect hooks
 ---
 
 ## Hands-On Exercise (10 min)
+
+> We continue working in `exercises/sample-project/`. A reference hooks configuration and validation script are in `exercises/m09-hooks/`.
 
 ### Build a Security Hook That Blocks Dangerous Commands
 

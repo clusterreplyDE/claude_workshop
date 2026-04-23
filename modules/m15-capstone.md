@@ -33,7 +33,7 @@ By the end of this module, participants will be able to:
 
 **Goal:** Build a team-ready Claude Code setup so a new team member clones the repo and is immediately productive.
 
-**Starting point:** Empty repository (or provided starter in `exercises/m15-capstone/`)
+**Starting point:** The sample project from M04 (`exercises/sample-project/`) — or an empty repository.
 
 ### The 6 Tasks
 
@@ -41,7 +41,7 @@ By the end of this module, participants will be able to:
 |---|------|-------------|------|----------|
 | 1 | Create CLAUDE.md | Project guide with context | 5 min | Write from template |
 | 2 | Build a custom skill | Review skill with SKILL.md | 5 min | Write from template |
-| 3 | Define a subagent | Code-reviewer description | 3 min | Add to CLAUDE.md |
+| 3 | Define a subagent | Code-reviewer agent file | 3 min | Create in `.claude/agents/` |
 | 4 | Connect MCP server | Filesystem MCP config | 3 min | Copy + adapt from M8 |
 | 5 | Configure a hook | Auto-format on edit | 3 min | Copy + adapt from M9 |
 | 6 | Sketch CI/CD integration | GitHub Action YAML | 3 min | Copy + adapt from M10 |
@@ -66,7 +66,7 @@ Create `CLAUDE.md` in the project root:
 
 ## Quick Start
 - `claude` — start a session
-- `claude --plan "your task"` — plan first
+- `/plan your task` — plan before executing
 - `/code-review:review <file>` — get feedback
 
 ## Architecture
@@ -96,16 +96,18 @@ Create `.claude/skills/code-review/SKILL.md`:
 
 ```markdown
 ---
-title: Code Review Assistant
-subtitle: Review code for bugs, security, and quality
-author: Team
-version: 1.0
+name: code-review
+description: Review code for bugs, security, and quality
+user-invocable: true
+context: fork
+allowed-tools: [Read, Grep, Glob]
+argument-hint: "[file-path]"
 ---
 
-## Description
-Reviews code for bugs, security issues, performance, and style.
+# Code Review
 
-## What to Check
+Review the provided code ($ARGUMENTS) for the following:
+
 1. **Bugs** — null checks, race conditions, logic errors
 2. **Security** — injection, hardcoded secrets, auth bypass
 3. **Performance** — N+1 queries, inefficient loops
@@ -116,27 +118,45 @@ Rate each finding: CRITICAL / HIGH / MEDIUM / LOW
 Include file path, line number, and suggested fix.
 ```
 
-Test it: `claude` → ask Claude to review a file using the skill.
+Test it:
+
+```bash
+claude
+> /code-review src/api.js
+```
 
 ---
 
 ## 4. Task 3: Define a Subagent Role (3 min)
 
-Add a "Subagents" section to your CLAUDE.md (from Task 1):
+Create `.claude/agents/code-reviewer.md` (as learned in M7):
 
 ```markdown
-## Subagents
+---
+name: code-reviewer
+description: Security and quality reviewer (read-only)
+tools:
+  - Read
+  - Grep
+  - Glob
+model: sonnet
+---
 
-### Code Reviewer
-- **Role:** Security and quality reviewer
-- **Tools:** Read, Grep, Glob (read-only)
-- **Scope:** Only `src/` and `tests/` directories
-- **When to use:** Before committing, ask Claude:
-  "Spawn a subagent to review src/payment.ts for security issues.
-  It should be read-only."
+You are an expert code reviewer. Focus on:
+
+1. **Security**: Vulnerabilities, injection, hardcoded secrets
+2. **Performance**: N+1 queries, inefficient loops
+3. **Maintainability**: Clarity, naming, test coverage
+
+Be concise. Prioritize: security > performance > style.
+Only review files in `src/` and `tests/`.
 ```
 
-Claude will create a focused subagent with its own isolated context (see M7). You can also create a dedicated agent file at `.claude/agents/code-reviewer.md` using the SKILL.md frontmatter format from M6, with `tools: [Read, Grep, Glob]`.
+Test it:
+
+```bash
+> @code-reviewer Review src/payment.ts for security issues
+```
 
 ---
 
@@ -181,7 +201,7 @@ Add to `.claude/settings.json`:
         "hooks": [
           {
             "type": "command",
-            "command": "/bin/bash -c 'npx prettier --write $TOOL_INPUT 2>/dev/null; echo \"Formatted: $TOOL_INPUT\"'"
+            "command": "/bin/bash -c 'FILE=$(echo \"$TOOL_INPUT\" | jq -r .file_path); npx prettier --write \"$FILE\" 2>/dev/null; echo \"Formatted: $FILE\"'"
           }
         ]
       }
@@ -190,7 +210,7 @@ Add to `.claude/settings.json`:
 }
 ```
 
-This auto-formats files after every edit. Remember: exit 0 = continue, exit 2 = block.
+Note: `$TOOL_INPUT` is JSON (e.g. `{"file_path": "/src/app.js", ...}`), so we extract the path with `jq` before passing it to Prettier. Exit 0 = continue, exit 2 = block.
 
 ---
 
@@ -215,7 +235,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Claude Review
         env:
-          CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           claude -p "Review this PR for security and quality." \
             --output-format text \
@@ -243,8 +263,10 @@ your-repo/
 ├── CLAUDE.md                         # Task 1
 ├── .claude/
 │   ├── settings.json                 # Task 5 (hooks)
-│   └── skills/
-│       └── code-review/SKILL.md      # Task 2
+│   ├── skills/
+│   │   └── code-review/SKILL.md      # Task 2
+│   └── agents/
+│       └── code-reviewer.md          # Task 3
 ├── .mcp.json                         # Task 4
 ├── .github/
 │   └── workflows/

@@ -159,10 +159,12 @@ Rules also support user-level placement at `~/.claude/rules/` for standards you 
 
 ### Generate and Customize a CLAUDE.md
 
+> **Exercise files:** `exercises/m05-claudemd-rules/` — starter CLAUDE.md template and example rule files with YAML frontmatter.
+
 **Step 1: Auto-Generate**
 
 ```bash
-cd /workshop-samples/sample-api
+cd exercises/sample-project
 claude /init
 # Review the generated CLAUDE.md
 cat CLAUDE.md
@@ -201,6 +203,8 @@ claude "Create a new endpoint for listing users"
 | **`/init`** | Auto-generates a draft CLAUDE.md from your codebase |
 | **`.claude/rules/`** | Organize rules by topic with conditional path-based loading |
 | **Size** | Keep under 200 lines. Reference external docs with `@file`. |
+
+> **Handout:** `handout/M05-M07-customization-reference.docx` — CLAUDE.md hierarchy, best practices, skill frontmatter, string substitutions, built-in agents, and invocation patterns.
 
 **Next step:** Module 6 covers Skills and Commands — how to turn conventions into reusable workflows, and how they compare to CLAUDE.md.
 
