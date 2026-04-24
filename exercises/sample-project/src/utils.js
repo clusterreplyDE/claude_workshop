@@ -2,36 +2,34 @@
  * Utility functions for the Workshop Sample API
  */
 
-/**
- * Validate a vehicle object
- * BUG 2: Missing validation for required fields (year can be negative, model can be empty)
- */
+const crypto = require("crypto");
+
 function validateVehicle(vehicle) {
   if (!vehicle) return { valid: false, error: "Vehicle is required" };
   if (!vehicle.make) return { valid: false, error: "Make is required" };
-  // Missing: model validation
-  // Missing: year range validation
+  if (!vehicle.model) return { valid: false, error: "Model is required" };
+  const currentYear = new Date().getFullYear();
+  if (typeof vehicle.year !== "number" || vehicle.year < 1886 || vehicle.year > currentYear + 1) {
+    return { valid: false, error: `Year must be between 1886 and ${currentYear + 1}` };
+  }
   return { valid: true };
 }
 
-/**
- * Generate a unique ID
- * BUG 3: Not actually unique — Math.random() can produce collisions
- */
 function generateId() {
-  return Math.floor(Math.random() * 10000).toString();
+  return crypto.randomUUID();
 }
 
-/**
- * Calculate average mileage from a list of vehicles
- * BUG 4: Division by zero when array is empty, also doesn't handle missing mileage
- */
 function calculateAverageMileage(vehicles) {
+  if (!vehicles || vehicles.length === 0) return 0;
   let total = 0;
+  let count = 0;
   for (const v of vehicles) {
-    total += v.mileage;
+    if (typeof v.mileage === "number") {
+      total += v.mileage;
+      count++;
+    }
   }
-  return total / vehicles.length;
+  return count === 0 ? 0 : total / count;
 }
 
 /**
