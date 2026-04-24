@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "transport": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/tmp/mcp-demo"]
+    },
+    "github": {
+      "transport": "http",
+      "url": "https://mcp.github.example.com",
+      "headers": {
+        "Authorization": "Bearer ${GITHUB_TOKEN}"
+      }
+    }
+  }
+}

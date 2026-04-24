@@ -2,6 +2,21 @@
 
 > *From zero to first session*
 
+
+
+## Contents
+
+- [Learning Objectives](#learning-objectives)
+- [1. Installation Methods](#1-installation-methods)
+- [2. System Requirements](#2-system-requirements)
+- [3. Post-Installation Verification](#3-post-installation-verification)
+- [4. Authentication Methods](#4-authentication-methods)
+- [5. First Launch](#5-first-launch)
+- [6. IDE Extensions](#6-ide-extensions)
+- [Hands-On Exercise (5 min)](#hands-on-exercise-5-min)
+- [Summary](#summary)
+
+
 ## Learning Objectives
 
 By the end of this module, participants will be able to:
@@ -9,7 +24,7 @@ By the end of this module, participants will be able to:
 - Install Claude Code using the recommended method for their OS
 - Verify the installation and diagnose any issues
 - Authenticate against Claude API, AWS Bedrock, or Google Vertex AI
-- Install and configure IDE extensions (VS Code, JetBrains)
+- Install and configure the VS Code extension
 - Start their first interactive session
 
 ---
@@ -211,75 +226,7 @@ Cost: $0.00
    - Use the Checkpoint Viewer to navigate between snapshots
    - Run `claude` in the integrated terminal for full sessions
 
-### JetBrains Plugins (IntelliJ, WebStorm, PyCharm, Rider, GoLand)
-
-1. **Install:** Settings → Plugins → Search "Claude Code" → Install
-2. **Authenticate:** Use the plugin's settings panel
-3. **Usage:**
-   - Right-click → "Ask Claude"
-   - Native diff viewer integration
-   - Inline suggestions and edits
-   - Terminal integration for full sessions
-
-> Both extensions are **optional** — you can use Claude Code entirely from the terminal. The extensions add IDE convenience but are not required.
-
----
-
-## 7. Configuration Files
-
-Claude Code respects standard environment variables and config locations:
-
-### API Keys & Auth
-
-| Environment Variable | Purpose |
-|----------------------|---------|
-| `ANTHROPIC_API_KEY` | Direct API authentication |
-| `AWS_PROFILE` | AWS Bedrock authentication |
-| `GOOGLE_APPLICATION_CREDENTIALS` | Google Vertex AI service account |
-| `HTTP_PROXY` / `HTTPS_PROXY` | Corporate proxy settings |
-
-### Config Directory
-
-Claude Code stores configuration at:
-- **macOS/Linux:** `~/.claude/`
-- **Windows:** `%APPDATA%\Claude\`
-
-Inside you'll find:
-- `config.json` — Session defaults, model preferences
-- `credentials.json` — Cached authentication tokens
-- `skills/` — User-level skills directory
-- `commands/` — User-level commands
-- `rules/` — User-level rules (CLAUDE.md alternative)
-
----
-
-## 8. Offline Mode (Limited)
-
-Claude Code requires internet to call the Claude API, but cached models and local tools work offline:
-
-```bash
-# These work offline (no API calls needed):
-claude !ls
-claude !grep pattern file.txt
-claude @@ [show loaded context]
-
-# These require internet:
-claude "explain this code"  # API call needed
-```
-
-For fully offline workflows, consider the **Claude Code Agent SDK** and a cached model context (advanced topic).
-
----
-
-> 🏢 **Reply Context:** In corporate environments with strict network policies:
->
-> - **Proxy Setup:** Set `HTTP_PROXY` and `HTTPS_PROXY` for your corporate proxy. Test with `claude doctor`.
-> - **Bedrock/Vertex:** For BMW projects, authenticate via AWS Bedrock or Google Vertex AI instead of direct API access. This keeps traffic within your cloud environment.
-> - **API Allowlist:** Ensure your firewall allows:
->   - `api.anthropic.com` (443/HTTPS)
->   - `registry.npmjs.org` (443/HTTPS) — for skill/plugin downloads
->   - Your cloud provider's API endpoints (if using Bedrock/Vertex)
-> - **SSH & Bastion Hosts:** Claude Code works through SSH tunnels; configure `ProxyCommand` in `~/.ssh/config` if needed.
+> The VS Code extension is **optional** — you can use Claude Code entirely from the terminal. The extension adds IDE convenience but is not required.
 
 ---
 
@@ -328,6 +275,17 @@ claude
 /context
 ```
 
+**Step 6: Prepare the Workshop Project**
+
+We'll use the same project throughout the workshop (M03–M15):
+
+```bash
+cd exercises/sample-project
+npm install
+```
+
+This is a Node.js Vehicle API with intentional bugs and a `.claude/` folder containing reference examples for every module.
+
 ### Troubleshooting
 
 | Issue | Solution |
@@ -347,9 +305,12 @@ claude
 | **Verify** | `claude doctor` |
 | **Authenticate** | `claude` (browser login) or set `ANTHROPIC_API_KEY` env var |
 | **Start Session** | `claude` or `claude "your prompt"` |
-| **IDE Integration** | Install VS Code or JetBrains plugin (optional) |
+| **IDE Integration** | Install VS Code extension (optional) |
 | **Check Version** | `claude --version` |
 | **Update** | `claude update` or `brew upgrade claude-code` |
+
+> **Handout:** `handout/M02-M04-setup-session-reference.docx` — Installation, authentication, built-in tools, context commands, keyboard shortcuts, and permission modes.
+> **CLI Reference:** `handout/M00-cli-reference.md` — Complete list of all CLI flags and subcommands.
 
 **Next steps:** You now have Claude Code running. Module 3 covers the interactive session workflow, tools, and agentic loop.
 

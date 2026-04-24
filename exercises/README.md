@@ -1,66 +1,77 @@
 # Exercises — Claude Code Deep Dive Workshop
 
-This folder contains all hands-on materials for the workshop exercises.
+This folder contains hands-on materials for the workshop, organized by module.
 
 ## Structure
 
 ```
 exercises/
-├── README.md              ← You are here
-├── sample-project/        # Sample Node.js project with intentional issues
+├── README.md                              ← You are here
+│
+├─�� sample-project/                        # Shared project for all exercises (M03–M15)
+│   ├── src/                               # Node.js Vehicle API with 6 intentional bugs
+│   ├── test/                              # 17 tests (6 failing)
 │   ├── package.json
-│   ├── src/
-│   │   ├── index.js       # Entry point (has bugs)
-│   │   ├── api.js         # API handlers (has bugs)
-│   │   ├── utils.js       # Utility functions (has bugs)
-│   │   └── config.js      # Configuration (has issues)
-│   ├── test/
-│   │   └── utils.test.js  # Tests (some failing)
-│   └── README.md          # Project description
+│   └── bug-fixes.md                       # Trainer reference: all bugs documented
 │
-├── configs/               # Starter configs for Modules 4-9
-│   ├── CLAUDE.md.example           # M4: Example CLAUDE.md
-│   ├── rules/                      # M4: Example .claude/rules/
-│   │   ├── code-style.md
-│   │   └── testing.md
-│   ├── skills/                     # M5: Example skills
-│   │   └── review/SKILL.md
-│   ├── commands/                   # M5: Example commands
-│   │   └── fix-issue.md
-│   ├── agents/                     # M6: Example subagents
-│   │   └── reviewer.md
-│   ├── mcp-setup.sh               # M7: MCP setup script
-│   ├── hooks-example.json          # M8: Example hook config
-│   └── github-action.yml           # M9: CI/CD template
+├── m05-claudemd-rules/                    # Module 5: CLAUDE.md & Rules
+│   ├── CLAUDE.md.example                  #   Starter CLAUDE.md template
+│   └── rules/                             #   Example .claude/rules/ files
+│       ├── code-style.md                  #     (no paths — always loaded)
+│       ├── testing.md                     #     (paths: test/**/*.js)
+│       └── api-design.md                  #     (paths: src/api.js, src/index.js)
 │
-└── solutions/             # Reference solutions
-    ├── CLAUDE.md                   # M4: Complete CLAUDE.md
-    ├── rules/                      # M4: Complete rules
-    ├── skills/                     # M5: Complete skills
-    ├── agents/                     # M6: Complete agents
-    ├── hooks.json                  # M8: Complete hooks config
-    ├── github-action.yml           # M9: Complete GitHub Action
-    └── capstone-structure.md       # M14: Expected final structure
+├── m06-skills-commands/                   # Module 6: Skills & Commands
+│   ├── SKILL-FORMAT-REFERENCE.md          #   All SKILL.md frontmatter fields
+│   ├── commands/                          #   Example .claude/commands/ files
+│   │   ├── review.md                      #     → /review
+│   │   └── fix-issue.md                   #     → /fix-issue (uses $ARGUMENTS)
+│   └── skills/                            #   Example .claude/skills/ structure
+│       └── code-review/SKILL.md           #     Full skill with frontmatter
+│
+├── m07-subagents/                         # Module 7: Subagents
+│   └── agents/                            #   Example .claude/agents/ file
+│       └── code-reviewer.md               #     Read-only reviewer agent
+│
+├── m08-mcp/                               # Module 8: MCP
+│   └── mcp.json                           #   Example .mcp.json (filesystem + GitHub)
+│
+├── m09-hooks/                             # Module 9: Hooks
+│   ├── settings.json                      #   Example .claude/settings.json with hooks
+│   └── scripts/                           #   Hook scripts
+│       └── validate-bash.sh               #     PreToolUse: block dangerous commands
+│
+└── m10-cicd/                              # Module 10: CI/CD
+    └── .github/workflows/
+        └── claude-review.yml              #   GitHub Action for PR review
 ```
 
 ## How to Use
 
-### Module 3 — Interactive Session (Bug Hunting)
+### Sample Project (M03–M15)
+
+The sample project is the shared working environment throughout the workshop:
 
 ```bash
 cd exercises/sample-project
 npm install
-claude
-# Ask Claude to find and fix bugs, run tests, commit
+npm test          # 11 pass, 6 fail — the bugs are intentional
 ```
 
-### Modules 4-9 — Configuration Exercises
+### Module Exercise Files (M05–M10)
 
-1. Copy configs from `configs/` to your project's `.claude/` directory
-2. Modify them according to the exercise instructions in each module
-3. Compare your results with the `solutions/` folder
+Each module folder contains reference files in the correct directory structure. Participants can copy them into the sample project:
 
-### Module 14 — Capstone
+```bash
+# Example: copy rules into sample-project
+cp -r exercises/m05-claudemd-rules/rules/ exercises/sample-project/.claude/rules/
 
-Use the `configs/` as starter templates and build a complete Claude Code setup.
-Compare against `solutions/capstone-structure.md` for the expected outcome.
+# Example: copy a skill
+cp -r exercises/m06-skills-commands/skills/ exercises/sample-project/.claude/skills/
+```
+
+### Tips
+
+- All step-by-step instructions are in the **module markdown files** (`modules/m01-...` through `modules/m15-...`)
+- The exercise files here are ready-to-use references in the correct folder structure
+- `bug-fixes.md` is trainer-only — don't share with participants before the M04 exercise

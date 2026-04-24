@@ -1,0 +1,36 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/bin/bash ./scripts/validate-bash.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/bin/bash -c 'FILE=$(echo \"$TOOL_INPUT\" | jq -r .file_path); npx prettier --write \"$FILE\" 2>/dev/null; echo \"Formatted: $FILE\"'"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"Session started: $(date '+%Y-%m-%d %H:%M') | Branch: $(git branch --show-current 2>/dev/null || echo 'N/A')\""
+          }
+        ]
+      }
+    ]
+  }
+}

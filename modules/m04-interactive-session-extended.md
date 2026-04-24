@@ -1,0 +1,278 @@
+# Module 4 — Interactive Session Extended (15 min)
+
+> *Mastering shortcuts, permissions, and version control*
+
+
+
+## Contents
+
+- [Learning Objectives](#learning-objectives)
+- [1. Keyboard Shortcuts](#1-keyboard-shortcuts)
+- [2. Permission Modes](#2-permission-modes)
+- [3. Checkpoints & Rewinding](#3-checkpoints-rewinding)
+- [4. Git Integration](#4-git-integration)
+- [5. Session Management](#5-session-management)
+- [Hands-On Exercise (10 min)](#hands-on-exercise-10-min)
+- [Summary](#summary)
+
+
+## Learning Objectives
+
+By the end of this module, participants will be able to:
+
+- Master keyboard shortcuts for fast navigation and workflow
+- Understand and switch between permission modes for different safety levels
+- Navigate checkpoints to undo changes and rewind to previous states
+- Integrate with Git to find bugs, commit fixes, and create pull requests
+- Manage multiple sessions for parallel work and efficient context handling
+
+---
+
+## 1. Keyboard Shortcuts
+
+Master these to work faster:
+
+| Shortcut | Action |
+|----------|--------|
+| `Esc` | Stop Claude mid-response |
+| `Esc` `Esc` | Rewind to last checkpoint |
+| `Shift+Tab` | Cycle permission modes |
+| `Ctrl+C` | Cancel prompt input or current operation |
+| `Ctrl+O` | Toggle verbose output (shows tool calls) |
+| `Ctrl+B` | Move current task to background |
+| `Ctrl+T` | Open task list (`/todo`) |
+| `Ctrl+G` | Open editor for multi-line prompts |
+| `!` (prefix) | Force bash mode (run command directly) |
+| `/btw` (prefix) | Ask a side question (doesn't affect main task) |
+
+**Examples:**
+
+```bash
+# Stop Claude if it's taking too long
+Esc
+
+# Rewind the last change
+Esc Esc
+
+# Ask a quick question without losing focus
+/btw "What's the Node version?"
+
+# Cycle through permission modes
+Shift+Tab Shift+Tab
+
+# Send a task to background and start a new one
+Ctrl+B
+"Now let's refactor the API"
+```
+
+---
+
+## 2. Permission Modes
+
+Control how much autonomy Claude has. Change with `Shift+Tab`.
+
+| Mode | Behavior | Use Case |
+|------|----------|----------|
+| **default** | Claude shows diffs before editing files. Asks before running dangerous commands (rm, reset, deploy). | Safe, hands-on. Good for learning. |
+| **acceptEdits** | Claude edits files directly, no confirmation. Safe commands auto-run. Dangerous commands still ask. | Trusted workflows. Faster iterations. |
+| **plan** | Claude explains its approach before taking ANY action. You review and approve. | High-stakes changes. Code reviews. |
+| **auto** | Claude runs everything without asking. Full autonomy. | Trusted automation, CI/CD environments. |
+| **dangerously-skip-permissions** | Bypasses all safety checks. Use with extreme caution. | Advanced users only. Can break things. |
+
+### Change Mode During Session
+
+```bash
+Shift+Tab Shift+Tab
+# Cycles through: default → acceptEdits → plan → auto → dangerously-skip-permissions → default
+```
+
+Or set on startup:
+
+```bash
+claude --permission-mode auto
+```
+
+**Best practice:** Start with `default` or `plan`. Move to `acceptEdits` or `auto` only after confirming Claude's approach.
+
+---
+
+## 3. Checkpoints & Rewinding
+
+Claude creates automatic snapshots before making edits. Roll back anytime.
+
+### Automatic Checkpoints
+
+Before Claude edits a file, it saves a checkpoint. You can restore it:
+
+```bash
+Esc Esc
+# Rewind to the previous checkpoint
+# Prompts: "Restore conversation only" or "Restore code and conversation"
+```
+
+### Checkpoint Viewer (VS Code)
+
+In VS Code, the Claude extension shows checkpoints:
+1. Open the Checkpoints panel in the Claude sidebar
+2. Browse snapshots with diffs
+3. Click to restore any checkpoint
+
+### Restoring Checkpoints
+
+When you press `Esc Esc`, Claude offers three restore options:
+
+1. **Restore conversation only** — undo Claude's last messages but keep file changes
+2. **Restore code and conversation** — revert both files and conversation to the checkpoint
+3. **Cancel** — do nothing
+
+Checkpoints are created automatically before each tool use. You can browse them in the VS Code Checkpoint Viewer.
+
+---
+
+## 4. Git Integration
+
+Claude Code understands your Git history and can commit changes.
+
+### What Claude Sees
+
+When you start a session, Claude is aware of:
+- Current branch
+- Uncommitted changes (staged and unstaged)
+- Recent commit history
+- `.gitignore` rules
+
+### Claude Makes Commits
+
+Ask Claude in natural language — it uses the Bash tool to run git commands:
+
+```bash
+> Find the memory leak in memory-manager.js and fix it
+
+# Claude edits the file, runs tests, then you say:
+> Commit the fix with a descriptive message
+
+# Claude runs: git add ..., git commit -m "Fix memory leak by adding cleanup in destructor"
+```
+
+### Creating Pull Requests
+
+```bash
+> Refactor the auth middleware to use async/await
+
+# After changes:
+> Create a PR for this change
+
+# Claude runs: git push, gh pr create ...
+# Output: "PR created: https://github.com/.../pull/123"
+```
+
+Claude uses `git` and `gh` CLI tools directly — there are no special slash commands for git operations.
+
+---
+
+## 5. Session Management
+
+| Command | Purpose |
+|---------|---------|
+| `claude` | Start a new session |
+| `claude --continue` | Resume the last session |
+| `claude --resume` | Pick a session to resume (interactive selection) |
+| `claude -n "feature-x"` | Start or resume a named session |
+
+### Example: Resume and Parallel Sessions
+
+```bash
+# Session A: Worked on authentication, stopped
+claude --continue
+# [Resume authentication work]
+
+# Session B (parallel): Start a new named session for a bug fix
+claude -n "bugfix-42"
+# [Work on bug fix independently]
+
+# Later, merge changes from both sessions into main
+```
+
+---
+
+## Hands-On Exercise (10 min)
+
+### Find and Fix Bugs in the Sample Project
+
+**Setup:**
+
+```bash
+cd exercises/sample-project
+npm install
+```
+
+This is a Node.js Vehicle API with **6 intentional bugs** (security issues, logic errors, best-practice violations). The test suite has 17 tests — 6 of them fail.
+
+**Step 1: Load Context**
+
+```bash
+claude @. "What's this project? What are the main modules?"
+# Claude scans the repo, reads README, package.json, key files
+```
+
+**Step 2: Ask Claude to Find Bugs**
+
+```bash
+> Run the tests. Are there any failures? Find the root causes.
+# Claude runs npm test, reads failing tests, identifies bugs in src/
+```
+
+**Step 3: Fix the Bug**
+
+```bash
+claude "Fix the bug we found. Make sure tests pass."
+# Claude edits the code, runs tests iteratively, confirms fix
+```
+
+**Step 4: Commit the Fix**
+
+```bash
+> Commit the fix with a descriptive message
+# Claude runs git add + git commit
+# Check the commit:
+> !git log --oneline -5
+```
+
+**Step 5: Create a Pull Request (Simulation)**
+
+```bash
+# On GitHub (or in workshop simulation):
+> Create a PR for this fix. Title: "Fix [bug]". Mention it resolves issue #42.
+# Claude uses gh pr create
+```
+
+### Expected Outcome
+
+- Claude finds 6 bugs across `src/config.js`, `src/utils.js`, and `src/api.js`
+- Fixes include: removing hardcoded credentials, adding validation, fixing ID generation, handling division by zero, fixing off-by-one, correcting HTTP status codes
+- All 17 tests pass after fixes
+- Compare your results with `exercises/sample-project/bug-fixes.md` (trainer reference)
+
+### Troubleshooting During Exercise
+
+| Issue | Fix |
+|-------|-----|
+| `Too much context loaded` | Use `/compact` to refocus on one area |
+| `Tests taking too long` | Use `Ctrl+B` to background the task, start another |
+| `Want to undo a change` | Press `Esc` `Esc` to rewind to last checkpoint |
+| `Stuck on a problem` | Ask `/btw "Can you try a different approach?"` |
+
+---
+
+## Summary
+
+| Concept | Key Takeaway |
+|---------|--------------|
+| **Shortcuts** | `Esc Esc` to rewind, `Shift+Tab` to change permissions, `Ctrl+O` for verbose mode |
+| **Permissions** | Start with `default` or `plan`. Move to `acceptEdits` or `auto` when confident. |
+| **Checkpoints** | Automatic snapshots before edits. Rewind with `Esc Esc`. Browse in VS Code Checkpoint Viewer. |
+| **Git** | Claude commits, creates PRs via git/gh CLI. Full history awareness. Ask in natural language. |
+| **Sessions** | `claude --continue` to resume, `--resume` to pick, `-n "name"` for named sessions |
+
+**Next step:** Module 5 — CLAUDE.md & Rules explores the CLAUDE.md configuration file for project-specific conventions and behaviors.
+

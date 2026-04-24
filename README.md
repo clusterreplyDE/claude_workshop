@@ -15,27 +15,35 @@ workshop/
 ├── README.md                  ← You are here
 │
 ├── modules/                   # Detailed module content (Markdown)
-│   ├── 00_WORKSHOP_OUTLINE.md #   Workshop outline & schedule (v3.0)
-│   ├── M01_CLAUDE_ECOSYSTEM.md#   Module 1: The Claude Ecosystem
-│   ├── M02_INSTALLATION_SETUP.md
-│   ├── ...                    #   (M01–M14, one file per module)
-│   └── M14_CAPSTONE.md        #   Module 14: Capstone
+│   ├── 00-workshop-outline.md #   Workshop outline & schedule (v3.0)
+│   ├── m01-claude-ecosystem.md#   Module 1: The Claude Ecosystem
+│   ├── m02-installation-setup.md
+│   ├── ...                    #   (m01–m15, one file per module)
+│   └── m15-capstone.md        #   Module 15: Capstone
 │
 ├── slides/                    # Workshop presentation (PowerPoint)
 │   └── workshop.pptx          #   Single deck for the full workshop
 │
 ├── handout/                   # Participant materials (Word / PDF)
 │   ├── M01-ecosystem-reference.docx
-│   ├── M02-M03-setup-session-reference.docx
-│   ├── M04-M06-customization-reference.docx
-│   ├── M07-M09-integration-reference.docx
-│   ├── M10-M14-big-picture-reference.docx
+│   ├── M02-M04-setup-session-reference.docx
+│   ├── M05-M07-customization-reference.docx
+│   ├── M08-M10-integration-reference.docx
+│   ├── M11-M15-big-picture-reference.docx
 │   └── cli-reference.md       #   Complete CLI flag & subcommand reference
 │
-├── exercises/                 # Hands-on materials
-│   ├── sample-project/        #   Sample repo with intentional bugs/TODOs
-│   ├── configs/               #   Example CLAUDE.md, skills, hooks, MCP configs
-│   └── solutions/             #   Reference solutions for exercises
+├── exercises/                 # Hands-on materials (organized by module)
+│   ├── m04-interactive-extended/
+│   ├── m05-claudemd-rules/
+│   ├── m06-skills-commands/
+│   ├── m07-subagents/
+│   ├── m08-mcp/
+│   ├── m09-hooks/
+│   ├── m10-cicd/
+│   └── m15-capstone/
+│
+├── html/                      # Interactive workshop web page
+│   └── index.html             #   Single-page app with schedule, modules, CLI reference
 │
 └── .gitignore                 # Git ignore rules
 ```
@@ -47,15 +55,16 @@ workshop/
 | **modules/** | Detailed reference material per topic (Markdown). Knowledge base, prep guide, and post-workshop download for participants. | Trainer + Participants |
 | **slides/** | Single PowerPoint deck (.pptx) guiding through the full workshop. Trainer switches to terminal/tools for hands-on parts. | Trainer (on screen) |
 | **handout/** | Cheat sheet with commands, examples, and quick references. Distributed as Word (.docx) and/or PDF for printing or digital use. | Participants (during workshop) |
-| **exercises/** | Sample project, starter configs, and reference solutions for hands-on tasks. | Participants (during workshop) |
+| **exercises/** | Starter configs, sample project, and reference solutions for hands-on tasks — organized by module. | Participants (during workshop) |
+| **html/** | Interactive single-page web app with schedule, expandable module cards, CLI reference, and progress tracking. | Trainer + Participants |
 
 ## Workshop Schedule
 
 | Time | Unit | Theme |
 |------|------|-------|
-| 09:30–11:00 | **Unit 1: Getting Started** | Ecosystem, Setup, First Session |
+| 09:30–11:00 | **Unit 1: Getting Started** | Ecosystem, Setup, Interactive Sessions |
 | 11:00–11:15 | Coffee Break | |
-| 11:15–12:30 | **Unit 2: Making Claude Yours** | CLAUDE.md, Skills, Subagents |
+| 11:15–12:30 | **Unit 2: Making Claude Yours** | CLAUDE.md, Skills & Commands, Subagents |
 | 12:30–13:30 | Lunch Break | |
 | 13:30–15:00 | **Unit 3: Integration & Automation** | MCP, Hooks, CLI & Headless |
 | 15:00–15:15 | Coffee Break | |
@@ -65,20 +74,21 @@ workshop/
 
 | # | Module | Duration | Type |
 |---|--------|----------|------|
-| M1 | The Claude Ecosystem | 15 min | Overview + Hands-on |
+| M1 | The Claude Ecosystem | 20 min | Overview + Hands-on |
 | M2 | Installation & Setup | 15 min | Hands-on |
-| M3 | Interactive Session Basics | 35 min | Hands-on |
-| M4 | CLAUDE.md & Rules | 20 min | Hands-on |
-| M5 | Skills & Commands | 30 min | Hands-on |
-| M6 | Subagents & Agent Teams | 25 min | Hands-on + Outlook |
-| M7 | MCP: External Connections | 35 min | Hands-on |
-| M8 | Hooks: Guaranteeing Determinism | 25 min | Hands-on |
-| M9 | CLI & Headless Mode | 25 min | Hands-on |
-| M10 | Plugins & Marketplace | 10 min | Demo |
-| M11 | Claude Code Remote & Web | 15 min | Demo |
-| M12 | Settings & Security | 10 min | Overview |
-| M13 | Best Practices & Patterns | 15 min | Discussion |
-| M14 | Capstone: Putting It All Together | 25 min | Hands-on |
+| M3 | The Interactive Session | 20 min | Hands-on |
+| M4 | Interactive Session Extended | 15 min | Hands-on |
+| M5 | CLAUDE.md & Rules | 20 min | Hands-on |
+| M6 | Skills & Commands | 30 min | Hands-on |
+| M7 | Subagents | 25 min | Hands-on |
+| M8 | MCP: External Connections | 35 min | Hands-on |
+| M9 | Hooks: Deterministic Guardrails | 15 min | Hands-on |
+| M10 | CLI & Headless Mode | 15 min | Hands-on |
+| M11 | Plugins & Marketplace | 10 min | Demo |
+| M12 | Remote & Web | 10 min | Overview |
+| M13 | Settings & Security | 10 min | Overview |
+| M14 | Best Practices & Patterns | 15 min | Discussion |
+| M15 | Capstone: Putting It All Together | 30 min | Hands-on |
 
 ## Prerequisites
 
@@ -90,7 +100,6 @@ Before attending, participants need:
 - [ ] **VS Code** installed (recommended)
 - [ ] **GitHub Account** with Personal Access Token
 - [ ] Admin rights for `npm install -g`
-- [ ] Network access to `api.anthropic.com` and `registry.npmjs.org`
 
 > Claude Code installation, VS Code Extension setup, and first session are done together on-site.
 
@@ -101,18 +110,44 @@ Before attending, participants need:
 | Workshop Outline (v3.0) | ✅ Complete |
 | M1 — Claude Ecosystem | ✅ Complete |
 | M2 — Installation & Setup | ✅ Complete |
-| M3 — Interactive Session | ✅ Complete |
-| M4 — CLAUDE.md & Rules | ✅ Complete |
-| M5 — Skills & Commands | ✅ Complete |
-| M6 — Subagents & Agent Teams | ✅ Complete |
-| M7 — MCP | ✅ Complete |
-| M8 — Hooks | ✅ Complete |
-| M9 — CLI & Headless | ✅ Complete |
-| M10 — Plugins | ✅ Complete |
-| M11 — Remote & Web | ✅ Complete |
-| M12 — Settings | ✅ Complete |
-| M13 — Best Practices | ✅ Complete |
-| M14 — Capstone | ✅ Complete |
-| Presentation (.pptx) | ✅ 45 slides |
+| M3 — The Interactive Session | ✅ Complete |
+| M4 — Interactive Session Extended | ✅ Complete |
+| M5 — CLAUDE.md & Rules | ✅ Complete |
+| M6 — Skills & Commands | ✅ Complete |
+| M7 — Subagents | ✅ Complete |
+| M8 — MCP | ✅ Complete |
+| M9 — Hooks: Deterministic Guardrails | ✅ Complete |
+| M10 — CLI & Headless | ✅ Complete |
+| M11 — Plugins | ✅ Complete |
+| M12 — Remote & Web | ✅ Complete |
+| M13 — Settings | ✅ Complete |
+| M14 — Best Practices | ✅ Complete |
+| M15 — Capstone | ✅ Complete |
+| Presentation (.pptx) | ✅ 47 slides |
 | Handouts (.docx) | ✅ 5 reference sheets |
-| Exercise materials | ✅ Sample project + configs + solutions |
+| Exercise materials | ✅ 8 module folders with starters + solutions |
+
+---
+
+## Future Topics
+
+The following areas are **not covered** in the current workshop but are candidates for future modules or expansions:
+
+| Topic | Description | Potential Format |
+|-------|-------------|-----------------|
+| Messages API & SDK | Python/TypeScript SDK — basic calls, tool use, structured output, extended thinking, streaming, prompt caching, batch API | Reference + hands-on |
+| Agent SDK | Embedding Claude into custom tools with `@anthropic-ai/claude-agent-sdk` — permissions, hooks, subagents, MCP integration | Hands-on module |
+| Worktrees & Parallelization | Isolated parallel sessions with `--worktree`, tmux integration, background tasks | Hands-on module |
+| Dispatch API | REST API for triggering Claude tasks from external systems, scheduled/recurring jobs on Anthropic infrastructure | Reference + examples |
+| Advanced Hooks | HTTP hooks, async hooks, JSON responses, advanced matchers, file patterns, environment variables, hook plugins (security-guidance, hookify) | Hands-on module |
+| Plugin Development | Building custom plugins from scratch, plugin.json manifest, data persistence, user configuration at enable time, publishing to marketplace | Hands-on module |
+| Remote Deep Dive | Ultraplan, parallel cloud execution, auto-fix CI, session sharing/teleporting, VS Code integration, remote control sessions | Hands-on module |
+| Enterprise Settings | Managed settings (MDM), granular permission rules, proxy/CA config, custom data retention, compliance (HIPAA, SOC 2) | Reference guide |
+| Advanced Context Management | Context costs (/context command), feature loading analysis, multi-agent patterns for parallel work, CLAUDE.md as living team documentation | Workshop module |
+| Computer Use (Deep Dive) | Claude controlling browser and desktop apps, testing workflows, practical patterns | Hands-on module |
+| Batch API Patterns | Production patterns for bulk processing, cost optimization, error handling, result aggregation | Reference + examples |
+| Enterprise Administration | SSO/SCIM setup, audit logs, data residency, managed policies, org-level configuration | Overview module |
+| Production Observability | Rate limit handling, retry strategies, monitoring dashboards, cost tracking at scale | Practical guide |
+| Multi-Provider Strategy | Bedrock vs. Vertex AI vs. Direct API — architecture decisions, failover, compliance mapping | Decision guide |
+| Prompt Engineering | Advanced prompting techniques, few-shot examples, chain-of-thought, evaluation and benchmarking | Workshop module |
+| Migration from Other Providers | OpenAI → Claude migration patterns, SDK differences, prompt adaptation strategies | Reference guide |

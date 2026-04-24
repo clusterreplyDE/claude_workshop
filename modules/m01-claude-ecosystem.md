@@ -1,6 +1,21 @@
-# Module 1 — The Claude Ecosystem (15 min)
+# Module 1 — The Claude Ecosystem (20 min)
 
 > *Setting the stage: Claude is more than Code*
+
+
+
+## Contents
+
+- [Learning Objectives](#learning-objectives)
+- [1. Claude Web (claude.ai)](#1-claude-web-claudeai)
+- [2. Claude Apps](#2-claude-apps)
+- [3. Claude Code](#3-claude-code)
+- [4. Claude API](#4-claude-api)
+- [5. How It All Connects](#5-how-it-all-connects)
+- [6. Subscription Tiers](#6-subscription-tiers)
+- [Hands-On Exercise (5 min)](#hands-on-exercise-5-min)
+- [Summary](#summary)
+
 
 ## Learning Objectives
 
@@ -68,7 +83,6 @@ The focus of this workshop. Claude Code is Anthropic's **agentic coding tool** �
 |-------------|--------|
 | **Terminal CLI** | `claude` command in any terminal |
 | **VS Code Extension** | Inline diffs, checkpoint viewer, selection context sharing |
-| **JetBrains Plugin** | IntelliJ, WebStorm, PyCharm, GoLand, Rider, etc. Native diff viewer integration |
 | **Claude Code Web** | Browser-based at claude.ai — no local install needed (Max/Enterprise) |
 | **Desktop App** | Built into the Claude Desktop application |
 
@@ -108,6 +122,21 @@ For developers building applications powered by Claude.
 | **Providers** | Direct (api.anthropic.com), AWS Bedrock, Google Vertex AI |
 | **Agent SDK** | `@anthropic-ai/claude-agent-sdk` — Node.js library for building custom agents with full access to tools, permissions, hooks, and subagents (covered briefly in Module 9) |
 
+### Advanced Model Features
+
+Beyond basic chat, the Claude API offers powerful capabilities that are especially relevant for developers:
+
+| Feature | What It Does | Developer Use Case |
+|---------|-------------|-------------------|
+| **Extended Thinking** | Claude shows its chain-of-thought reasoning before answering. Controllable via `thinking` parameter with configurable token budget. | Complex code analysis, architecture decisions, debugging multi-step problems |
+| **Multimodal (Vision)** | Process images, screenshots, and diagrams as input alongside text. Supports PNG, JPEG, GIF, WebP. | UI review from mockups, whiteboard→code, error screenshot analysis, diagram understanding |
+| **PDF Support** | Native PDF processing — extracts text, tables, and images from documents. | Analyze specs, review documentation, process contracts or compliance docs |
+| **Computer Use** | Claude controls mouse, keyboard, and screen — interacts with desktop and browser applications. | Automated browser testing, UI workflow automation, legacy system interaction |
+| **Prompt Caching** | Cache reusable context blocks (system prompts, large documents) across API calls. Up to 90% cost reduction on cached content. | High-volume API usage, repeated analysis with same context, cost-efficient pipelines |
+| **Batch API** | Submit large sets of requests asynchronously. 50% cost reduction, 24-hour processing window. | Bulk code analysis, migration tasks, large-scale reporting, dataset processing |
+
+> These features are available via the **Messages API** — see the Future Topics section in the README for more details.
+
 ### When to Use the API vs. Claude Code
 
 - **API**: Building your own products/tools powered by Claude, custom integrations, high-volume automation
@@ -131,10 +160,10 @@ For developers building applications powered by Claude.
         ┌──────▼──────┐ ┌────▼─────┐  ┌──────▼──────┐
         │  Projects   │ │ Terminal │  │  Agent SDK  │
         │  Artifacts  │ │ VS Code  │  │  Custom     │
-        │  Memory     │ │ JetBrains│  │  Apps       │
-        │  Deep Res.  │ │ Web      │  │  Bedrock    │
-        └─────────────┘ │ Desktop  │  │  Vertex     │
-                        └──────────┘  └─────────────┘
+        │  Memory     │ │ Web      │  │  Apps       │
+        │  Deep Res.  │ │ Desktop  │  │  Bedrock    │
+        └─────────────┘ └──────────┘  │  Vertex     │
+                                       └─────────────┘
                │              │
         ┌──────▼──────────────▼──────┐
         │     Claude Apps            │
@@ -178,7 +207,6 @@ For developers building applications powered by Claude.
 - **Third-party providers** (AWS Bedrock, Google Vertex AI) use their own billing
 - For heavy Claude Code users, **Max 5x or 20x** is recommended to avoid rate limits
 
-> 🏢 **Reply Context:** Check with your team which subscriptions are available. For BMW projects using Bedrock or Vertex, Claude Code can authenticate against these providers directly (covered in Module 2).
 
 ---
 
@@ -214,5 +242,7 @@ Notice how Projects + Custom Instructions shape Claude's responses. This same co
 | **Claude Apps** | Multi-platform access | Desktop (Code built-in), Mobile, Chrome (browser automation), Cowork |
 | **Claude Code** | Agentic coding | Full codebase context, tools, extensibility, CI/CD |
 | **Claude API** | Build custom apps | Programmatic access, Agent SDK |
+
+> **Handout:** `handout/M01-ecosystem-reference.docx` — Product landscape, decision guide, subscription tiers, models, and useful URLs at a glance.
 
 **Up next:** Module 2 — Installing Claude Code and getting your first session running.

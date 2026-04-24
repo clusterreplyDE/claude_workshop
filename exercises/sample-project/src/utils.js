@@ -35,11 +35,10 @@ function calculateAverageMileage(vehicles) {
 }
 
 /**
- * Filter vehicles by year range
- * BUG 5: Off-by-one error — excludes endYear
+ * Filter vehicles by year range (inclusive)
  */
 function filterByYearRange(vehicles, startYear, endYear) {
-  return vehicles.filter(v => v.year >= startYear && v.year < endYear);
+  return vehicles.filter(v => v.year >= startYear && v.year <= endYear);
 }
 
 /**
