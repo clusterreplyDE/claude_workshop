@@ -59,7 +59,6 @@ function getVehicle(req, res) {
 /**
  * POST /api/vehicles
  * Add a new vehicle
- * BUG 6: No input sanitization — user input is used directly without escaping
  */
 function createVehicle(req, res) {
   const validation = validateVehicle(req.body);
@@ -69,16 +68,15 @@ function createVehicle(req, res) {
 
   const newVehicle = {
     id: generateId(),
-    make: req.body.make,
-    model: req.body.model,
-    year: req.body.year,
-    mileage: req.body.mileage || 0,
+    make: String(req.body.make).trim(),
+    model: String(req.body.model).trim(),
+    year: parseInt(req.body.year, 10),
+    mileage: parseInt(req.body.mileage, 10) || 0,
   };
 
   vehicles.push(newVehicle);
 
-  // BUG: Should return 201, not 200
-  res.json({ data: formatVehicle(newVehicle), message: "Vehicle created" });
+  res.status(201).json({ data: formatVehicle(newVehicle), message: "Vehicle created" });
 }
 
 /**
